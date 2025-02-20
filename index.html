@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<<<<<<< HEAD
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Desafío de 30 Días</title>
@@ -177,3 +178,115 @@
   </script>
 </body>
 </html>
+=======
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafío de 30 Días</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        #calendar {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            max-width: 600px;
+            margin: auto;
+        }
+        .day {
+            padding: 20px;
+            border: 2px solid #ccc;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: 0.3s;
+            background-color: #333;
+            color: #fff;
+            border-radius: 5px;
+        }
+        .unlocked {
+            opacity: 1;
+            border-color: #007bff;
+            background: #1e90ff;
+        }
+        #videoContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50vh;
+        }
+        video {
+            max-width: 80%;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Desafío de 30 Días</h1>
+    <div id="calendar"></div>
+    <div id="videoContainer">
+        <video id="videoPlayer" controls></video>
+    </div>
+    
+    <script>
+        const totalDays = 30;
+        const calendar = document.getElementById("calendar");
+        const videoPlayer = document.getElementById("videoPlayer");
+        const today = new Date().getDate();
+        
+        // Cargar progreso (para pruebas, desbloquear todos los días temporalmente)
+        let unlockedDays = JSON.parse(localStorage.getItem("unlockedDays")) || Array.from({length: totalDays}, (_, i) => i + 1);
+
+        function unlockDay(day) {
+            if (!unlockedDays.includes(day)) {
+                unlockedDays.push(day);
+                localStorage.setItem("unlockedDays", JSON.stringify(unlockedDays));
+            }
+        }
+        
+        const videoLinks = [
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/dry-jelq.webm?view=1",
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/dry-jelq.webm?view=1",
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jelq-squeeze.webm?view=1",
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jelq-squeeze.webm?view=1",
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/uli3.webm?view=1",
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/extreme-uli.webm?view=1",
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/plumped-bend.webm?view=1",
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/sadsak-slinky.webm?view=1",
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/simple-manual-stretches.webm?view=1",
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/btc-stretch.webm?view=1",
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jai-stretch.webm?view=1",
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/v-stretch.webm?view=1",
+            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/inverted-v-a-stretch.webm?view=1"
+        ];
+
+        for (let i = 1; i <= totalDays; i++) {
+            let dayDiv = document.createElement("div");
+            dayDiv.classList.add("day");
+            dayDiv.textContent = `Día ${i}`;
+            
+            if (unlockedDays.includes(i)) {
+                dayDiv.classList.add("unlocked");
+            }
+            
+            dayDiv.addEventListener("click", () => {
+                if (unlockedDays.includes(i)) {
+                    let videoIndex = (i - 1) % videoLinks.length;
+                    if (videoIndex % 7 !== 6) { // Días de descanso cada 7 días
+                        videoPlayer.src = videoLinks[videoIndex];
+                        videoPlayer.style.display = "block";
+                    }
+                    if (i === today) {
+                        unlockDay(i + 1);
+                    }
+                }
+            });
+            
+            calendar.appendChild(dayDiv);
+        }
+    </script>
+</body>
+</html>
+>>>>>>> a279cdf (chupelo)
