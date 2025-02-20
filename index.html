@@ -1,113 +1,179 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desafío de 30 Días</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #121212;
-            color: #ffffff;
-        }
-        #calendar {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 10px;
-            max-width: 600px;
-            margin: auto;
-        }
-        .day {
-            padding: 20px;
-            border: 2px solid #ccc;
-            cursor: pointer;
-            opacity: 0.5;
-            transition: 0.3s;
-            background-color: #333;
-            color: #fff;
-            border-radius: 5px;
-        }
-        .unlocked {
-            opacity: 1;
-            border-color: #007bff;
-            background: #1e90ff;
-        }
-        #videoContainer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 50vh;
-        }
-        video {
-            max-width: 80%;
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desafío de 30 Días</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #121212;
+      color: #ffffff;
+    }
+    .calendar-container {
+      margin: 40px auto;
+    }
+    #calendar, #calendarKegel {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    .day {
+      padding: 20px;
+      border: 2px solid #ccc;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: 0.3s;
+      background-color: #333;
+      color: #fff;
+      border-radius: 5px;
+    }
+    .unlocked {
+      opacity: 1;
+      border-color: #007bff;
+      background: #1e90ff;
+    }
+    .media-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50vh;
+      margin: 20px 0;
+    }
+    video, .media-container img {
+      max-width: 80%;
+      display: none;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 <body>
+  <!-- Primer calendario -->
+  <div class="calendar-container">
     <h1>Desafío de 30 Días</h1>
     <div id="calendar"></div>
-    <div id="videoContainer">
-        <video id="videoPlayer" controls></video>
+    <div class="media-container">
+      <video id="videoPlayer" controls></video>
     </div>
-    
-    <script>
-        const totalDays = 30;
-        const calendar = document.getElementById("calendar");
-        const videoPlayer = document.getElementById("videoPlayer");
-        const today = new Date().getDate();
-        
-        // Cargar progreso (para pruebas, desbloquear todos los días temporalmente)
-        let unlockedDays = JSON.parse(localStorage.getItem("unlockedDays")) || Array.from({length: totalDays}, (_, i) => i + 1);
+  </div>
 
-        function unlockDay(day) {
-            if (!unlockedDays.includes(day)) {
-                unlockedDays.push(day);
-                localStorage.setItem("unlockedDays", JSON.stringify(unlockedDays));
-            }
+  <!-- Segundo calendario Keguel Pro Max -->
+  <div class="calendar-container">
+    <h1>Ejercicios Keguel Pro Max</h1>
+    <div id="calendarKegel"></div>
+    <div class="media-container">
+      <video id="videoPlayerKegel" controls></video>
+      <img id="imagePlayerKegel" alt="Ejercicio Keguel">
+    </div>
+  </div>
+
+  <script>
+    // Configuración inicial común
+    const totalDays = 30;
+    const today = new Date().getDate();
+
+    // Primer calendario (original)
+    const calendar = document.getElementById("calendar");
+    const videoPlayer = document.getElementById("videoPlayer");
+    let unlockedDays = JSON.parse(localStorage.getItem("unlockedDays")) || [];
+    if (unlockedDays.length === 0) {
+      unlockedDays.push(1);
+      localStorage.setItem("unlockedDays", JSON.stringify(unlockedDays));
+    }
+
+    // Segundo calendario Keguel
+    const calendarKegel = document.getElementById("calendarKegel");
+    const videoPlayerKegel = document.getElementById("videoPlayerKegel");
+    const imagePlayerKegel = document.getElementById("imagePlayerKegel");
+    let unlockedDaysKegel = JSON.parse(localStorage.getItem("unlockedDaysKegel")) || [];
+    if (unlockedDaysKegel.length === 0) {
+      unlockedDaysKegel.push(1);
+      localStorage.setItem("unlockedDaysKegel", JSON.stringify(unlockedDaysKegel));
+    }
+
+    // VideoLinks como array de cadenas
+    const videoLinks = [
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/dry-jelq.webm?view=1",
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/dry-jelq.webm?view=1",
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jelq-squeeze.webm?view=1",
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jelq-squeeze.webm?view=1",
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/uli3.webm?view=1",
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/extreme-uli.webm?view=1",
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/plumped-bend.webm?view=1",
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/sadsak-slinky.webm?view=1",
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/simple-manual-stretches.webm?view=1",
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/btc-stretch.webm?view=1",
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jai-stretch.webm?view=1",
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/v-stretch.webm?view=1",
+      "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/inverted-v-a-stretch.webm?view=1"
+    ];
+
+    // Medios para Keguel Pro Max (como objetos)
+    const keguelMedia = [
+      { type: 'video', src: 'https://v1.pinimg.com/videos/mc/expMp4/21/92/a1/2192a16111270966efde7939ca45433f_t3.mp4' },
+      { type: 'image', src: 'https://i.pinimg.com/736x/8c/72/54/8c7254c7a2f7a2bcce6105f5d05a1aa4.jpg' },
+      { type: 'image', src: 'https://i.pinimg.com/736x/1a/7e/c3/1a7ec3e71eca9ccd4826e1cd924c83c3.jpg' },
+      { type: 'image', src: 'https://i.pinimg.com/736x/8d/6f/d1/8d6fd184b27bae9190e3e87396083eb3.jpg' },
+      { type: 'image', src: 'https://i.pinimg.com/736x/56/8d/29/568d2984ae81b4f3a3c6b64a06ea97ea.jpg' },
+      { type: 'image', src: 'https://i.pinimg.com/736x/c4/f2/1c/c4f21cb47aeb50e0726ebfc20c51edf4.jpg' }
+    ];
+
+    // Función para crear calendarios
+    function createCalendar(container, unlockedDays, mediaArray, storageKey) {
+      for (let i = 1; i <= totalDays; i++) {
+        const dayDiv = document.createElement("div");
+        dayDiv.classList.add("day");
+        dayDiv.textContent = `Día ${i}`;
+
+        if (unlockedDays.includes(i)) {
+          dayDiv.classList.add("unlocked");
         }
-        
-        const videoLinks = [
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/dry-jelq.webm?view=1",
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/dry-jelq.webm?view=1",
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jelq-squeeze.webm?view=1",
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jelq-squeeze.webm?view=1",
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/uli3.webm?view=1",
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/extreme-uli.webm?view=1",
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/plumped-bend.webm?view=1",
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/sadsak-slinky.webm?view=1",
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/simple-manual-stretches.webm?view=1",
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/btc-stretch.webm?view=1",
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jai-stretch.webm?view=1",
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/v-stretch.webm?view=1",
-            "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/inverted-v-a-stretch.webm?view=1"
-        ];
 
-        for (let i = 1; i <= totalDays; i++) {
-            let dayDiv = document.createElement("div");
-            dayDiv.classList.add("day");
-            dayDiv.textContent = `Día ${i}`;
-            
-            if (unlockedDays.includes(i)) {
-                dayDiv.classList.add("unlocked");
+        dayDiv.addEventListener("click", () => {
+          if (unlockedDays.includes(i)) {
+            const mediaIndex = (i - 1) % mediaArray.length;
+            const media = mediaArray[mediaIndex];
+
+            if (container.id === 'calendarKegel') {
+              // Limpiar contenido previo
+              videoPlayerKegel.style.display = 'none';
+              imagePlayerKegel.style.display = 'none';
+
+              if (media.type === 'video') {
+                videoPlayerKegel.src = media.src;
+                videoPlayerKegel.style.display = 'block';
+              } else {
+                imagePlayerKegel.src = media.src;
+                imagePlayerKegel.style.display = 'block';
+              }
+            } else if (container.id === 'calendar') {
+              // Usar el string directamente para el primer calendario
+              videoPlayer.src = media;
+              videoPlayer.style.display = 'block';
             }
-            
-            dayDiv.addEventListener("click", () => {
-                if (unlockedDays.includes(i)) {
-                    let videoIndex = (i - 1) % videoLinks.length;
-                    if (videoIndex % 7 !== 6) { // Días de descanso cada 7 días
-                        videoPlayer.src = videoLinks[videoIndex];
-                        videoPlayer.style.display = "block";
-                    }
-                    if (i === today) {
-                        unlockDay(i + 1);
-                    }
+
+            // Desbloquear el siguiente día si se hace clic en el día actual
+            if (i === today) {
+              if (!unlockedDays.includes(i + 1)) {
+                unlockedDays.push(i + 1);
+                localStorage.setItem(storageKey, JSON.stringify(unlockedDays));
+                if (dayDiv.nextElementSibling) {
+                  dayDiv.nextElementSibling.classList.add("unlocked");
                 }
-            });
-            
-            calendar.appendChild(dayDiv);
-        }
-    </script>
+              }
+            }
+          }
+        });
+        container.appendChild(dayDiv);
+      }
+    }
+
+    // Inicializar ambos calendarios
+    createCalendar(calendar, unlockedDays, videoLinks, 'unlockedDays');
+    createCalendar(calendarKegel, unlockedDaysKegel, keguelMedia, 'unlockedDaysKegel');
+  </script>
 </body>
 </html>
