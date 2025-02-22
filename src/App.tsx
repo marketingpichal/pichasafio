@@ -1,5 +1,11 @@
+import { Publicity } from "./components/Publicity";
 import ThirtyDayChallenge from "./components/ThirtyDaysChanllenge";
 
 export const App = () => {
-  return <ThirtyDayChallenge />;
+  return (
+    <main>
+      <Publicity />
+      <ThirtyDayChallenge />
+    </main>
+  );
 };
