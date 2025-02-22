@@ -3,18 +3,18 @@ import SitioWebImg from "../../assets/sitioweb.png";
 
 export const Publicity = () => {
   return (
-    <section className="w-full flex flex-row gap-4 p-4 bg-gray-900">
+    <div className="grid gap-6 md:grid-cols-2">
       <a
         href="https://wa.me/573008607992"
         target="_blank"
         rel="noreferrer"
-        className="w-1/2 flex items-center justify-center"
+        className="group relative overflow-hidden rounded-lg bg-black/20 transition-transform hover:scale-105"
       >
-        <div className="relative w-full aspect-[16/4] overflow-hidden">
-          <img 
-            src={SiruxImg} 
+        <div className="aspect-[16/4] w-full">
+          <img
+            src={SiruxImg}
             alt="Siriux"
-            className="absolute inset-0 w-full h-full object-contain"
+            className="h-full w-full object-contain"
           />
         </div>
       </a>
@@ -22,16 +22,16 @@ export const Publicity = () => {
         href="https://wa.me/573004048012"
         target="_blank"
         rel="noreferrer"
-        className="w-1/2 flex items-center justify-center"
+        className="group relative overflow-hidden rounded-lg bg-black/20 transition-transform hover:scale-105"
       >
-        <div className="relative w-full aspect-[16/4] overflow-hidden">
-          <img 
-            src={SitioWebImg} 
+        <div className="aspect-[16/4] w-full">
+          <img
+            src={SitioWebImg}
             alt="Sitio Web"
-            className="absolute inset-0 w-full h-full object-contain"
+            className="h-full w-full object-contain"
           />
         </div>
       </a>
-    </section>
+    </div>
   );
 };
