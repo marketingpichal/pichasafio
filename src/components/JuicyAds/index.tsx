@@ -1,11 +1,5 @@
 import { useEffect, useRef } from "react";
 
-declare global {
-  interface Window {
-    juicy_tags: string[];
-  }
-}
-
 interface JuicyAdProps {
   adZoneId: string;
 }
@@ -14,23 +8,19 @@ export default function JuicyAd({ adZoneId }: JuicyAdProps) {
   const adRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    window.juicy_tags = ["a", "img"];
-
     const script = document.createElement("script");
     script.src = `https://js.juicyads.com/jp.php?c=${adZoneId}&u=http%3A%2F%2Fwww.juicyads.rocks`;
     script.async = true;
     script.type = "text/javascript";
 
-    if (adRef.current) {
-      adRef.current.appendChild(script);
-    }
+    document.body.appendChild(script);
 
     return () => {
-      if (adRef.current && script.parentNode) {
-        adRef.current.removeChild(script);
+      if (script.parentNode) {
+        document.body.removeChild(script);
       }
     };
-  }, [adZoneId]);
+  }, []);
 
   return (
     <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-xl shadow-lg">
