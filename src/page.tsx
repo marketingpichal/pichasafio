@@ -8,6 +8,8 @@ import ThirtyDayChallenge from "./components/ThirtyDaysChanllenge";
 import { WarzoneCalculator } from "./components/warzonecalculator";
 import Header from "./components/header";
 import Instructions from "./components/Instrucciones";
+
+
 export default function Page() {
   return (
     <div className="min-h-screen bg-gray-900">
