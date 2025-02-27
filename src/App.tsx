@@ -1,8 +1,11 @@
+import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import Page from "./page";
 import AgeVerificationModal from "./components/VerificarEdad";
 import JuicyAd from "./components/JuicyAds";
+import Navbar from "./components/NavigationBar"; // Importamos el nuevo componente
 
-import { useState } from "react";
+const About = () => <h2 className="text-white">Acerca de Nosotros</h2>;
 
 export default function App() {
   const [isVerified, setIsVerified] = useState(false);
@@ -22,7 +25,11 @@ export default function App() {
       {isVerified && (
         <>
           <JuicyAd adZoneId={zoneId} />
-          <Page />
+          <Navbar /> {/* Añadimos la barra de navegación */}
+          <Routes>
+            <Route path="/" element={<Page />} />
+            <Route path="/about" element={<About />} />
+          </Routes>
         </>
       )}
     </div>

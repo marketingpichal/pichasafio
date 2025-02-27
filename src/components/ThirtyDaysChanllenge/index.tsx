@@ -5,6 +5,7 @@ interface Exercise {
   name: string;
   url: string;
   description?: string;
+  embedUrl?: string; // Para los enlaces de iframe
 }
 
 interface DayProps {
@@ -16,7 +17,8 @@ interface DayProps {
 const exercises: Exercise[] = [
   {
     name: "Dry Jelq",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/dry-jelq.webm?view=1",
+    url: "https://ghbrisk.com/z2f2g5rix02n?view=1",
+    embedUrl: "https://ghbrisk.com/e/z2f2g5rix02n", // Iframe que ya teníamos
     description: "Ejercicio básico de jelqing seco",
   },
   {
@@ -51,7 +53,8 @@ const exercises: Exercise[] = [
   },
   {
     name: "BTC Stretch",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/btc-stretch.webm?view=1",
+    url: "https://ghbrisk.com/e/intq78mtlfxr?view=1",
+    embedUrl: "https://ghbrisk.com/e/intq78mtlfxr", // Nuevo iframe que me pasaste
     description: "Estiramiento BTC",
   },
   {
@@ -100,7 +103,7 @@ const ThirtyDayChallenge: React.FC = () => {
   const handleDayClick = (day: number) => {
     const exercise = getExerciseForDay(day);
     setCurrentExercise(exercise);
-    setCurrentVideo(exercise.url);
+    setCurrentVideo(exercise.embedUrl || exercise.url); // Usamos embedUrl si existe
     setShowVideo(true);
   };
 
@@ -134,11 +137,25 @@ const ThirtyDayChallenge: React.FC = () => {
                 )}
               </div>
               <div className="flex justify-center items-center h-[50vh]">
-                <video
-                  controls
-                  src={currentVideo}
-                  className="max-w-[80%] h-auto"
-                />
+                {currentExercise.embedUrl ? (
+                  <iframe
+                    src={currentExercise.embedUrl}
+                    frameBorder={0}
+                    marginWidth={0}
+                    marginHeight={0}
+                    scrolling="no"
+                    width={640}
+                    height={360}
+                    allowFullScreen
+                    className="max-w-[80%] h-auto"
+                  />
+                ) : (
+                  <video
+                    controls
+                    src={currentVideo}
+                    className="max-w-[80%] h-auto"
+                  />
+                )}
               </div>
             </div>
           )}
