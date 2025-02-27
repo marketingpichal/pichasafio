@@ -5,7 +5,7 @@ interface Exercise {
   name: string;
   url: string;
   description?: string;
-  embedUrl?: string; // Para los enlaces de iframe
+  embedUrl?: string;
 }
 
 interface DayProps {
@@ -18,7 +18,7 @@ const exercises: Exercise[] = [
   {
     name: "Dry Jelq",
     url: "https://ghbrisk.com/z2f2g5rix02n?view=1",
-    embedUrl: "https://ghbrisk.com/e/z2f2g5rix02n", // Iframe que ya teníamos
+    embedUrl: "https://ghbrisk.com/e/z2f2g5rix02n",
     description: "Ejercicio básico de jelqing seco",
   },
   {
@@ -145,15 +145,15 @@ const ThirtyDayChallenge: React.FC = () => {
                     marginHeight={0}
                     scrolling="no"
                     width={640}
-                    height={360}
+                    height={860}
                     allowFullScreen
-                    className="max-w-[80%] h-auto"
+                    className="max-w-[80%] h-[350px]"
                   />
                 ) : (
                   <video
                     controls
                     src={currentVideo}
-                    className="max-w-[80%] h-auto"
+                    className="max-w-[80%] h-[400px]"
                   />
                 )}
               </div>

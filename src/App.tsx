@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Page from "./page";
 import AgeVerificationModal from "./components/VerificarEdad";
-import JuicyAd from "./components/JuicyAds";
-import Navbar from "./components/NavigationBar"; // Importamos el nuevo componente
+import Navbar from "./components/NavigationBar";
 
 const About = () => <h2 className="text-white">Acerca de Nosotros</h2>;
 
@@ -17,15 +16,12 @@ export default function App() {
     }
   };
 
-  const zoneId = import.meta.env.VITE_APP_API_KEY_ADS as string;
-
   return (
     <div className="min-h-screen bg-gray-900">
       {!isVerified && <AgeVerificationModal onVerified={handleVerification} />}
       {isVerified && (
         <>
-          <JuicyAd adZoneId={zoneId} />
-          <Navbar /> {/* Añadimos la barra de navegación */}
+          <Navbar />
           <Routes>
             <Route path="/" element={<Page />} />
             <Route path="/about" element={<About />} />
