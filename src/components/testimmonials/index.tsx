@@ -1,4 +1,5 @@
 import TestimonioVid from "../../assets/testimonio.mp4";
+
 interface VideoProps {
   src: string | undefined;
   title: string;
@@ -8,13 +9,11 @@ interface VideoProps {
 const Video = ({ src, title, className }: VideoProps) => {
   return (
     <div className="aspect-video w-full overflow-hidden rounded-lg shadow-xl">
-      <iframe
+      <video
         src={src}
         title={title}
         className={`h-full w-full ${className}`}
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
+        controls
       />
     </div>
   );
