@@ -1,4 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
+
+declare global {
+  interface Window {
+    juicy_tags: string[];
+  }
+}
 
 interface JuicyAdProps {
   adZoneId: string;
@@ -8,20 +14,21 @@ export default function JuicyAd({ adZoneId }: JuicyAdProps) {
   const adRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Carga el script principal de JuicyAds
-    const script = document.createElement('script');
-    script.src = 'https://js.juicyads.com/juicyads.js'; // Script base
-    script.async = true;
-    document.body.appendChild(script);
+    window.juicy_tags = ["a", "img"];
 
-    // Asegura que el <ins> esté listo
+    const script = document.createElement("script");
+    script.src = `https://js.juicyads.com/jp.php?c=${adZoneId}&u=http%3A%2F%2Fwww.juicyads.rocks`;
+    script.async = true;
+    script.type = "text/javascript";
+
     if (adRef.current) {
-      adRef.current.setAttribute('data-jua-id', adZoneId);
+      adRef.current.appendChild(script);
     }
 
-    // Limpieza al desmontar
     return () => {
-      document.body.removeChild(script);
+      if (adRef.current && script.parentNode) {
+        adRef.current.removeChild(script);
+      }
     };
   }, [adZoneId]);
 
@@ -30,9 +37,10 @@ export default function JuicyAd({ adZoneId }: JuicyAdProps) {
       <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-2">
         Pichasafio Patrocinado
       </h3>
-      <div ref={adRef} className="min-h-[250px] w-full flex justify-center">
-        <ins data-jua-id={adZoneId}></ins>
-      </div>
+      <div
+        ref={adRef}
+        className="min-h-[250px] w-full flex justify-center"
+      ></div>
     </div>
   );
 }
