@@ -23,12 +23,12 @@ const exercises: Exercise[] = [
   },
   {
     name: "Jelq Squeeze",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jelq-squeeze.webm?view=1",
+    url: "https://ghbrisk.com/sgt0gmzij6q0",
     description: "Jelqing con técnica de squeeze",
   },
   {
     name: "ULI Basic",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/uli3.webm?view=1",
+    url: "https://ghbrisk.com/s6xpur8wu859",
     description: "Ejercicio ULI básico",
   },
   {
@@ -43,12 +43,12 @@ const exercises: Exercise[] = [
   },
   {
     name: "Sadsak Slinky",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/sadsak-slinky.webm?view=1",
+    url: "https://ghbrisk.com/z2f2g5rix02nƒ",
     description: "Técnica Sadsak Slinky",
   },
   {
     name: "Manual Stretches",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/simple-manual-stretches.webm?view=1",
+    url: "https://ghbrisk.com/hf2c4b7otlub",
     description: "Estiramientos manuales básicos",
   },
   {
@@ -59,17 +59,17 @@ const exercises: Exercise[] = [
   },
   {
     name: "JAI Stretch",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jai-stretch.webm?view=1",
+    url: "https://ghbrisk.com/dylqbnzx7aqd",
     description: "Estiramiento JAI",
   },
   {
     name: "V-Stretch",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/v-stretch.webm?view=1",
+    url: "https://ghbrisk.com/intq78mtlfxr",
     description: "Estiramiento en V",
   },
   {
     name: "Inverted V-Stretch",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/inverted-v-a-stretch.webm?view=1",
+    url: "https://ghbrisk.com/val0i7vpzxwn",
     description: "Estiramiento en V invertida",
   },
 ];
