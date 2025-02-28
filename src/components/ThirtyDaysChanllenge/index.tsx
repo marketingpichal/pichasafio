@@ -5,6 +5,7 @@ interface Exercise {
   name: string;
   url: string;
   description?: string;
+  embedUrl?: string;
 }
 
 interface DayProps {
@@ -16,17 +17,18 @@ interface DayProps {
 const exercises: Exercise[] = [
   {
     name: "Dry Jelq",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/dry-jelq.webm?view=1",
+    url: "https://ghbrisk.com/z2f2g5rix02n?view=1",
+    embedUrl: "https://ghbrisk.com/e/z2f2g5rix02n",
     description: "Ejercicio básico de jelqing seco",
   },
   {
     name: "Jelq Squeeze",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jelq-squeeze.webm?view=1",
+    url: "https://ghbrisk.com/sgt0gmzij6q0",
     description: "Jelqing con técnica de squeeze",
   },
   {
     name: "ULI Basic",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/uli3.webm?view=1",
+    url: "https://ghbrisk.com/s6xpur8wu859",
     description: "Ejercicio ULI básico",
   },
   {
@@ -41,32 +43,33 @@ const exercises: Exercise[] = [
   },
   {
     name: "Sadsak Slinky",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/sadsak-slinky.webm?view=1",
+    url: "https://ghbrisk.com/z2f2g5rix02nƒ",
     description: "Técnica Sadsak Slinky",
   },
   {
     name: "Manual Stretches",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/simple-manual-stretches.webm?view=1",
+    url: "https://ghbrisk.com/hf2c4b7otlub",
     description: "Estiramientos manuales básicos",
   },
   {
     name: "BTC Stretch",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/btc-stretch.webm?view=1",
+    url: "https://ghbrisk.com/e/intq78mtlfxr?view=1",
+    embedUrl: "https://ghbrisk.com/e/intq78mtlfxr", // Nuevo iframe que me pasaste
     description: "Estiramiento BTC",
   },
   {
     name: "JAI Stretch",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/jai-stretch.webm?view=1",
+    url: "https://ghbrisk.com/dylqbnzx7aqd",
     description: "Estiramiento JAI",
   },
   {
     name: "V-Stretch",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/v-stretch.webm?view=1",
+    url: "https://ghbrisk.com/intq78mtlfxr",
     description: "Estiramiento en V",
   },
   {
     name: "Inverted V-Stretch",
-    url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/inverted-v-a-stretch.webm?view=1",
+    url: "https://ghbrisk.com/val0i7vpzxwn",
     description: "Estiramiento en V invertida",
   },
 ];
@@ -100,7 +103,7 @@ const ThirtyDayChallenge: React.FC = () => {
   const handleDayClick = (day: number) => {
     const exercise = getExerciseForDay(day);
     setCurrentExercise(exercise);
-    setCurrentVideo(exercise.url);
+    setCurrentVideo(exercise.embedUrl || exercise.url); // Usamos embedUrl si existe
     setShowVideo(true);
   };
 
@@ -134,11 +137,25 @@ const ThirtyDayChallenge: React.FC = () => {
                 )}
               </div>
               <div className="flex justify-center items-center h-[50vh]">
-                <video
-                  controls
-                  src={currentVideo}
-                  className="max-w-[80%] h-auto"
-                />
+                {currentExercise.embedUrl ? (
+                  <iframe
+                    src={currentExercise.embedUrl}
+                    frameBorder={0}
+                    marginWidth={0}
+                    marginHeight={0}
+                    scrolling="no"
+                    width={640}
+                    height={860}
+                    allowFullScreen
+                    className="max-w-[80%] h-[350px]"
+                  />
+                ) : (
+                  <video
+                    controls
+                    src={currentVideo}
+                    className="max-w-[80%] h-[400px]"
+                  />
+                )}
               </div>
             </div>
           )}

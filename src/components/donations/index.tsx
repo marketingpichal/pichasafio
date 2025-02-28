@@ -1,24 +1,14 @@
-import { Heart, Phone, Share2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Heart } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useState, useEffect } from "react";
+import NequiQR from "../../assets/NequiQR.jpeg";
 
 export default function DonationBanner() {
   const [isVisible, setIsVisible] = useState(false);
-  const phoneNumber = "3204051366";
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
-
-  const handleCopyNumber = async () => {
-    try {
-      await navigator.clipboard.writeText(phoneNumber);
-      alert("¡Número copiado al portapapeles!");
-    } catch (err) {
-      console.error("Error al copiar:", err);
-    }
-  };
 
   return (
     <div
@@ -43,20 +33,10 @@ export default function DonationBanner() {
             <p className="text-lg font-medium text-pink-200">
               Realiza tu donación a través de Nequi
             </p>
-            <div className="flex items-center justify-center space-x-2 text-xl font-bold">
-              <Phone className="h-5 w-5" />
-              <span className="animate-pulse">{phoneNumber}</span>
-            </div>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-3">
-            <Button
-              onClick={handleCopyNumber}
-              className="bg-white font-semibold text-[#2C0054] hover:bg-pink-100"
-            >
-              <Share2 className="mr-2 h-4 w-4" />
-              Copiar Número
-            </Button>
+          <div>
+            <img src={NequiQR} alt="Código QR de Nequi" className="w-64 h-64" />
           </div>
 
           <p className="text-sm text-pink-200">
