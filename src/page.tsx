@@ -12,11 +12,17 @@ import Footer from "./components/Footer";
 
 import Donate from "./components/DonacionesFull";
 
+//Prueba
+import Login from "./components/Login";
+import Register from "./components/Register";
+
 export default function Page() {
   return (
     <div className="min-h-screen bg-gray-900">
 
-   
+      <section>
+       <Register></Register>
+      </section>
         <section>
             <Header></Header>
         </section>
