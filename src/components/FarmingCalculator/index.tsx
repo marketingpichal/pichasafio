@@ -129,7 +129,6 @@ const FarmingCalculator = () => {
 
   const Column = styled.div`
     width: 48%;
-    background: rgba(255, 255, 255, 0.8);
     color: black;
     padding: 15px;
     border-radius: 10px;

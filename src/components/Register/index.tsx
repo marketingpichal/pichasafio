@@ -68,18 +68,19 @@ export default function Register() {
   };
 
   return (
-    <div>
-      <h2>Registrarse</h2>
+    <div style={styles.container}>
+      <h2 style={styles.title}>Registrarse</h2>
       {success ? (
-        <p>¡Registro exitoso! Por favor, revisa tu correo para confirmar tu cuenta.</p>
+        <p style={styles.successMessage}>¡Registro exitoso! Por favor, revisa tu correo para confirmar tu cuenta.</p>
       ) : (
-        <form onSubmit={handleRegister}>
+        <form onSubmit={handleRegister} style={styles.form}>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             required
+            style={styles.input}
           />
           <input
             type="password"
@@ -87,6 +88,7 @@ export default function Register() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Contraseña"
             required
+            style={styles.input}
           />
           <input
             type="text"
@@ -94,13 +96,70 @@ export default function Register() {
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Nombre de usuario"
             required
+            style={styles.input}
           />
-          <button type="submit" disabled={loading}>
+          <button type="submit" disabled={loading} style={styles.button}>
             {loading ? 'Cargando...' : 'Registrarse'}
           </button>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {error && <p style={styles.errorMessage}>{error}</p>}
         </form>
       )}
     </div>
   );
 }
+
+const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px',
+    backgroundColor: '#f7f7f7',
+    borderRadius: '8px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    maxWidth: '400px',
+    margin: '0 auto',
+  },
+  title: {
+    fontSize: '24px',
+    marginBottom: '20px',
+    color: '#333',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+  },
+  input: {
+    padding: '10px',
+    marginBottom: '15px',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    fontSize: '16px',
+  },
+  button: {
+    padding: '10px',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '16px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+  },
+  buttonDisabled: {
+    backgroundColor: '#ccc',
+    cursor: 'not-allowed',
+  },
+  errorMessage: {
+    color: 'red',
+    marginTop: '10px',
+    textAlign: 'center' as 'center',
+  },
+  successMessage: {
+    color: 'green',
+    marginTop: '10px',
+    textAlign: 'center',
+  },
+};

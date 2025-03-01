@@ -19,6 +19,22 @@ export default function Navbar() {
               Inicio
             </Link>
           </li>
+          <li>
+            <Link
+              to="/login"
+              className="hover:text-gray-300 transition-colors duration-200"
+            >
+              Iniciar sesión
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/register"
+              className="hover:text-gray-300 transition-colors duration-200"
+            >
+              Registrarse
+            </Link>
+          </li>
           
           <li>
             <Link
