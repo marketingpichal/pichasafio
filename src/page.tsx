@@ -5,12 +5,11 @@ import { Publicity } from "./components/Publicity";
 import RespirationCalendar from "./components/RespirationCalendar";
 import { Testimonial } from "./components/testimmonials";
 import ThirtyDayChallenge from "./components/ThirtyDaysChanllenge";
-import { WarzoneCalculator } from "./components/warzonecalculator";
+
 import Header from "./components/header";
 import Instructions from "./components/Instrucciones";
 import Footer from "./components/Footer";
 
-import Testimonials from "./components/TestimoniosAnonimos";
 import Donate from "./components/DonacionesFull";
 
 export default function Page() {
@@ -21,15 +20,11 @@ export default function Page() {
         <section>
             <Header></Header>
         </section>
-        <section>
-          <Testimonials></Testimonials>
-        </section>
+        
         <section>
           <Donate></Donate>
         </section>
-        <section>
-         
-        </section>
+ 
         <section>
             <Instructions></Instructions>
     </section>
@@ -56,20 +51,6 @@ export default function Page() {
         <ThirtyDayChallenge />
       </section>
 
-      {/* Calculadora de Warzone */}
-      <section>
-        <WarzoneCalculator />
-      </section>
-
-       {/* Respiracion */}
-       <section className="container mx-auto px-4 py-8">
-        <RespirationCalendar />
-      </section>
-
-       {/* Respiracion */}
-       <section className="container mx-auto px-4 py-8">
-        <KeguelChallengue />
-      </section>
       <section className="container mx-auto px-4 py-8">
         <Footer />
       </section>
