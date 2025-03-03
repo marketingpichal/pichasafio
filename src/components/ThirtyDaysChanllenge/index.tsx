@@ -75,6 +75,7 @@ const exercises: Exercise[] = [
 ];
 
 const Day: React.FC<DayProps> = ({ day, exercise, onClick }) => {
+   console.log('day', day);
   return (
     <div
       onClick={() => onClick(day)}
