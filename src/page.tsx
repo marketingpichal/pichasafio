@@ -7,6 +7,7 @@ import Header from "./components/header";
 import Instructions from "./components/Instrucciones";
 import Footer from "./components/Footer";
 import Donate from "./components/DonacionesFull";
+import InstruccionesPene from "./components/Warning";
 
 
 export default function Page() {
@@ -15,6 +16,9 @@ export default function Page() {
 
       <section>
         <Header></Header>
+      </section>
+      <section>
+        <InstruccionesPene></InstruccionesPene>
       </section>
       {/* Banners de Publicidad */}
       <section className="container mx-auto px-4 py-8">
