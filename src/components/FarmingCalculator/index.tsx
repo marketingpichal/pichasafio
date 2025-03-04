@@ -1,208 +1,231 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import { WarzoneCalculator } from '../warzonecalculator';
-
+import { useState } from "react";
+import { WarzoneCalculator } from "../warzonecalculator";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Label } from "../ui/label";
+import { Button } from "../ui/button";
 
 const FarmingCalculator = () => {
-  const [categoria, setCategoria] = useState('2');
-  const [penalizacion, setPenalizacion] = useState('0');
-  const [xpAcumulada, setXpAcumulada] = useState(0);
-  const [historial, setHistorial] = useState<string[]>([]);
-  const [conteo, setConteo] = useState({
-    "Fea": 0,
-    "Gorda": 0,
-    "Anciana": 0,
-    "Discapacitada": 0,
-    "Extranjera": 0,
-    "Gorda y Fea": 0
-  });
-
-  const multiplicadores = {
-    "Fea": 2,
-    "Gorda": 4,
-    "Anciana": 10,
-    "Discapacitada": 5,
-    "Extranjera": 8,
-    "Gorda y Fea": 20
-  };
-
   const categorias = [
-    { value: "2", text: "Fea" },
-    { value: "4", text: "Gorda" },
-    { value: "10", text: "Anciana" },
-    { value: "5", text: "Discapacitada" },
-    { value: "8", text: "Extranjera" },
-    { value: "20", text: "Gorda y Fea" }
+    { value: "gorda", text: "Gorda (40 XP)", xp: 40 },
+    { value: "fea", text: "Fea (20 XP)", xp: 20 },
+    { value: "normal", text: "Normal (10 XP)", xp: 10 },
+    { value: "buena", text: "Buena (5 XP)", xp: 5 },
+    { value: "top", text: "Top (2 XP)", xp: 2 },
   ];
 
   const penalizaciones = [
-    { value: "0", text: "Ninguna" },
-    { value: "-500", text: "Prima" },
-    { value: "-900", text: "Familiar cercano" },
-    { value: "ban", text: "Mujer sin cédula (Baneo)" }
+    { value: "none", text: "Sin penalización", factor: 1 },
+    { value: "leve", text: "Leve (x0.5)", factor: 0.5 },
+    { value: "media", text: "Media (x0.25)", factor: 0.25 },
+    { value: "grave", text: "Grave (x0)", factor: 0 },
+    { value: "ban", text: "Ban", factor: 0 },
   ];
 
+  // Estados
+  const [categoria, setCategoria] = useState("gorda");
+  const [penalizacion, setPenalizacion] = useState("none");
+  const [xpAcumulada, setXpAcumulada] = useState(0);
+  const [historial, setHistorial] = useState<string[]>([]);
+  const [conteo, setConteo] = useState<Record<string, number>>({});
+  const [multiplicadores, setMultiplicadores] = useState<number[]>([]);
+
+  // Calcular XP
   const calcularXP = () => {
-    const baseXP = 10;
-    const categoriaEncontrada = categorias.find(cat => cat.value === categoria);
-    const categoriaTexto = categoriaEncontrada ? categoriaEncontrada.text as keyof typeof conteo : null;
-    const multiplicador = parseFloat(categoria);
-    const penalizacionEncontrada = penalizaciones.find(pen => pen.value === penalizacion);
-    const penalizacionTexto = penalizacionEncontrada ? penalizacionEncontrada.text : 'Desconocida';
+    const categoriaSeleccionada = categorias.find(
+      (cat) => cat.value === categoria
+    );
+    const penalizacionSeleccionada = penalizaciones.find(
+      (pen) => pen.value === penalizacion
+    );
+
+    if (!categoriaSeleccionada || !penalizacionSeleccionada) return;
 
     if (penalizacion === "ban") {
-      setHistorial([...historial, "¡Baneado del servidor!"]);
+      setHistorial((prev) => [
+        `¡Baneado del servidor! ${new Date().toLocaleTimeString()}`,
+        ...prev,
+      ]);
       return;
     }
 
-    const xpTotal = (baseXP * multiplicador) + parseInt(penalizacion);
-    setXpAcumulada(prev => prev + xpTotal);
-    setHistorial([...historial, `${categoriaTexto} (${xpTotal} XP) - Penalización: ${penalizacionTexto}`]);
-    if (categoriaTexto) {
-      setConteo(prev => ({
-        ...prev,
-        [categoriaTexto]: prev[categoriaTexto] + 1 as number
-      }));
-    }
+    const xpBase = categoriaSeleccionada.xp;
+    const factor = penalizacionSeleccionada.factor;
+    const xpGanada = xpBase * factor;
+
+    setXpAcumulada((prev) => prev + xpGanada);
+    setHistorial((prev) => [
+      `${categoriaSeleccionada.text} con penalización ${
+        penalizacionSeleccionada.text
+      }: ${xpGanada} XP (${new Date().toLocaleTimeString()})`,
+      ...prev,
+    ]);
+
+    setConteo((prev) => ({
+      ...prev,
+      [categoriaSeleccionada.value]:
+        (prev[categoriaSeleccionada.value] || 0) + 1,
+    }));
+
+    setMultiplicadores((prev) => [...prev, factor]);
   };
 
+  // Calcular promedio de multiplicador
   const calcularPromedio = () => {
-    const totalCategorias = Object.values(conteo).reduce((sum, val) => sum + val, 0);
-    const sumaMultiplicadores = Object.entries(conteo).reduce(
-      (sum, [cat, count]) => sum + (count * multiplicadores[cat as keyof typeof multiplicadores]),
-      0
-    );
-    return totalCategorias > 0 ? (sumaMultiplicadores / totalCategorias).toFixed(2) : 0;
+    if (multiplicadores.length === 0) return "N/A";
+    const suma = multiplicadores.reduce((acc, val) => acc + val, 0);
+    return (suma / multiplicadores.length).toFixed(2);
   };
 
-  // Styled components
-  const Body = styled.div`
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 50px;
-    background-color: #f8f9fa;
-    
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    color: white;
-    min-height: 100vh;
-  `;
+  // Calcular cuántas gordas o feas necesita para recuperar XP positivo
+  const calcularRecuperacion = () => {
+    if (xpAcumulada >= 0) return null;
 
-  const Container = styled.div`
-    max-width: 800px;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-    margin: 0 auto;
-  `;
+    const gordasNecesarias = Math.ceil(Math.abs(xpAcumulada) / 40);
+    const feasNecesarias = Math.ceil(Math.abs(xpAcumulada) / 20);
 
-  const Title = styled.h1`
-    font-size: 2rem;
-  `;
+    return { gordasNecesarias, feasNecesarias };
+  };
 
-  const Subtitle = styled.h2`
-    font-size: 2rem;
-  `;
-
-  const Label = styled.label`
-    font-size: 2rem;
-  `;
-
-  const Select = styled.select`
-    font-size: 1.8rem;
-    padding: 10px;
-  `;
-
-  const Button = styled.button`
-    font-size: 2rem;
-    font-weight: bold;
-    padding: 10px;
-  `;
-
-  const Row = styled.div`
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-  `;
-
-  const Column = styled.div`
-    width: 48%;
-    color: black;
-    padding: 15px;
-    border-radius: 10px;
-    font-size: 1.5rem;
-  `;
+  const recuperacion = calcularRecuperacion();
 
   return (
-    <Body>
-      <Container>
-        <Title>Calculadora de Farmeo</Title>
-        <div className="mb-3">
-          <Label htmlFor="categoria" className="form-label">Selecciona la categoría:</Label>
-          <Select
-            id="categoria"
-            className="form-select"
-            value={categoria}
-            onChange={(e) => setCategoria(e.target.value)}
-          >
-            {categorias.map(cat => (
-              <option key={cat.value} value={cat.value}>{cat.text}</option>
-            ))}
-          </Select>
-        </div>
-        <div className="mb-3">
-          <Label htmlFor="penalizacion" className="form-label">Penalización:</Label>
-          <Select
-            id="penalizacion"
-            className="form-select"
-            value={penalizacion}
-            onChange={(e) => setPenalizacion(e.target.value)}
-          >
-            {penalizaciones.map(pen => (
-              <option key={pen.value} value={pen.value}>{pen.text}</option>
-            ))}
-          </Select>
-        </div>
-        <Button className="btn btn-danger" onClick={calcularXP}>Calcular XP</Button>
-        
-        <Subtitle className="mt-3">
-          {penalizacion === "ban" ? "¡Baneado del servidor!" : (
-            xpAcumulada < 0 ? (
-              <>
-                XP Total: {xpAcumulada}<br />
-                <span style={{ color: '#ff6666' }}>
-                  Necesitas farmear {Math.ceil(Math.abs(xpAcumulada) / 40)} Gorda(s) o {Math.ceil(Math.abs(xpAcumulada) / 20)} Fea(s)<br />
-                  para recuperar XP positivo.
-                </span>
-              </>
-            ) : `XP Total: ${xpAcumulada}`
-          )}
-        </Subtitle>
+    <div className="container mx-auto max-w-4xl">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Calculadora de Farmeo</h1>
+        {/* <ModeToggle /> */}
+      </div>
 
-        <Row>
-          <Column id="historial">
-            <h3>Historial:</h3>
-            <ul>
-              {historial.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
-          </Column>
-          <Column id="conteo">
-            <h3>Conteo:</h3>
-            <ul>
-              {Object.entries(conteo).map(([cat, count]) => (
-                <li key={cat}>{cat} Total: {count}</li>
-              ))}
-              <li><strong>Promedio de multiplicador:</strong> {calcularPromedio()}</li>
-            </ul>
-          </Column>
-        </Row>
-      </Container>
-      <WarzoneCalculator/>
-    </Body>
+      <Card>
+        <CardHeader>
+          <CardTitle>Calcula tu XP de farmeo</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6">
+            <div className="grid gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="categoria">Selecciona la categoría:</Label>
+                <Select value={categoria} onValueChange={setCategoria}>
+                  <SelectTrigger id="categoria">
+                    <SelectValue placeholder="Selecciona una categoría" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categorias.map((cat) => (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        {cat.text}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="penalizacion">Penalización:</Label>
+                <Select value={penalizacion} onValueChange={setPenalizacion}>
+                  <SelectTrigger id="penalizacion">
+                    <SelectValue placeholder="Selecciona una penalización" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {penalizaciones.map((pen) => (
+                      <SelectItem key={pen.value} value={pen.value}>
+                        {pen.text}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button variant="destructive" onClick={calcularXP}>
+                Calcular XP
+              </Button>
+            </div>
+
+            <div className="mt-4">
+              <h2 className="text-2xl font-semibold mb-2">
+                {penalizacion === "ban" ? (
+                  "¡Baneado del servidor!"
+                ) : (
+                  <>XP Total: {xpAcumulada}</>
+                )}
+              </h2>
+
+              {recuperacion && (
+                <div className="p-4 rounded-md bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive-foreground">
+                  <p>
+                    Necesitas farmear {recuperacion.gordasNecesarias} Gorda(s) o{" "}
+                    {recuperacion.feasNecesarias} Fea(s) para recuperar XP
+                    positivo.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <Tabs defaultValue="historial">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="historial">Historial</TabsTrigger>
+                <TabsTrigger value="conteo">Conteo</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="historial" className="mt-4">
+                <div className="max-h-60 overflow-y-auto border rounded-md p-4">
+                  {historial.length > 0 ? (
+                    <ul className="space-y-2">
+                      {historial.map((item, index) => (
+                        <li key={index} className="border-b pb-2 last:border-0">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-muted-foreground">
+                      No hay historial disponible.
+                    </p>
+                  )}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="conteo" className="mt-4">
+                <div className="border rounded-md p-4">
+                  <ul className="space-y-2">
+                    {Object.entries(conteo).map(([cat, count]) => {
+                      const categoria = categorias.find((c) => c.value === cat);
+                      return (
+                        <li
+                          key={cat}
+                          className="flex justify-between border-b pb-2 last:border-0"
+                        >
+                          <span>{categoria?.text.split(" ")[0] || cat}</span>
+                          <span className="font-semibold">Total: {count}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <div className="mt-4 pt-2 border-t">
+                    <p className="flex justify-between">
+                      <span className="font-semibold">
+                        Promedio de multiplicador:
+                      </span>
+                      <span>{calcularPromedio()}</span>
+                    </p>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="mt-8">
+        <WarzoneCalculator />
+      </div>
+    </div>
   );
 };
 
