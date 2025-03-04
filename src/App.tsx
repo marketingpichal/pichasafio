@@ -3,7 +3,12 @@ import { Routes, Route } from "react-router-dom";
 import Page from "./page";
 import AgeVerificationModal from "./components/VerificarEdad";
 import Navbar from "./components/NavigationBar";
-
+import FarmingCalculator from "./components/FarmingCalculator";
+import KeguelChallengue from "./components/KeguelChallenge";
+import RespirationCalendar from "./components/RespirationCalendar";
+import Testimonials from "./components/TestimoniosAnonimos";
+import Login from "./components/Login";
+import Register from "./components/Register";
 const About = () => <h2 className="text-white">Acerca de Nosotros</h2>;
 
 export default function App() {
@@ -25,6 +30,12 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Page />} />
             <Route path="/about" element={<About />} />
+            <Route path="calculadora" element={<FarmingCalculator/>}/>
+            <Route path="/keguel" element={<KeguelChallengue/>}></Route>
+            <Route path="/respiracion" element={<RespirationCalendar/>}></Route>
+            <Route path="/testimonios" element={<Testimonials/>}></Route>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </>
       )}

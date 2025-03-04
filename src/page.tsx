@@ -1,38 +1,36 @@
 // Page.tsx
 import DonationBanner from "./components/donations"; // Ajusta las rutas
-import KeguelChallengue from "./components/KeguelChallenge";
 import { Publicity } from "./components/Publicity";
-import RespirationCalendar from "./components/RespirationCalendar";
 import { Testimonial } from "./components/testimmonials";
 import ThirtyDayChallenge from "./components/ThirtyDaysChanllenge";
-import { WarzoneCalculator } from "./components/warzonecalculator";
 import Header from "./components/header";
 import Instructions from "./components/Instrucciones";
 import Footer from "./components/Footer";
-
-import Testimonials from "./components/TestimoniosAnonimos";
 import Donate from "./components/DonacionesFull";
+import InstruccionesPene from "./components/Warning";
+
 
 export default function Page() {
   return (
     <div className="min-h-screen bg-gray-900">
 
-   
-        <section>
-            <Header></Header>
-        </section>
-        <section>
-          <Testimonials></Testimonials>
-        </section>
-        <section>
-          <Donate></Donate>
-        </section>
-        <section>
-         
-        </section>
-        <section>
-            <Instructions></Instructions>
-    </section>
+      <section>
+        <Header></Header>
+      </section>
+      <section>
+        <InstruccionesPene></InstruccionesPene>
+      </section>
+      {/* Banners de Publicidad */}
+      <section className="container mx-auto px-4 py-8">
+        <Publicity />
+      </section>
+      <section>
+        <Donate></Donate>
+      </section>
+
+      <section>
+        <Instructions></Instructions>
+      </section>
 
       {/* Sección Hero con Video y Donación */}
       <section className="container mx-auto px-4 py-8 md:py-12">
@@ -46,30 +44,13 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Banners de Publicidad */}
-      <section className="container mx-auto px-4 py-8">
-        <Publicity />
-      </section>
+
 
       {/* Reto de 30 Días */}
       <section className="container mx-auto px-4 py-8 md:py-12">
         <ThirtyDayChallenge />
       </section>
 
-      {/* Calculadora de Warzone */}
-      <section>
-        <WarzoneCalculator />
-      </section>
-
-       {/* Respiracion */}
-       <section className="container mx-auto px-4 py-8">
-        <RespirationCalendar />
-      </section>
-
-       {/* Respiracion */}
-       <section className="container mx-auto px-4 py-8">
-        <KeguelChallengue />
-      </section>
       <section className="container mx-auto px-4 py-8">
         <Footer />
       </section>

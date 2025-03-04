@@ -1,0 +1,107 @@
+.instrucciones-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #f9f9f9; /* Fondo claro para mejor legibilidad */
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave para un toque moderno */
+    font-family: 'Roboto', Arial, sans-serif; /* Tipografía más legible */
+  }
+  
+  /* Título principal */
+  h1 {
+    color: #2c3e50; /* Color oscuro pero suave */
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #3498db; /* Línea decorativa debajo del título */
+    padding-bottom: 10px;
+  }
+  
+  /* Introducción */
+  .intro {
+    font-size: 1.1rem;
+    color: #34495e;
+    text-align: center;
+    margin-bottom: 30px;
+    font-style: italic;
+  }
+  
+  /* Contenedor de las instrucciones */
+  .instrucciones-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Espacio entre cada instrucción */
+  }
+  
+  /* Cada item de instrucción */
+  .instruccion-item {
+    display: flex;
+    align-items: flex-start;
+    background-color: #ffffff; /* Fondo blanco para cada instrucción */
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Sombra sutil */
+    transition: transform 0.2s ease; /* Animación al hacer hover */
+  }
+  
+  /* Hover para interactividad */
+  .instruccion-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Número de cada instrucción */
+  .numero {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #3498db; /* Color resaltado para el número */
+    margin-right: 15px;
+    min-width: 30px;
+  }
+  
+  /* Texto de la instrucción */
+  .instruccion-item p {
+    margin: 0;
+    font-size: 1rem;
+    color: #2c3e50; /* Color oscuro para buena legibilidad */
+    line-height: 1.6;
+  }
+  
+  /* Estilo para texto en negritas (como "OBLIGATORIA" o "RECUERDA") */
+  .instruccion-item p strong {
+    color: #e74c3c; /* Color rojo para resaltar palabras importantes */
+  }
+  
+  /* Nota final */
+  .nota-final {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #e8f4f8; /* Fondo azul claro para la nota */
+    border-left: 5px solid #3498db; /* Borde izquierdo decorativo */
+    border-radius: 5px;
+    text-align: center;
+    font-size: 1rem;
+    color: #2c3e50;
+  }
+  
+  /* Responsive para pantallas pequeñas */
+  @media (max-width: 600px) {
+    .instrucciones-container {
+      margin: 20px;
+      padding: 20px;
+    }
+  
+    h1 {
+      font-size: 1.8rem;
+    }
+  
+    .instruccion-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .numero {
+      margin-bottom: 10px;
+    }
+  }
