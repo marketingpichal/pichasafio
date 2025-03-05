@@ -16,9 +16,12 @@ const FarmingCalculator = () => {
   const categorias = [
     { value: "gorda", text: "Gorda (40 XP)", xp: 40 },
     { value: "fea", text: "Fea (20 XP)", xp: 20 },
+    { value: "extranjera", text: "extranjera (40 XP)", xp: 40 },
+    { value: "novia", text: "Novia (1000 XP)", xp: 1000 },
+    { value: "amiga", text: "Amiga (10 XP)", xp: 10 },
     { value: "normal", text: "Normal (10 XP)", xp: 10 },
     { value: "buena", text: "Buena (5 XP)", xp: 5 },
-    { value: "top", text: "Top (2 XP)", xp: 2 },
+    { value: "top", text: "Top (200 XP)", xp: 200 },
   ];
 
   const penalizaciones = [
@@ -99,13 +102,13 @@ const FarmingCalculator = () => {
   return (
     <div className="container mx-auto max-w-4xl">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Calculadora de Farmeo</h1>
+        <h1 className="text-3xl font-bold">Calculiadora de Farmeo</h1>
         {/* <ModeToggle /> */}
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Calcula tu XP de farmeo</CardTitle>
+          <CardTitle>Calculiadora de tu XP de farmeo</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-6">
