@@ -1,8 +1,15 @@
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
+  const navigate = useNavigate(); // Hook para navegar
+
+  const handleClick = () => {
+    navigate('/rutinas'); // Redirige a la ruta "/rutinas"
+  };
+
   return (
-<motion.section
+    <motion.section
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
@@ -15,12 +22,15 @@ export default function Header() {
       >
         Pichasafio.com
       </motion.h1>
- 
+
       <p className="text-xl md:text-2xl text-gray-200 mt-4">
         Agranda tu chimbo, dura más y no te vengas rápido
       </p>
-      <button className="mt-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-8 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all">
-        ¡Únete al Reto!
+      <button
+        onClick={handleClick} // Añades el evento onClick
+        className="mt-6 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-8 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all"
+      >
+        ¡CLIC AQUI PARA VER LAS NUEVAS RUTINAS!
       </button>
     </motion.section>
   );
