@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 
+import { useNavigate } from 'react-router-dom';
+
 export default function Login() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   interface SupabaseAuthResponse {
     data: {
@@ -24,11 +27,13 @@ export default function Login() {
       password,
     });
     setLoading(false);
+    
     if (error) {
       setError(error.message);
     } else {
       console.log('Usuario logueado:', data.user);
-      // Aquí puedes redirigir, por ejemplo: window.location.href = '/dashboard';
+      // Redirect to Routines component
+      navigate('/rutinas');
     }
   };
 
