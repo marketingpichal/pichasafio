@@ -1,38 +1,60 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
-const AuthContext = createContext<{
-  session: any;
-  user: any;
-}>({ session: null, user: null });
+export const AuthContext = createContext({
+  user: null,
+  login: (userData: any, token: string) => {},
+  logout: () => {},
+  loading: true
+});
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [session, setSession] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-    });
+    // Check for existing session on mount
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setUser(session.user);
+        localStorage.setItem('token', session.access_token);
+      }
+      setLoading(false);
+    };
 
-    // Listen for auth changes
+    checkSession();
+
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+      if (session) {
+        setUser(session.user);
+        localStorage.setItem('token', session.access_token);
+      } else {
+        setUser(null);
+        localStorage.removeItem('token');
+      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
+  const login = (userData: any, token: string) => {
+    setUser(userData);
+    localStorage.setItem('token', token);
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    localStorage.removeItem('token');
+  };
+
   return (
-    <AuthContext.Provider value={{ session, user }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  return useContext(AuthContext);
 };
