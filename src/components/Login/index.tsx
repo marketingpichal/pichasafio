@@ -1,45 +1,56 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '@/context/AuthProvider';
 
 export default function Login() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string>('');
   const navigate = useNavigate();
+  const { login, user } = useContext(AuthContext);
 
-  interface SupabaseAuthResponse {
-    data: {
-      user: any;
-    };
-    error: {
-      message: string;
-    } | null;
-  }
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/rutinas');
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    const { data, error }: SupabaseAuthResponse = await supabase.auth.signInWithPassword({
+    setError(null);
+    setSuccessMessage('');
+
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    setLoading(false);
     
     if (error) {
       setError(error.message);
+      setLoading(false);
     } else {
-      console.log('Usuario logueado:', data.user);
-      // Redirect to Routines component
-      navigate('/rutinas');
+      const session = await supabase.auth.getSession();
+      login(data.user, session.data.session?.access_token || '');
+      // Get user's email and create welcome message
+      const userEmail = data.user.email;
+      const userName = userEmail?.split('@')[0] || 'usuario';
+      setSuccessMessage(`¡Bienvenido ${userName}! Redirigiendo...`);
+      
+      setTimeout(() => {
+        navigate('/rutinas');
+      }, 1500);
     }
   };
 
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Iniciar Sesión</h2>
+      {successMessage && <p style={styles.successMessage}>{successMessage}</p>}
       <form onSubmit={handleLogin} style={styles.form}>
         <input
           type="email"
@@ -66,6 +77,7 @@ export default function Login() {
   );
 }
 
+// Add to your existing styles
 const styles = {
   container: {
     display: 'flex',
@@ -115,4 +127,13 @@ const styles = {
     marginTop: '10px',
     textAlign: 'center',
   },
-};
+  successMessage: {
+    color: '#28a745',
+    marginBottom: '15px',
+    textAlign: 'center',
+    padding: '10px',
+    backgroundColor: '#d4edda',
+    borderRadius: '4px',
+    width: '100%',
+  },
+} as const;
