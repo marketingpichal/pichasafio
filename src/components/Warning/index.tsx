@@ -1,4 +1,3 @@
-import React from 'react';
 import './Instrucciones.css'; // Opcional: para estilos
 
 const InstruccionesPene = () => {
