@@ -60,10 +60,10 @@ export default function Register() {
   const sendVerificationEmailWithResend = async (userEmail: string, token: string) => {
     try {
       await resend.emails.send({
-        from: import.meta.env.REACT_APP_RESEND_FROM_EMAIL || 'noreply@tu-dominio.com',
+        from: process.env.REACT_APP_RESEND_FROM_EMAIL || 'noreply@tu-dominio.com',
         to: userEmail,
         subject: 'Verifica tu cuenta',
-        html: `<p>Haz clic <a href="${import.meta.env.REACT_APP_SITE_URL}/verify?token=${token}&type=signup">aquí</a> para verificar tu cuenta.</p>`,
+        html: `<p>Haz clic <a href="${process.env.REACT_APP_SITE_URL}/verify?token=${token}&type=signup">aquí</a> para verificar tu cuenta.</p>`,
       });
       console.log('Correo de verificación enviado con Resend');
     } catch (err) {
@@ -76,20 +76,7 @@ export default function Register() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-  
-    // Enhanced validation
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      setLoading(false);
-      return;
-    }
-  
-    if (username.length < 3) {
-      setError('Username must be at least 3 characters long');
-      setLoading(false);
-      return;
-    }
-  
+
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
       setLoading(false);
@@ -112,66 +99,47 @@ export default function Register() {
     }
 
     try {
-      // First, check if email already exists
-      const { data: existingUser } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('email', email)
-        .single();
-
-      if (existingUser) {
-        setError('This email is already registered');
-        setLoading(false);
-        return;
-      }
-
-      // Proceed with registration
       const { data: authData, error: authError }: AuthResponse = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { 
-            username,
-          },
-          emailRedirectTo: `${import.meta.env.VITE_SITE_URL}/auth/callback`,
+          data: { username },
+          emailRedirectTo: `${process.env.REACT_APP_SITE_URL}/auth/callback`,
         },
       });
 
       if (authError) {
-        throw authError;
-      } 
-      
-      if (authData.user) {
-        // Check if profile already exists
-        const { data: existingProfile } = await supabase
+        if (authError.message.includes('rate limit exceeded')) {
+          // Si Supabase falla por límite, usa Resend
+          const { data, error } = await supabase.auth.admin.generateLink('signup', email);
+          if (error) throw error;
+          await sendVerificationEmailWithResend(email, data.properties.action_link);
+          setSuccess(true);
+        } else {
+          throw authError;
+        }
+      } else {
+        const user = authData.user;
+        if (!user) throw new Error('No se pudo registrar el usuario.');
+
+        const { error: profileError }: ProfileResponse = await supabase
           .from('profiles')
-          .select('id')
-          .eq('id', authData.user.id)
-          .single();
+          .insert({
+            id: user.id,
+            username,
+            email: user.email,
+            created_at: new Date().toISOString(),
+          });
 
-        if (!existingProfile) {
-          // Only create profile if it doesn't exist
-          const { error: profileError }: ProfileResponse = await supabase
-            .from('profiles')
-            .insert({
-              id: authData.user.id,
-              username,
-              email: authData.user.email,
-              created_at: new Date().toISOString(),
-              "30_days": []
-            });
-
-          if (profileError) {
-            // Rollback user creation if profile creation fails
-            await supabase.auth.admin.deleteUser(authData.user.id);
-            throw profileError;
-          }
+        if (profileError) {
+          await supabase.auth.admin.deleteUser(user.id);
+          throw profileError;
         }
 
         setSuccess(true);
       }
     } catch (err: any) {
-      setError(err.message || 'Registration failed. Please try again.');
+      setError(err.message || 'Error al registrar. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }
