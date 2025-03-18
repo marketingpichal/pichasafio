@@ -1,60 +1,42 @@
-import { createContext, useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "../lib/supabaseClient";
 
-export const AuthContext = createContext({
-  user: null,
-  login: (userData: any, token: string) => {},
-  logout: () => {},
-  loading: true
-});
+const AuthContext = createContext<{
+  session: any;
+  user: any;
+}>({ session: null, user: null });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    // Check for existing session on mount
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setUser(session.user);
-        localStorage.setItem('token', session.access_token);
-      }
-      setLoading(false);
-    };
-
-    checkSession();
-
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setUser(session.user);
-        localStorage.setItem('token', session.access_token);
-      } else {
-        setUser(null);
-        localStorage.removeItem('token');
-      }
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
     });
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = (userData: any, token: string) => {
-    setUser(userData);
-    localStorage.setItem('token', token);
-  };
-
-  const logout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    localStorage.removeItem('token');
-  };
-
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ session, user }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useAuth = () => {
+  return useContext(AuthContext);
 };
