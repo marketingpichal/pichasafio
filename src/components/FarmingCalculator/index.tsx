@@ -1,16 +1,27 @@
-import { useState } from "react";
-import { WarzoneCalculator } from "../warzonecalculator";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { useState, useEffect } from "react";
+import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import LeaderboardTable from "@/components/LeaderboardTable";
+
+interface Leaderboard {
+  id: number;
+  profileId: string;
+  points: number;
+  level: number;
+  rank: string;
+  last_activity: string;
+  achievements: any;
+  position: number;
+}
 
 const FarmingCalculator = () => {
   const categorias = [
@@ -32,16 +43,21 @@ const FarmingCalculator = () => {
     { value: "ban", text: "Ban", factor: 0 },
   ];
 
-  // Estados
+  const supabase = useSupabaseClient();
+  const user = useUser();
+  const [leaderboard, setLeaderboard] = useState<Leaderboard[]>([]);
+  const [dailyCount, setDailyCount] = useState(0);
+  const [canSubmit, setCanSubmit] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [categoria, setCategoria] = useState("gorda");
   const [penalizacion, setPenalizacion] = useState("none");
   const [xpAcumulada, setXpAcumulada] = useState(0);
   const [historial, setHistorial] = useState<string[]>([]);
-  const [conteo, setConteo] = useState<Record<string, number>>({});
-  const [multiplicadores, setMultiplicadores] = useState<number[]>([]);
 
-  // Calcular XP
-  const calcularXP = () => {
+  // Modificar calcularXP para eliminar la actualización del leaderboard
+  const calcularXP = async () => {
+    if (!user?.id || !canSubmit) return;
+
     const categoriaSeleccionada = categorias.find(
       (cat) => cat.value === categoria
     );
@@ -63,171 +79,181 @@ const FarmingCalculator = () => {
     const factor = penalizacionSeleccionada.factor;
     const xpGanada = xpBase * factor;
 
-    setXpAcumulada((prev) => prev + xpGanada);
-    setHistorial((prev) => [
-      `${categoriaSeleccionada.text} con penalización ${
-        penalizacionSeleccionada.text
-      }: ${xpGanada} XP (${new Date().toLocaleTimeString()})`,
-      ...prev,
-    ]);
+    try {
+      const { data: existingUser, error: userError } = await supabase
+        .from('leaderboard')
+        .select('points, level')
+        .eq('profileId', user.id)
+        .single();
 
-    setConteo((prev) => ({
-      ...prev,
-      [categoriaSeleccionada.value]:
-        (prev[categoriaSeleccionada.value] || 0) + 1,
-    }));
+      if (userError && userError.code !== 'PGRST116') {
+        throw userError;
+      }
 
-    setMultiplicadores((prev) => [...prev, factor]);
+      const currentPoints = existingUser?.points || 0;
+      const newPoints = currentPoints + xpGanada;
+      const newLevel = Math.floor(newPoints / 1000) + 1;
+
+      if (existingUser) {
+        await supabase
+          .from('leaderboard')
+          .update({
+            points: newPoints,
+            level: newLevel,
+            last_activity: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('profileId', user.id);
+      } else {
+        await supabase
+          .from('leaderboard')
+          .insert({
+            profileId: user.id,
+            points: xpGanada,
+            level: 1,
+            rank: 'Novato',
+            last_activity: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          });
+      }
+
+      setXpAcumulada(newPoints);
+      setDailyCount(prev => prev + 1);
+      setCanSubmit(prev => (prev + 1) < 2);
+      setHistorial((prev) => [
+        `${categoriaSeleccionada.text} con ${penalizacionSeleccionada.text}: ${xpGanada} XP - Total: ${newPoints} XP - ${new Date().toLocaleTimeString()}`,
+        ...prev,
+      ]);
+    } catch (error) {
+      console.error('Error saving to Supabase:', error);
+    }
   };
 
-  // Calcular promedio de multiplicador
-  const calcularPromedio = () => {
-    if (multiplicadores.length === 0) return "N/A";
-    const suma = multiplicadores.reduce((acc, val) => acc + val, 0);
-    return (suma / multiplicadores.length).toFixed(2);
-  };
-
-  // Calcular cuántas gordas o feas necesita para recuperar XP positivo
-  const calcularRecuperacion = () => {
-    if (xpAcumulada >= 0) return null;
-
-    const gordasNecesarias = Math.ceil(Math.abs(xpAcumulada) / 40);
-    const feasNecesarias = Math.ceil(Math.abs(xpAcumulada) / 20);
-
-    return { gordasNecesarias, feasNecesarias };
-  };
-
-  const recuperacion = calcularRecuperacion();
-
+  // Modificar el return para incluir el nuevo componente LeaderboardTable
   return (
     <div className="container mx-auto max-w-4xl">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Calculiadora de Farmeo</h1>
-        {/* <ModeToggle /> */}
+        <h1 className="text-3xl font-bold">Calculadora de Farmeo</h1>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Calculiadora de tu XP de farmeo</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-6">
-            <div className="grid gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="categoria">Selecciona la categoría:</Label>
-                <Select value={categoria} onValueChange={setCategoria}>
-                  <SelectTrigger id="categoria">
-                    <SelectValue placeholder="Selecciona una categoría" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categorias.map((cat) => (
-                      <SelectItem key={cat.value} value={cat.value}>
-                        {cat.text}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="penalizacion">Penalización:</Label>
-                <Select value={penalizacion} onValueChange={setPenalizacion}>
-                  <SelectTrigger id="penalizacion">
-                    <SelectValue placeholder="Selecciona una penalización" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {penalizaciones.map((pen) => (
-                      <SelectItem key={pen.value} value={pen.value}>
-                        {pen.text}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <Button variant="destructive" onClick={calcularXP}>
-                Calcular XP
-              </Button>
+      <Card className="mb-6">
+        <CardContent className="p-6">
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label>Categoría</Label>
+              <Select value={categoria} onValueChange={setCategoria}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {categorias.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      {cat.text}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="mt-4">
-              <h2 className="text-2xl font-semibold mb-2">
-                {penalizacion === "ban" ? (
-                  "¡Baneado del servidor!"
-                ) : (
-                  <>XP Total: {xpAcumulada}</>
-                )}
-              </h2>
-
-              {recuperacion && (
-                <div className="p-4 rounded-md bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive-foreground">
-                  <p>
-                    Necesitas farmear {recuperacion.gordasNecesarias} Gorda(s) o{" "}
-                    {recuperacion.feasNecesarias} Fea(s) para recuperar XP
-                    positivo.
-                  </p>
-                </div>
-              )}
+            <div className="grid gap-2">
+              <Label>Penalización</Label>
+              <Select value={penalizacion} onValueChange={setPenalizacion}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {penalizaciones.map((pen) => (
+                    <SelectItem key={pen.value} value={pen.value}>
+                      {pen.text}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <Tabs defaultValue="historial">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="historial">Historial</TabsTrigger>
-                <TabsTrigger value="conteo">Conteo</TabsTrigger>
-              </TabsList>
+            <Button onClick={calcularXP} disabled={!canSubmit}>
+              Calcular XP
+            </Button>
 
-              <TabsContent value="historial" className="mt-4">
-                <div className="max-h-60 overflow-y-auto border rounded-md p-4">
-                  {historial.length > 0 ? (
-                    <ul className="space-y-2">
-                      {historial.map((item, index) => (
-                        <li key={index} className="border-b pb-2 last:border-0">
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-muted-foreground">
-                      No hay historial disponible.
-                    </p>
-                  )}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="conteo" className="mt-4">
-                <div className="border rounded-md p-4">
-                  <ul className="space-y-2">
-                    {Object.entries(conteo).map(([cat, count]) => {
-                      const categoria = categorias.find((c) => c.value === cat);
-                      return (
-                        <li
-                          key={cat}
-                          className="flex justify-between border-b pb-2 last:border-0"
-                        >
-                          <span>{categoria?.text.split(" ")[0] || cat}</span>
-                          <span className="font-semibold">Total: {count}</span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                  <div className="mt-4 pt-2 border-t">
-                    <p className="flex justify-between">
-                      <span className="font-semibold">
-                        Promedio de multiplicador:
-                      </span>
-                      <span>{calcularPromedio()}</span>
-                    </p>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
+            <div className="text-center">
+              <p className="text-2xl font-bold">XP Acumulada: {xpAcumulada}</p>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      <div className="mt-8">
-        <WarzoneCalculator />
-      </div>
+      {!canSubmit && (
+        <div className="mt-4 p-4 bg-yellow-100 text-yellow-800 rounded-md">
+          Has alcanzado el límite de 2 registros diarios. Vuelve mañana!
+        </div>
+      )}
+
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle>Tabla de Líderes</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {leaderboard.map((entry, index) => (
+              <div
+                key={entry.id}
+                className={`flex items-center justify-between p-4 rounded-lg ${
+                  entry.profileId === user.id ? 'bg-primary/10' : 'bg-secondary/10'
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <span className="text-2xl font-bold">#{index + 1}</span>
+                  <div>
+                    <p className="font-semibold">Usuario {entry.profileId.slice(0, 8)}...</p>
+                    <p className="text-sm text-muted-foreground">Nivel {entry.level}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold">{entry.points} XP</p>
+                  <p className="text-sm text-muted-foreground">{entry.rank}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {historial.length > 0 && (
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Historial</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {historial.map((entrada, index) => (
+                <div key={index} className="text-sm text-gray-500">
+                  {entrada}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      <LeaderboardTable />
+
+      {historial.length > 0 && (
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Historial</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {historial.map((entrada, index) => (
+                <div key={index} className="text-sm text-gray-500">
+                  {entrada}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

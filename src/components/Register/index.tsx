@@ -27,6 +27,11 @@ export default function Register() {
     null
   );
   const [checkingUsername, setCheckingUsername] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
+  const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
+  const [checkingEmail, setCheckingEmail] = useState<boolean>(false);
 
   // Validar disponibilidad del nombre de usuario
   useEffect(() => {
@@ -55,6 +60,59 @@ export default function Register() {
     const timeout = setTimeout(checkUsername, 500);
     return () => clearTimeout(timeout);
   }, [username]);
+
+  // Password validation
+  const validatePassword = (pass: string) => {
+    const minLength = pass.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(pass);
+    const hasLowerCase = /[a-z]/.test(pass);
+    const hasNumber = /[0-9]/.test(pass);
+    const hasSpecialChar = /[!@#$%^&*]/.test(pass);
+
+    return {
+      isValid:
+        minLength &&
+        hasUpperCase &&
+        hasLowerCase &&
+        hasNumber &&
+        hasSpecialChar,
+      errors: {
+        minLength,
+        hasUpperCase,
+        hasLowerCase,
+        hasNumber,
+        hasSpecialChar,
+      },
+    };
+  };
+
+  // Email validation effect
+  useEffect(() => {
+    const checkEmail = async () => {
+      if (email.length > 0 && email.includes("@")) {
+        setCheckingEmail(true);
+        setEmailAvailable(null);
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("email")
+          .eq("email", email)
+          .single();
+
+        if (error && error.code !== "PGRST116") {
+          setError("Error al verificar el email");
+          setEmailAvailable(null);
+        } else if (data) {
+          setEmailAvailable(false);
+        } else {
+          setEmailAvailable(true);
+        }
+        setCheckingEmail(false);
+      }
+    };
+
+    const timeout = setTimeout(checkEmail, 500);
+    return () => clearTimeout(timeout);
+  }, [email]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -177,14 +235,29 @@ export default function Register() {
         </p>
       ) : (
         <form onSubmit={handleRegister} style={styles.form}>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
-            style={styles.input}
-          />
+          <div style={styles.inputContainer}>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              required
+              style={styles.input}
+            />
+            {checkingEmail ? (
+              <span style={styles.checking}>Verificando...</span>
+            ) : (
+              email &&
+              emailAvailable !== null && (
+                <span
+                  style={emailAvailable ? styles.available : styles.unavailable}
+                >
+                  {emailAvailable ? "✓ Disponible" : "✗ Email en uso"}
+                </span>
+              )
+            )}
+          </div>
+
           <div style={styles.inputContainer}>
             <input
               type="text"
@@ -209,22 +282,93 @@ export default function Register() {
               )
             )}
           </div>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Contraseña"
-            required
-            style={styles.input}
-          />
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirmar contraseña"
-            required
-            style={styles.input}
-          />
+
+          <div style={styles.inputContainer}>
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Contraseña"
+              required
+              style={styles.input}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={styles.passwordToggle}
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </button>
+          </div>
+
+          {password && (
+            <div style={styles.passwordRequirements}>
+              <p
+                style={
+                  validatePassword(password).errors.minLength
+                    ? styles.validRequirement
+                    : styles.invalidRequirement
+                }
+              >
+                ✓ Mínimo 8 caracteres
+              </p>
+              <p
+                style={
+                  validatePassword(password).errors.hasUpperCase
+                    ? styles.validRequirement
+                    : styles.invalidRequirement
+                }
+              >
+                ✓ Al menos una mayúscula
+              </p>
+              <p
+                style={
+                  validatePassword(password).errors.hasLowerCase
+                    ? styles.validRequirement
+                    : styles.invalidRequirement
+                }
+              >
+                ✓ Al menos una minúscula
+              </p>
+              <p
+                style={
+                  validatePassword(password).errors.hasNumber
+                    ? styles.validRequirement
+                    : styles.invalidRequirement
+                }
+              >
+                ✓ Al menos un número
+              </p>
+              <p
+                style={
+                  validatePassword(password).errors.hasSpecialChar
+                    ? styles.validRequirement
+                    : styles.invalidRequirement
+                }
+              >
+                ✓ Al menos un carácter especial (!@#$%^&*)
+              </p>
+            </div>
+          )}
+
+          <div style={styles.inputContainer}>
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirmar contraseña"
+              required
+              style={styles.input}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              style={styles.passwordToggle}
+            >
+              {showConfirmPassword ? "🙈" : "👁️"}
+            </button>
+          </div>
+
           <label style={styles.checkboxContainer}>
             <input
               type="checkbox"
@@ -344,5 +488,28 @@ const styles: Record<string, CSSProperties> = {
     color: "green",
     marginTop: "10px",
     textAlign: "center",
+  },
+  passwordToggle: {
+    position: "absolute" as const,
+    right: "10px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "16px",
+    padding: "4px",
+  },
+  passwordRequirements: {
+    marginBottom: "15px",
+    fontSize: "14px",
+  },
+  validRequirement: {
+    color: "green",
+    margin: "4px 0",
+  },
+  invalidRequirement: {
+    color: "#666",
+    margin: "4px 0",
   },
 };
