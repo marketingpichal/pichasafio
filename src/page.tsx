@@ -1,6 +1,5 @@
 import Header from "./components/header";
 import { Testimonial } from "./components/testimmonials";
-import AdComponent from "./components/common/AdComponent";
 import BannerElTiempo from "./assets/banner-el-tiempo.jpg";
 import { Publicity } from "./components/Publicity";
 import ThirtyDayChallenge from "./components/ThirtyDaysChanllenge";
@@ -15,16 +14,7 @@ export default function Page() {
       <section className="relative">
         <Header />
 
-        {/* Anuncio del Header */}
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-          <AdComponent
-            adZoneId="1098247"
-            width={728}
-            height={90}
-            position="header"
-            className="mx-auto"
-          />
-        </div>
+
       </section>
 
       {/* Warning Section */}
@@ -50,40 +40,9 @@ export default function Page() {
 
       {/* Hero Content Section - Testimonial & Donation Banner */}
       <section className="py-8 sm:py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Sidebar Izquierdo */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-8">
-                <AdComponent
-                  adZoneId="1098246"
-                  width={250}
-                  height={250}
-                  position="sidebar-left"
-                  className="mb-6"
-                />
-              </div>
-            </div>
-
-            {/* Contenido Principal */}
-            <div className="lg:col-span-2">
-              <div className="bg-gray-800/50 rounded-2xl p-6 sm:p-8">
-                <Testimonial />
-              </div>
-            </div>
-
-            {/* Sidebar Derecho */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-8">
-                <AdComponent
-                  adZoneId="1098248"
-                  width={308}
-                  height={286}
-                  position="sidebar-right"
-                  className="mb-6"
-                />
-              </div>
-            </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gray-800/50 rounded-2xl p-6 sm:p-8">
+            <Testimonial />
           </div>
         </div>
       </section>
