@@ -19,22 +19,20 @@ const AdComponent: React.FC<AdComponentProps> = ({
   const [adFailed, setAdFailed] = useState(false);
   const isProduction = window.location.hostname === 'pichasafio.com' || 
                       window.location.hostname === 'www.pichasafio.com';
+  
+  // Debug para verificar el entorno
+  useEffect(() => {
+    console.log('AdComponent Debug:', {
+      hostname: window.location.hostname,
+      isProduction,
+      adZoneId,
+      width,
+      height
+    });
+  }, [isProduction, adZoneId, width, height]);
 
   useEffect(() => {
     if (!isProduction || !adRef.current) return;
-
-    // Cargar el script de JuicyAds si no está cargado
-    if (!window.adsbyjuicy) {
-      const script = document.createElement('script');
-      script.src = 'https://poweredby.jads.co/js/jads.js';
-      script.async = true;
-      script.setAttribute('data-cfasync', 'false');
-      script.onerror = () => {
-        console.log('JuicyAds script failed to load - likely blocked by ad blocker');
-        setAdFailed(true);
-      };
-      document.head.appendChild(script);
-    }
 
     // Crear el elemento de anuncio
     const adElement = document.createElement('ins');
@@ -48,13 +46,20 @@ const AdComponent: React.FC<AdComponentProps> = ({
       adRef.current.appendChild(adElement);
     }
 
-    // Cargar el anuncio con manejo de errores
-    const loadAd = () => {
+    // Cargar el anuncio con manejo de errores y reintentos
+    const loadAd = (retryCount = 0) => {
       try {
         if (window.adsbyjuicy) {
+          console.log(`Loading ad for zone: ${adZoneId}`);
           (window.adsbyjuicy = window.adsbyjuicy || []).push({ adzone: adZoneId });
         } else {
-          setTimeout(loadAd, 100);
+          if (retryCount < 10) {
+            console.log(`Retrying ad load for zone: ${adZoneId}, attempt: ${retryCount + 1}`);
+            setTimeout(() => loadAd(retryCount + 1), 500);
+          } else {
+            console.log(`Failed to load ad after ${retryCount} attempts`);
+            setAdFailed(true);
+          }
         }
       } catch (error) {
         console.log('Ad failed to load:', error);
@@ -62,7 +67,25 @@ const AdComponent: React.FC<AdComponentProps> = ({
       }
     };
 
-    loadAd();
+    // Método alternativo: crear el script directamente
+    const createAdScript = () => {
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.async = true;
+      script.setAttribute('data-cfasync', 'false');
+      script.textContent = `(adsbyjuicy = window.adsbyjuicy || []).push({ adzone: ${adZoneId} });`;
+      
+      if (adRef.current) {
+        adRef.current.appendChild(script);
+      }
+    };
+
+    // Esperar un poco antes de cargar el anuncio para asegurar que los scripts estén listos
+    setTimeout(() => {
+      loadAd();
+      // También intentar el método alternativo
+      setTimeout(createAdScript, 2000);
+    }, 1000);
   }, [adZoneId, width, height, isProduction]);
 
   // En desarrollo o cuando los anuncios fallan, mostrar placeholder
