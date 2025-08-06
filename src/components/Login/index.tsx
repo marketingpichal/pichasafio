@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
-
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import ResponsiveCard from "../common/ResponsiveCard";
+import ResponsiveButton from "../common/ResponsiveButton";
 
 export default function Login() {
   const [email, setEmail] = useState<string>("");
@@ -12,7 +14,6 @@ export default function Login() {
 
   interface SupabaseAuthResponse {
     data: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       user: any;
     };
     error: {
@@ -23,6 +24,8 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
+    
     const { data, error }: SupabaseAuthResponse =
       await supabase.auth.signInWithPassword({
         email,
@@ -34,95 +37,97 @@ export default function Login() {
       setError(error.message);
     } else {
       console.log("Usuario logueado:", data.user);
-      // Redirect to Routines component
       navigate("/rutinas");
     }
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Iniciar Sesión</h2>
-      <form onSubmit={handleLogin} style={styles.form}>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-          style={styles.input}
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Contraseña"
-          required
-          style={styles.input}
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          style={
-            loading
-              ? { ...styles.button, ...styles.buttonDisabled }
-              : styles.button
-          }
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md"
+      >
+        <ResponsiveCard
+          title="Iniciar Sesión"
+          subtitle="Accede a tu cuenta para continuar"
+          className="text-center"
         >
-          {loading ? "Cargando..." : "Iniciar sesión"}
-        </button>
-        {error && <p style={styles.errorMessage}>{error}</p>}
-      </form>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 text-left">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="tu@email.com"
+                required
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                disabled={loading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 text-left">
+                Contraseña
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Tu contraseña"
+                required
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                disabled={loading}
+              />
+            </div>
+
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-red-500/10 border border-red-500/20 rounded-xl p-4"
+              >
+                <p className="text-red-400 text-sm">{error}</p>
+              </motion.div>
+            )}
+
+            <ResponsiveButton
+              type="submit"
+              disabled={loading}
+              className="w-full"
+              size="lg"
+            >
+              {loading ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Cargando...</span>
+                </div>
+              ) : (
+                "Iniciar Sesión"
+              )}
+            </ResponsiveButton>
+
+            <div className="text-center">
+              <p className="text-gray-400 text-sm">
+                ¿No tienes cuenta?{" "}
+                <button
+                  type="button"
+                  onClick={() => navigate("/register")}
+                  className="text-blue-400 hover:text-blue-300 transition-colors duration-200 font-medium"
+                >
+                  Regístrate aquí
+                </button>
+              </p>
+            </div>
+          </form>
+        </ResponsiveCard>
+      </motion.div>
     </div>
   );
 }
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "20px",
-    backgroundColor: "#f7f7f7",
-    borderRadius: "8px",
-    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-    maxWidth: "400px",
-    margin: "0 auto",
-  },
-  title: {
-    fontSize: "24px",
-    marginBottom: "20px",
-    color: "#333",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column" as React.CSSProperties["flexDirection"],
-    width: "100%",
-  },
-  input: {
-    padding: "10px",
-    marginBottom: "15px",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
-    fontSize: "16px",
-  },
-  button: {
-    padding: "10px",
-    backgroundColor: "#007bff",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    fontSize: "16px",
-    cursor: "pointer",
-    transition: "background-color 0.3s ease",
-  },
-  buttonDisabled: {
-    backgroundColor: "#ccc",
-    cursor: "not-allowed",
-  },
-  errorMessage: {
-    color: "red",
-    marginTop: "10px",
-    textAlign: "center",
-  },
-};

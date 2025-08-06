@@ -1,5 +1,7 @@
 import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
+import ResponsiveCard from "../common/ResponsiveCard";
+import { Calendar, Play, Target, Trophy } from "lucide-react";
 
 interface Exercise {
   name: string;
@@ -12,6 +14,7 @@ interface DayProps {
   day: number;
   exercise: Exercise;
   onClick: (day: number) => void;
+  isActive?: boolean;
 }
 
 const exercises: Exercise[] = [
@@ -72,27 +75,30 @@ const exercises: Exercise[] = [
   },
 ];
 
-const Day: React.FC<DayProps> = ({ day, exercise, onClick }) => {
-   console.log('day', day);
+const Day: React.FC<DayProps> = ({ day, exercise, onClick, isActive }) => {
   return (
-    <div
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
       onClick={() => onClick(day)}
-      className="p-4 border-2 border-blue-500 bg-blue-600 cursor-pointer 
-                transition-all duration-300 rounded hover:bg-blue-700 text-white"
+      className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 text-center ${
+        isActive
+          ? "border-blue-500 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
+          : "border-gray-600 bg-gray-800 hover:border-blue-400 hover:bg-gray-700 text-gray-300 hover:text-white"
+      }`}
     >
-      <div className="font-bold mb-1">Día {day}</div>
-      <div className="text-sm">{exercise.name}</div>
-    </div>
+      <div className="font-bold text-lg mb-1">Día {day}</div>
+      <div className="text-xs sm:text-sm opacity-90">{exercise.name}</div>
+    </motion.div>
   );
 };
 
 const ThirtyDayChallenge: React.FC = () => {
   const totalDays = 30;
   const [currentVideo, setCurrentVideo] = React.useState<string>("");
-  const [currentExercise, setCurrentExercise] = React.useState<Exercise | null>(
-    null
-  );
+  const [currentExercise, setCurrentExercise] = React.useState<Exercise | null>(null);
   const [showVideo, setShowVideo] = React.useState<boolean>(false);
+  const [selectedDay, setSelectedDay] = React.useState<number | null>(null);
 
   const getExerciseForDay = (day: number): Exercise => {
     const exerciseIndex = (day - 1) % exercises.length;
@@ -102,64 +108,182 @@ const ThirtyDayChallenge: React.FC = () => {
   const handleDayClick = (day: number) => {
     const exercise = getExerciseForDay(day);
     setCurrentExercise(exercise);
-    setCurrentVideo(exercise.embedUrl || exercise.url); // Usamos embedUrl si existe
+    setCurrentVideo(exercise.embedUrl || exercise.url);
     setShowVideo(true);
+    setSelectedDay(day);
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
-      <Card className="max-w-4xl mx-auto bg-gray-800">
-        <CardContent className="p-6">
-          <h1 className="text-3xl font-bold mb-8 text-center text-white">
+    <div className="min-h-screen bg-gray-900 py-8 sm:py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-12"
+        >
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center">
+              <Trophy className="w-10 h-10 text-white" />
+            </div>
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text-extended mb-4">
             Desafío de 30 Días
           </h1>
+          <p className="text-gray-300 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
+            Completa este desafío de 30 días y transforma tu vida. 
+            Cada día tiene un ejercicio específico diseñado para maximizar tus resultados.
+          </p>
+        </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
-            {Array.from({ length: totalDays }, (_, i) => i + 1).map((day) => (
-              <Day
-                key={day}
-                day={day}
-                exercise={getExerciseForDay(day)}
-                onClick={handleDayClick}
-              />
-            ))}
-          </div>
+        {/* Progress Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+        >
+          <ResponsiveCard className="text-center">
+            <div className="flex justify-center mb-4">
+              <Calendar className="w-8 h-8 text-blue-400" />
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">30</h3>
+            <p className="text-gray-300 text-sm">Días de Entrenamiento</p>
+          </ResponsiveCard>
 
-          {showVideo && currentExercise && (
-            <div className="space-y-4">
-              <div className="text-center">
-                <h2 className="text-xl font-bold">{currentExercise.name}</h2>
-                {currentExercise.description && (
-                  <p className="text-gray-300 mt-2">
-                    {currentExercise.description}
+          <ResponsiveCard className="text-center">
+            <div className="flex justify-center mb-4">
+              <Target className="w-8 h-8 text-green-400" />
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">11</h3>
+            <p className="text-gray-300 text-sm">Ejercicios Diferentes</p>
+          </ResponsiveCard>
+
+          <ResponsiveCard className="text-center">
+            <div className="flex justify-center mb-4">
+              <Trophy className="w-8 h-8 text-yellow-400" />
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">100%</h3>
+            <p className="text-gray-300 text-sm">Resultados Garantizados</p>
+          </ResponsiveCard>
+        </motion.div>
+
+        {/* Calendar Grid */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mb-12"
+        >
+          <ResponsiveCard
+            title="Calendario de Entrenamiento"
+            subtitle="Haz clic en cualquier día para ver el ejercicio correspondiente"
+          >
+            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-10 gap-3 sm:gap-4">
+              {Array.from({ length: totalDays }, (_, i) => i + 1).map((day) => (
+                <Day
+                  key={day}
+                  day={day}
+                  exercise={getExerciseForDay(day)}
+                  onClick={handleDayClick}
+                  isActive={selectedDay === day}
+                />
+              ))}
+            </div>
+          </ResponsiveCard>
+        </motion.div>
+
+        {/* Video Section */}
+        {showVideo && currentExercise && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mb-12"
+          >
+            <ResponsiveCard
+              title={`Día ${selectedDay}: ${currentExercise.name}`}
+              subtitle={currentExercise.description}
+            >
+              <div className="space-y-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <Play className="w-4 h-4 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white">
+                    Ejercicio del Día {selectedDay}
+                  </h3>
+                </div>
+
+                <div className="flex justify-center">
+                  <div className="w-full max-w-4xl">
+                    {currentExercise.embedUrl ? (
+                      <iframe
+                        src={currentExercise.embedUrl}
+                        frameBorder={0}
+                        marginWidth={0}
+                        marginHeight={0}
+                        scrolling="no"
+                        width="100%"
+                        height="400"
+                        allowFullScreen
+                        className="rounded-xl shadow-lg"
+                      />
+                    ) : (
+                      <video
+                        controls
+                        src={currentVideo}
+                        className="w-full rounded-xl shadow-lg"
+                        style={{ maxHeight: "400px" }}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-gray-800/50 rounded-xl p-4">
+                  <h4 className="font-semibold text-white mb-2">Instrucciones:</h4>
+                  <p className="text-gray-300 text-sm leading-relaxed">
+                    {currentExercise.description || 
+                     "Sigue las instrucciones del video cuidadosamente. Realiza el ejercicio de manera controlada y respeta los tiempos de descanso."}
                   </p>
-                )}
+                </div>
               </div>
-              <div className="flex justify-center items-center h-[50vh]">
-                {currentExercise.embedUrl ? (
-                  <iframe
-                    src={currentExercise.embedUrl}
-                    frameBorder={0}
-                    marginWidth={0}
-                    marginHeight={0}
-                    scrolling="no"
-                    width={640}
-                    height={860}
-                    allowFullScreen
-                    className="max-w-[80%] h-[350px]"
-                  />
-                ) : (
-                  <video
-                    controls
-                    src={currentVideo}
-                    className="max-w-[80%] h-[400px]"
-                  />
-                )}
+            </ResponsiveCard>
+          </motion.div>
+        )}
+
+        {/* Call to Action */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="text-center"
+        >
+          <ResponsiveCard className="max-w-2xl mx-auto">
+            <div className="space-y-4">
+              <h3 className="text-2xl font-bold gradient-text mb-4">
+                ¡Comienza tu Desafío Hoy!
+              </h3>
+              <p className="text-gray-300 leading-relaxed">
+                Selecciona el día 1 y comienza tu transformación. 
+                Recuerda ser consistente y seguir las instrucciones al pie de la letra.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+                <button 
+                  onClick={() => handleDayClick(1)}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200"
+                >
+                  Comenzar Día 1
+                </button>
+                <button className="bg-gray-700 text-white px-8 py-3 rounded-xl font-semibold hover:bg-gray-600 transform hover:scale-105 transition-all duration-200">
+                  Ver Progreso
+                </button>
               </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </ResponsiveCard>
+        </motion.div>
+      </div>
     </div>
   );
 };

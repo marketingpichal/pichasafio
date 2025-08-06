@@ -1,9 +1,21 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useSound from 'use-sound';
 import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
-import LeaderboardTable from "@/components/LeaderboardTable";
+import ResponsiveCard from "../common/ResponsiveCard";
+import { 
+  Clock, 
+  Target, 
+  TrendingUp, 
+  Play, 
+  Pause, 
+  Award, 
+  Activity,
+  Zap,
+  Heart,
+  Brain,
+  Wind
+} from "lucide-react";
 
 interface Exercise {
   name: string;
@@ -110,6 +122,16 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({ phase, progress, time
     rest: { scale: 1 }
   };
 
+  const getPhaseColor = () => {
+    switch (phase) {
+      case 'inhale': return 'text-blue-400';
+      case 'holdIn': return 'text-purple-400';
+      case 'exhale': return 'text-green-400';
+      case 'holdOut': return 'text-orange-400';
+      default: return 'text-gray-400';
+    }
+  };
+
   return (
     <motion.div 
       className="relative"
@@ -124,7 +146,7 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({ phase, progress, time
           stroke="currentColor"
           strokeWidth={strokeWidth}
           fill="none"
-          className="text-blue-500"
+          className={getPhaseColor()}
           initial={{ pathLength: 0 }}
           animate={{ pathLength: progress }}
           transition={{ duration: 0.1 }}
@@ -136,14 +158,17 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({ phase, progress, time
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           key={phase}
+          className="text-center"
         >
-          {phase === 'inhale' && "Inhala"}
-          {phase === 'holdIn' && "Mantén"}
-          {phase === 'exhale' && "Exhala"}
-          {phase === 'holdOut' && "Mantén"}
-          {phase === 'rest' && "Prepárate"}
+          <div className="text-2xl font-poppins-bold mb-2">
+            {phase === 'inhale' && "Inhala"}
+            {phase === 'holdIn' && "Mantén"}
+            {phase === 'exhale' && "Exhala"}
+            {phase === 'holdOut' && "Mantén"}
+            {phase === 'rest' && "Prepárate"}
+          </div>
+          <div className="text-4xl font-poppins-bold text-blue-400">{Math.ceil(timeLeft)}s</div>
         </motion.div>
-        <div className="text-sm mt-2">{Math.ceil(timeLeft)}s</div>
       </div>
     </motion.div>
   );
@@ -284,7 +309,7 @@ const RespirationCalendar: React.FC = () => {
   const completeExercise = async () => {
     setIsExercising(false);
     playComplete();
-    setExerciseCompleted(true);  // Mark exercise as completed
+    setExerciseCompleted(true);
     setStats(prev => {
       const newStats = {
         totalSessions: prev.totalSessions + 1,
@@ -366,170 +391,354 @@ const RespirationCalendar: React.FC = () => {
     }
   };
 
-  // Modify the return JSX to include the claim button
+  const getEffectIcon = (effect: string) => {
+    switch (effect) {
+      case 'BALANCING': return <Target className="w-5 h-5" />;
+      case 'CALMING': return <Heart className="w-5 h-5" />;
+      case 'ENERGIZING': return <Zap className="w-5 h-5" />;
+      default: return <Activity className="w-5 h-5" />;
+    }
+  };
+
+  const getEffectColor = (effect: string) => {
+    switch (effect) {
+      case 'BALANCING': return 'from-purple-500 to-pink-500';
+      case 'CALMING': return 'from-blue-500 to-cyan-500';
+      case 'ENERGIZING': return 'from-green-500 to-emerald-500';
+      default: return 'from-gray-500 to-gray-600';
+    }
+  };
+
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'beginner': return 'from-green-500 to-emerald-500';
+      case 'intermediate': return 'from-yellow-500 to-orange-500';
+      case 'advanced': return 'from-red-500 to-pink-500';
+      default: return 'from-blue-500 to-purple-500';
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
-      {showCompletionModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="bg-gray-800 p-8 rounded-xl shadow-xl max-w-md w-full mx-4"
-          >
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-white mb-4">¡Ejercicio Completado!</h3>
-              <div className="bg-gray-700 rounded-lg p-6 mb-6">
-                <div className="text-4xl font-bold text-yellow-400 mb-2">
-                  +{earnedXP.total} XP
-                </div>
-                <div className="text-sm text-gray-300">
-                  <div>Base: {earnedXP.base} XP</div>
-                  <div>Bonus por tiempo: +{earnedXP.bonus} XP</div>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowCompletionModal(false)}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
-              >
-                Continuar
-              </button>
+    <div className="min-h-screen bg-gray-900 py-8 sm:py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-12"
+        >
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center">
+              <Wind className="w-10 h-10 text-white" />
             </div>
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text-extended mb-4 font-poppins">
+            Ejercicios de Respiración
+          </h1>
+          <p className="text-gray-300 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed font-poppins-light">
+            Mejora tu control respiratorio y relájate con estos ejercicios de pranayama.
+            Cada técnica tiene beneficios específicos para tu bienestar.
+          </p>
+        </motion.div>
+
+        {/* Completion Modal */}
+        {showCompletionModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            onClick={() => setShowCompletionModal(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-gray-900 rounded-2xl p-8 max-w-md w-full border border-gray-700"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Award className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4 font-poppins-bold">¡Ejercicio Completado!</h3>
+                <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-6 mb-6">
+                  <div className="text-4xl font-bold text-yellow-400 mb-2 font-poppins-bold">
+                    +{earnedXP.total} XP
+                  </div>
+                  <div className="text-sm text-gray-300 font-poppins-light">
+                    <div>Base: {earnedXP.base} XP</div>
+                    <div>Bonus por tiempo: +{earnedXP.bonus} XP</div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowCompletionModal(false)}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 font-poppins-semibold"
+                >
+                  Continuar
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
-        </div>
-      )}
-      <Card className="max-w-4xl mx-auto bg-gray-800">
-        <CardContent className="p-6">
-          {!isExercising ? (
-            <>
-              {exerciseCompleted && (
-                <div className="mb-8 text-center">
+        )}
+
+        {!isExercising ? (
+          <div className="space-y-8">
+            {/* Claim XP Button */}
+            {exerciseCompleted && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center"
+              >
+                <ResponsiveCard className="max-w-md mx-auto">
                   <button
                     onClick={claimExperiencePoints}
                     disabled={isClaimingXP}
-                    className={`px-6 py-3 rounded-lg text-white font-bold ${
+                    className={`w-full px-6 py-4 rounded-xl font-bold text-white transition-all duration-200 transform hover:scale-105 ${
                       isClaimingXP 
                         ? 'bg-gray-600 cursor-not-allowed'
-                        : 'bg-green-600 hover:bg-green-700'
-                    }`}
+                        : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
+                    } font-poppins-semibold`}
                   >
-                    {isClaimingXP ? 'Reclamando XP...' : 'Reclamar XP'}
+                    {isClaimingXP ? 'Reclamando XP...' : '🎉 ¡Reclamar XP Ganado!'}
                   </button>
-                </div>
-              )}
-              <div className="mb-8">
-                <label className="block text-lg font-medium mb-4">
-                  Duración del ejercicio
-                </label>
-                <div className="flex items-center gap-4">
-                  <input
-                    type="range"
-                    min="1"
-                    max="30"
-                    value={selectedMinutes}
-                    onChange={(e) => setSelectedMinutes(parseInt(e.target.value))}
-                    className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
-                  />
-                  <div className="flex items-center gap-2 min-w-[100px]">
-                    <input
-                      type="number"
-                      min="1"
-                      max="30"
-                      value={selectedMinutes}
-                      onChange={(e) => setSelectedMinutes(Math.max(1, parseInt(e.target.value)))}
-                      className="bg-gray-700 text-white px-3 py-2 rounded-lg w-20 text-center"
-                    />
-                    <span className="text-gray-300">min</span>
-                  </div>
-                </div>
-                <div className="mt-4 p-4 bg-gray-700 rounded-lg">
-                  <p className="text-lg font-medium mb-2">Recompensa</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl font-bold text-yellow-400">
-                      {10 + (selectedMinutes - 1) * 5}
-                    </span>
-                    <span className="text-gray-300">XP</span>
-                  </div>
-                  <p className="text-sm text-gray-400 mt-1">
-                    Base: 10 XP + {(selectedMinutes - 1) * 5} XP por minutos adicionales
-                  </p>
-                </div>
-              </div>
+                </ResponsiveCard>
+              </motion.div>
+            )}
 
-              <div className="mb-8 grid grid-cols-3 gap-4 text-center">
-                <div className="bg-gray-700 p-4 rounded-lg">
-                  <div className="text-2xl font-bold">{stats.totalSessions}</div>
-                  <div className="text-sm text-gray-300">Sesiones Completadas</div>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-lg">
-                  <div className="text-2xl font-bold">{stats.totalMinutes}</div>
-                  <div className="text-sm text-gray-300">Minutos Totales</div>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-lg">
-                  <div className="text-2xl font-bold">
-                    {stats.lastCompleted ? new Date(stats.lastCompleted).toLocaleDateString() : '-'}
-                  </div>
-                  <div className="text-sm text-gray-300">Última Sesión</div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {exercises.map((exercise, index) => (
-                  <div
-                    key={index}
-                    className={`p-4 rounded-lg cursor-pointer transition-colors ${
-                      exercise.effect === 'BALANCING' ? 'bg-purple-700 hover:bg-purple-600' :
-                      exercise.effect === 'CALMING' ? 'bg-blue-700 hover:bg-blue-600' :
-                      'bg-green-700 hover:bg-green-600'
-                    }`}
-                    onClick={() => startExercise(exercise)}
-                  >
-                    <h3 className="text-xl font-bold mb-2">{exercise.name}</h3>
-                    <p className="text-gray-100 mb-2">{exercise.description}</p>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-200">Efecto: {exercise.effect}</span>
-                      <span className="text-gray-200">Dificultad: {exercise.difficulty}</span>
+            {/* Duration and Reward Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <ResponsiveCard
+                title="Configuración del Ejercicio"
+                subtitle="Ajusta la duración y ve tu recompensa"
+              >
+                <div className="space-y-6">
+                  {/* Duration Slider */}
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <Clock className="w-6 h-6 text-blue-400" />
+                      <label className="text-lg font-medium text-white font-poppins-semibold">
+                        Duración del ejercicio
+                      </label>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="range"
+                        min="1"
+                        max="30"
+                        value={selectedMinutes}
+                        onChange={(e) => setSelectedMinutes(parseInt(e.target.value))}
+                        className="flex-1 h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                      />
+                      <div className="flex items-center gap-2 min-w-[120px]">
+                        <input
+                          type="number"
+                          min="1"
+                          max="30"
+                          value={selectedMinutes}
+                          onChange={(e) => setSelectedMinutes(Math.max(1, parseInt(e.target.value)))}
+                          className="bg-gray-700 text-white px-4 py-2 rounded-xl w-20 text-center font-poppins-semibold border border-gray-600 focus:border-blue-500 focus:outline-none"
+                        />
+                        <span className="text-gray-300 font-poppins-medium">min</span>
+                      </div>
                     </div>
                   </div>
-                ))}
+
+                  {/* Reward Section */}
+                  <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl p-6">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <Award className="w-6 h-6 text-yellow-400" />
+                      <h3 className="text-lg font-semibold text-white font-poppins-semibold">Recompensa</h3>
+                    </div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-3xl font-bold text-yellow-400 font-poppins-bold">
+                        {10 + (selectedMinutes - 1) * 5}
+                      </span>
+                      <span className="text-gray-300 font-poppins-medium">XP</span>
+                    </div>
+                    <p className="text-sm text-gray-400 font-poppins-light">
+                      Base: 10 XP + {(selectedMinutes - 1) * 5} XP por minutos adicionales
+                    </p>
+                  </div>
+                </div>
+              </ResponsiveCard>
+            </motion.div>
+
+            {/* Statistics */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            >
+              <ResponsiveCard className="text-center">
+                <div className="flex justify-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <Activity className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2 font-poppins-bold">{stats.totalSessions}</h3>
+                <p className="text-gray-300 text-sm font-poppins-light">Sesiones Completadas</p>
+              </ResponsiveCard>
+
+              <ResponsiveCard className="text-center">
+                <div className="flex justify-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2 font-poppins-bold">{stats.totalMinutes}</h3>
+                <p className="text-gray-300 text-sm font-poppins-light">Minutos Totales</p>
+              </ResponsiveCard>
+
+              <ResponsiveCard className="text-center">
+                <div className="flex justify-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-white" />
+                  </div>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2 font-poppins-bold">
+                  {stats.lastCompleted ? new Date(stats.lastCompleted).toLocaleDateString() : '-'}
+                </h3>
+                <p className="text-gray-300 text-sm font-poppins-light">Última Sesión</p>
+              </ResponsiveCard>
+            </motion.div>
+
+            {/* Exercise Cards */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {exercises.map((exercise, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 * index }}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => startExercise(exercise)}
+                  className="group cursor-pointer"
+                >
+                  <div className="relative overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 shadow-xl hover:shadow-2xl">
+                    {/* Gradient overlay on hover */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${getEffectColor(exercise.effect)}/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                    
+                    <div className="relative z-10">
+                      {/* Header */}
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors duration-300 font-poppins-semibold">
+                          {exercise.name}
+                        </h3>
+                        <div className={`px-3 py-1 rounded-full bg-gradient-to-r ${getDifficultyColor(exercise.difficulty)} text-white text-xs font-semibold font-poppins-medium`}>
+                          {exercise.difficulty}
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-gray-300 text-sm leading-relaxed mb-4 font-poppins-light">
+                        {exercise.description}
+                      </p>
+
+                      {/* Details Grid */}
+                      <div className="space-y-3">
+                        {/* Effect */}
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-8 h-8 bg-gradient-to-r ${getEffectColor(exercise.effect)} rounded-lg flex items-center justify-center`}>
+                            {getEffectIcon(exercise.effect)}
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-400 font-medium font-poppins-medium">Efecto</p>
+                            <p className="text-sm text-white font-semibold font-poppins-semibold">{exercise.effect}</p>
+                          </div>
+                        </div>
+
+                        {/* Pattern */}
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center">
+                            <Brain className="w-4 h-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-400 font-medium font-poppins-medium">Patrón</p>
+                            <p className="text-sm text-white font-semibold font-poppins-semibold">
+                              {exercise.inhaleTime}-{exercise.holdInTime}-{exercise.exhaleTime}-{exercise.holdOutTime}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Play Button */}
+                      <div className="mt-6 flex justify-center">
+                        <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <Play className="w-5 h-5 text-white ml-0.5" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        ) : (
+          /* Exercise Session */
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex flex-col items-center space-y-8"
+          >
+            <ResponsiveCard className="max-w-2xl w-full">
+              <div className="text-center space-y-6">
+                <h2 className="text-2xl font-bold text-white font-poppins-bold">
+                  {selectedExercise?.name}
+                </h2>
+                
+                <div className="flex items-center justify-center space-x-4">
+                  <div className="text-center">
+                    <div className="text-sm text-gray-400 font-poppins-medium">Ronda</div>
+                    <div className="text-2xl font-bold text-white font-poppins-bold">
+                      {currentRound}/{selectedExercise?.rounds}
+                    </div>
+                  </div>
+                  <div className="w-32 bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300"
+                      style={{ 
+                        width: `${(currentRound / (selectedExercise?.rounds || 1)) * 100}%` 
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <AnimatePresence mode="wait">
+                  <BreathingCircle
+                    phase={currentPhase}
+                    progress={progress}
+                    timeLeft={timeLeft}
+                  />
+                </AnimatePresence>
+
+                <div className="flex space-x-4">
+                  <button
+                    className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl hover:from-red-600 hover:to-pink-700 text-white font-semibold transition-all duration-200 transform hover:scale-105 font-poppins-semibold"
+                    onClick={() => setIsExercising(false)}
+                  >
+                    <Pause className="w-5 h-5 inline mr-2" />
+                    Terminar
+                  </button>
+                </div>
               </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center space-y-8">
-              <h2 className="text-2xl font-bold text-white">
-                {selectedExercise?.name} - Ronda {currentRound}/{selectedExercise?.rounds}
-              </h2>
-              
-              <div className="w-full max-w-md bg-gray-700 rounded-full h-2 mb-4">
-                <div 
-                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                  style={{ 
-                    width: `${(currentRound / (selectedExercise?.rounds || 1)) * 100}%` 
-                  }}
-                />
-              </div>
+            </ResponsiveCard>
+          </motion.div>
+        )}
 
-              <AnimatePresence mode="wait">
-                <BreathingCircle
-                  phase={currentPhase}
-                  progress={progress}
-                  timeLeft={timeLeft}
-                />
-              </AnimatePresence>
 
-              <button
-                className="px-6 py-2 bg-red-500 rounded-lg hover:bg-red-600 text-white"
-                onClick={() => setIsExercising(false)}
-              >
-                Terminar (Espacio)
-              </button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Add LeaderboardTable component */}
-      <LeaderboardTable />
+      </div>
     </div>
   );
 };
