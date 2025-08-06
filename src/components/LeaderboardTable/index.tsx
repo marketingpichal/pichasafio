@@ -9,6 +9,7 @@ interface Leaderboard {
   level: number;
   rank: string;
   last_activity: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   achievements: any;
   position: number;
 }
@@ -24,18 +25,26 @@ const LeaderboardTable = () => {
       setIsLoading(true);
       try {
         const { data: leaderboardData, error } = await supabase
-          .from('leaderboard')
-          .select('id, profileId, points, level, rank, last_activity') // Especificar columnas
-          .order('points', { ascending: false })
+          .from("leaderboard")
+          .select("id, profileId, points, level, rank, last_activity") // Especificar columnas
+          .order("points", { ascending: false })
           .limit(10);
 
         if (error) {
-          console.error('Error fetching leaderboard:', error);
+          console.error("Error fetching leaderboard:", error);
           return;
         }
-        setLeaderboard(leaderboardData || []);
+        // Adaptar los datos recibidos para cumplir con la interfaz Leaderboard
+        const leaderboardAdapted =
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (leaderboardData || []).map((item: any, idx: number) => ({
+            ...item,
+            achievements: item.achievements ?? [],
+            position: idx + 1,
+          })) as Leaderboard[];
+        setLeaderboard(leaderboardAdapted);
       } catch (error) {
-        console.error('Error fetching leaderboard:', error);
+        console.error("Error al obtener la tabla de líderes:", error);
       } finally {
         setIsLoading(false);
       }
@@ -45,13 +54,14 @@ const LeaderboardTable = () => {
 
     // Modificar la suscripción para ser más específica
     const subscription = supabase
-      .channel('public:leaderboard')
-      .on('postgres_changes', 
+      .channel("public:leaderboard")
+      .on(
+        "postgres_changes",
         {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'leaderboard',
-        }, 
+          event: "UPDATE",
+          schema: "public",
+          table: "leaderboard",
+        },
         fetchLeaderboard
       )
       .subscribe();
@@ -65,7 +75,9 @@ const LeaderboardTable = () => {
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-center text-gray-500">Cargando tabla de líderes...</p>
+          <p className="text-center text-gray-500">
+            Cargando tabla de líderes...
+          </p>
         </CardContent>
       </Card>
     );
@@ -82,14 +94,20 @@ const LeaderboardTable = () => {
             <div
               key={entry.id}
               className={`flex items-center justify-between p-4 rounded-lg ${
-                entry.profileId === user?.id ? 'bg-primary/10' : 'bg-secondary/10'
+                entry.profileId === user?.id
+                  ? "bg-primary/10"
+                  : "bg-secondary/10"
               }`}
             >
               <div className="flex items-center gap-4">
                 <span className="text-2xl font-bold">#{index + 1}</span>
                 <div>
-                  <p className="font-semibold">Usuario {entry.profileId.slice(0, 8)}...</p>
-                  <p className="text-sm text-muted-foreground">Nivel {entry.level}</p>
+                  <p className="font-semibold">
+                    Usuario {entry.profileId.slice(0, 8)}...
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Nivel {entry.level}
+                  </p>
                 </div>
               </div>
               <div className="text-right">

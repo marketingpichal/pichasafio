@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Play, Clock, Target, AlertTriangle, Lightbulb, Dumbbell } from "lucide-react";
+import { Play, Clock, Target, AlertTriangle, Lightbulb } from "lucide-react";
 
 interface Exercise {
   name: string;
@@ -106,7 +106,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onClick }) => {
             <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition-colors duration-300">
               {exercise.name}
             </h3>
-            <div className={`px-3 py-1 rounded-full bg-gradient-to-r ${getLevelColor(exercise.level)} text-white text-xs font-semibold`}>
+            <div className={`px-3 py-1 rounded-full bg-gradient-to-r ${getLevelColor(exercise?.level || "")} text-white text-xs font-semibold`}>
               {exercise.level}
             </div>
           </div>

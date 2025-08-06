@@ -17,10 +17,8 @@ const AdComponent: React.FC<AdComponentProps> = ({
 }) => {
   const adRef = useRef<HTMLDivElement>(null);
   const [adFailed, setAdFailed] = useState(false);
-  const isProduction = window.location.hostname !== 'localhost' && 
-                      window.location.hostname !== '127.0.0.1' && 
-                      !window.location.hostname.includes('vercel.app') &&
-                      !window.location.hostname.includes('netlify.app');
+  const isProduction = window.location.hostname === 'pichasafio.com' || 
+                      window.location.hostname === 'www.pichasafio.com';
 
   useEffect(() => {
     if (!isProduction || !adRef.current) return;
