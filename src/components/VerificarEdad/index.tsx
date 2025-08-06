@@ -20,7 +20,7 @@ export default function AgeVerificationModal({ onVerified }: AgeVerificationModa
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
       <div className="bg-gray-800/90 backdrop-blur-md p-5 sm:p-6 rounded-xl shadow-xl max-w-xs w-full text-center border border-gray-600/30">
         {/* Icon */}
         <div className="mb-3">
