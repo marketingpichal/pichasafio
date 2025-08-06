@@ -9,45 +9,185 @@
       content="b10d8544595290d85c6dc3c1eb286729"
     />
     <title>Pichasafio</title>
+    <style>
+      /* Estilos para posicionar anuncios */
+      .ad-container {
+        margin: 10px 0;
+        text-align: center;
+      }
+      
+      .ad-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.9);
+        padding: 5px;
+        text-align: center;
+      }
+      
+      .ad-sidebar-left {
+        position: fixed;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 999;
+      }
+      
+      .ad-sidebar-right {
+        position: fixed;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 999;
+      }
+      
+      .ad-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.9);
+        padding: 5px;
+        text-align: center;
+      }
+      
+      /* Ajustar el contenido principal para los anuncios fijos */
+      body {
+        padding-top: 90px; /* Para el anuncio del header */
+        padding-bottom: 90px; /* Para el anuncio del footer */
+        padding-left: 250px; /* Para el anuncio del sidebar izquierdo */
+        padding-right: 308px; /* Para el anuncio del sidebar derecho */
+      }
+      
+      /* Responsive - ocultar anuncios en móvil */
+      @media (max-width: 768px) {
+        .ad-sidebar-left,
+        .ad-sidebar-right {
+          display: none;
+        }
+        
+        body {
+          padding-left: 0;
+          padding-right: 0;
+        }
+      }
+      
+      /* Simular anuncios en localhost para desarrollo */
+      @media (max-width: 1200px) {
+        body {
+          padding-left: 0;
+          padding-right: 0;
+        }
+        
+        .ad-sidebar-left,
+        .ad-sidebar-right {
+          display: none;
+        }
+      }
+      
+      /* Placeholder para anuncios en localhost */
+      .ad-header::before {
+        content: "📢 Anuncio Header (728x90) - Solo visible en producción";
+        display: block;
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        color: white;
+        padding: 10px;
+        font-size: 12px;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 5px;
+        margin: 5px;
+      }
+      
+      .ad-sidebar-left::before {
+        content: "📢 Anuncio Izquierdo (250x250) - Solo visible en producción";
+        display: block;
+        background: linear-gradient(45deg, #a8e6cf, #dcedc1);
+        color: #333;
+        padding: 10px;
+        font-size: 12px;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 5px;
+        margin: 5px;
+        width: 230px;
+      }
+      
+      .ad-sidebar-right::before {
+        content: "📢 Anuncio Derecho (308x286) - Solo visible en producción";
+        display: block;
+        background: linear-gradient(45deg, #ffd93d, #ff6b6b);
+        color: white;
+        padding: 10px;
+        font-size: 12px;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 5px;
+        margin: 5px;
+        width: 288px;
+      }
+    </style>
   </head>
   <body>
+    <!-- Anuncio del Header (728x90) -->
+    <div class="ad-header">
+      <div class="ad-container">
+        <script
+          type="text/javascript"
+          data-cfasync="false"
+          async
+          src="https://poweredby.jads.co/js/jads.js"
+        ></script>
+        <ins id="1098247" data-width="728" data-height="90"></ins>
+        <script type="text/javascript" data-cfasync="false" async>
+          (adsbyjuicy = window.adsbyjuicy || []).push({ adzone: 1098247 });
+        </script>
+      </div>
+    </div>
+
+    <!-- Anuncio del Sidebar Izquierdo (250x250) -->
+    <div class="ad-sidebar-left">
+      <div class="ad-container">
+        <script
+          type="text/javascript"
+          data-cfasync="false"
+          async
+          src="https://poweredby.jads.co/js/jads.js"
+        ></script>
+        <ins id="1098246" data-width="250" data-height="250"></ins>
+        <script type="text/javascript" data-cfasync="false" async>
+          (adsbyjuicy = window.adsbyjuicy || []).push({ adzone: 1098246 });
+        </script>
+      </div>
+    </div>
+
+    <!-- Anuncio del Sidebar Derecho (308x286) -->
+    <div class="ad-sidebar-right">
+      <div class="ad-container">
+        <script
+          type="text/javascript"
+          data-cfasync="false"
+          async
+          src="https://poweredby.jads.co/js/jads.js"
+        ></script>
+        <ins id="1098248" data-width="308" data-height="286"></ins>
+        <script type="text/javascript" data-cfasync="false" async>
+          (adsbyjuicy = window.adsbyjuicy || []).push({ adzone: 1098248 });
+        </script>
+      </div>
+    </div>
+
+    <!-- Contenido Principal -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Script principal de JuicyAds -->
     <script
       type="text/javascript"
       src="https://js.juicyads.com/jp.php?c=445413x2u244u4r2o2b4y25464&u=http%3A%2F%2Fwww.juicyads.rocks"
     ></script>
-    <script
-      type="text/javascript"
-      data-cfasync="false"
-      async
-      src="https://poweredby.jads.co/js/jads.js"
-    ></script>
-    <ins id="1098246" data-width="250" data-height="250"></ins>
-    <script type="text/javascript" data-cfasync="false" async>
-      (adsbyjuicy = window.adsbyjuicy || []).push({ adzone: 1098246 });
-    </script>
-    <script
-      type="text/javascript"
-      data-cfasync="false"
-      async
-      src="https://poweredby.jads.co/js/jads.js"
-    ></script>
-    <ins id="1098247" data-width="728" data-height="90"></ins>
-    <script type="text/javascript" data-cfasync="false" async>
-      (adsbyjuicy = window.adsbyjuicy || []).push({ adzone: 1098247 });
-    </script>
-    <!-- JuicyAds v3.0 -->
-    <script
-      type="text/javascript"
-      data-cfasync="false"
-      async
-      src="https://poweredby.jads.co/js/jads.js"
-    ></script>
-    <ins id="1098248" data-width="308" data-height="286"></ins>
-    <script type="text/javascript" data-cfasync="false" async>
-      (adsbyjuicy = window.adsbyjuicy || []).push({ adzone: 1098248 });
-    </script>
-    <!--JuicyAds END-->
   </body>
 </html>
