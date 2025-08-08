@@ -48,6 +48,17 @@
       </script>
     </div>
 
+    <!-- Anuncio Móvil (300x100) - Solo en pantallas pequeñas -->
+    <div id="ad-mobile-bottom">
+      <!-- JuicyAds v3.0 -->
+      <script type="text/javascript" data-cfasync="false" async src="https://poweredby.jads.co/js/jads.js"></script>
+      <ins id="1098249" data-width="300" data-height="100"></ins>
+      <script type="text/javascript" data-cfasync="false" async>
+        (adsbyjuicy = window.adsbyjuicy || []).push({ adzone: 1098249 });
+      </script>
+      <!--JuicyAds END-->
+    </div>
+
     <!-- CSS para ajustar el contenido principal -->
     <style>
       /* Los anuncios flotan por encima sin afectar el diseño */
@@ -78,10 +89,27 @@
         z-index: 9997;
       }
       
-      /* Responsive - ocultar anuncios laterales en móvil */
+      /* Contenedor del anuncio móvil inferior */
+      #ad-mobile-bottom {
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 0;
+        z-index: 9998;
+        padding: 5px;
+        text-align: center;
+        display: none;
+      }
+
+      /* Responsive - ocultar anuncios laterales y header en móvil */
       @media (max-width: 768px) {
+        #ad-header,
         #ad-sidebar-left, #ad-sidebar-right { 
           display: none; 
+        }
+        /* Mostrar solo el banner móvil en pantallas pequeñas */
+        #ad-mobile-bottom {
+          display: block;
         }
       }
       
@@ -109,5 +137,10 @@
         }
       }
     </style>
+    
+    <!-- Start JuicyAds Float Ad (Layer para videos) -->
+    <script type="text/javascript">juicy_adzone = '1098484';</script>
+    <script type="text/javascript" src="https://poweredby.jads.co/js/jfc.js" charset="utf-8"></script>
+    <!-- End JuicyAds Float Ad -->
   </body>
 </html>
