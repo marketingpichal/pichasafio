@@ -10,6 +10,8 @@ import Testimonials from "./components/TestimoniosAnonimos";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Rutinas from "./components/Rutines";
+// import PichasahurSidebar from "./components/common/PichasahurSidebar";
+// import PichasahurFloatingButton from "./components/common/PichasahurFloatingButton";
 
 const About = () => (
   <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -27,6 +29,7 @@ const About = () => (
 
 export default function App() {
   const [isVerified, setIsVerified] = useState(false);
+  // const [isPichasahurOpen, setIsPichasahurOpen] = useState(false);
 
   const handleVerification = (verified: boolean) => {
     setIsVerified(verified);
@@ -34,6 +37,9 @@ export default function App() {
       window.location.href = "https://www.google.com";
     }
   };
+
+  // const openPichasahur = () => setIsPichasahurOpen(true);
+  // const closePichasahur = () => setIsPichasahurOpen(false);
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -54,6 +60,18 @@ export default function App() {
               <Route path="/rutinas" element={<Rutinas />} />
             </Routes>
           </main>
+          
+          {/* Pichasahur Floating Button */}
+          {/* <PichasahurFloatingButton 
+            onClick={openPichasahur} 
+            isVisible={true} 
+          /> */}
+          
+          {/* Pichasahur Sidebar */}
+          {/* <PichasahurSidebar 
+            isOpen={isPichasahurOpen} 
+            onClose={closePichasahur} 
+          /> */}
         </div>
       )}
     </div>

@@ -1,4 +1,7 @@
 import React from "react";
+import RewardedAdGate from "../common/RewardedAdGate";
+import { logAdEvent, trackUserAdImpression } from "@/lib/adTracking";
+import { useAuth } from "@/context/AuthProvider";
 import { motion } from "framer-motion";
 import ResponsiveCard from "../common/ResponsiveCard";
 import { Calendar, Play, Target, Trophy } from "lucide-react";
@@ -99,18 +102,41 @@ const ThirtyDayChallenge: React.FC = () => {
   const [currentExercise, setCurrentExercise] = React.useState<Exercise | null>(null);
   const [showVideo, setShowVideo] = React.useState<boolean>(false);
   const [selectedDay, setSelectedDay] = React.useState<number | null>(null);
+  const [showAdGate, setShowAdGate] = React.useState<boolean>(false);
+  const pendingRef = React.useRef<{ day: number; exercise: Exercise } | null>(null);
+  const { user } = useAuth();
 
   const getExerciseForDay = (day: number): Exercise => {
     const exerciseIndex = (day - 1) % exercises.length;
     return exercises[exerciseIndex];
   };
 
-  const handleDayClick = (day: number) => {
-    const exercise = getExerciseForDay(day);
+  const shouldGateForDay = (day: number): boolean => {
+    // MVP: cada 3 días pide anuncio. Puedes afinar o randomizar.
+    return day % 3 === 0;
+  };
+
+  const unlockVideo = (day: number, exercise: Exercise) => {
     setCurrentExercise(exercise);
     setCurrentVideo(exercise.embedUrl || exercise.url);
     setShowVideo(true);
     setSelectedDay(day);
+  };
+
+  const handleDayClick = (day: number) => {
+    const exercise = getExerciseForDay(day);
+    if (shouldGateForDay(day)) {
+      pendingRef.current = { day, exercise };
+      setShowAdGate(true);
+      logAdEvent("gate_required", {
+        user_id: user?.id ?? null,
+        provider: "juicyads",
+        ad_zone: window.matchMedia && window.matchMedia("(max-width: 768px)").matches ? "1098249" : "1098247",
+        context: { day, exerciseName: exercise.name },
+      }).catch(() => void 0);
+      return;
+    }
+    unlockVideo(day, exercise);
   };
 
   return (
@@ -251,6 +277,27 @@ const ThirtyDayChallenge: React.FC = () => {
               </div>
             </ResponsiveCard>
           </motion.div>
+        )}
+
+        {/* Rewarded Ad Gate */}
+        {showAdGate && (
+          <RewardedAdGate
+            isOpen={showAdGate}
+            onClose={() => setShowAdGate(false)}
+            onReward={() => {
+              const pending = pendingRef.current;
+              if (!pending) return;
+              trackUserAdImpression(user?.id ?? null);
+              logAdEvent("gate_rewarded", {
+                user_id: user?.id ?? null,
+                provider: "juicyads",
+                context: { day: pending.day, exerciseName: pending.exercise.name },
+              }).catch(() => void 0);
+              unlockVideo(pending.day, pending.exercise);
+              pendingRef.current = null;
+            }}
+            videoContext={{ day: pendingRef.current?.day, exerciseName: pendingRef.current?.exercise.name }}
+          />
         )}
 
         {/* Call to Action */}

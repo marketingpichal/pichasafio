@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import PichasahurComicBanner from '../common/PichasahurComicBanner';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -19,6 +20,16 @@ export default function Header() {
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
       
       <div className="relative z-10 max-w-4xl mx-auto">
+        {/* Pichasahur Comic Banner */}
+        <motion.div
+          initial={{ scale: 0, y: -50 }}
+          animate={{ scale: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1, type: "spring", stiffness: 200 }}
+          className="flex justify-center mb-8"
+        >
+          <PichasahurComicBanner size="large" animated={true} variant="action" />
+        </motion.div>
+        
         <motion.h1
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
