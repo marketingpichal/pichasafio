@@ -10,6 +10,9 @@ import Testimonials from "./components/TestimoniosAnonimos";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Rutinas from "./components/Rutines";
+import Chochasafio from "./components/Chochasafio";
+
+import TerminosYCondiciones from "./components/Terms";
 // import PichasahurSidebar from "./components/common/PichasahurSidebar";
 // import PichasahurFloatingButton from "./components/common/PichasahurFloatingButton";
 
@@ -58,6 +61,10 @@ export default function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/rutinas" element={<Rutinas />} />
+              <Route path="/chochasafio" element={<Chochasafio />} />
+      {/* Pichasahur Floating Button   <Route path="/sexshop" element={<SexShop />} />*/}
+              <Route path="/tyc" element={<TerminosYCondiciones onVerified={setIsVerified} />} />
+      
             </Routes>
           </main>
           

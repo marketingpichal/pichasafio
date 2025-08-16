@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface AgeVerificationModalProps {
   onVerified: (isVerified: boolean) => void;
@@ -45,7 +46,7 @@ export default function AgeVerificationModal({ onVerified }: AgeVerificationModa
             onClick={handleConfirm}
             className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium py-2 px-3 rounded-md hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
           >
-            Sí, tengo 18+
+            Sí, tengo 18+ y acepto los tyc
           </button>
           <button
             onClick={handleDeny}
@@ -56,8 +57,12 @@ export default function AgeVerificationModal({ onVerified }: AgeVerificationModa
         </div>
 
         <p className="text-xs text-gray-400 mt-2">
-          Al continuar, confirmas que eres mayor de edad
-        </p>
+  Al continuar, confirmas que eres mayor de edad y que aceptas nuestros{" "}
+  <Link to="/tyc" className="text-blue-400 hover:text-blue-300 underline">
+    Términos y Condiciones
+  </Link>
+</p>
+
       </div>
     </div>
   );
