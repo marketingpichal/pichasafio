@@ -1,12 +1,32 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import PichasahurComicBanner from '../common/PichasahurComicBanner';
+import { useAuth } from '../../context/AuthProvider';
+import { useState } from 'react';
+import { Lock, X, LogIn, UserPlus } from 'lucide-react';
 
 export default function Header() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAuthenticated = !!user;
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleClick = () => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
     navigate('/rutinas');
+  };
+
+  const handleLogin = () => {
+    setShowAuthModal(false);
+    navigate('/login');
+  };
+
+  const handleRegister = () => {
+    setShowAuthModal(false);
+    navigate('/register');
   };
 
   return (
@@ -67,6 +87,78 @@ export default function Header() {
         <div className="absolute top-10 left-10 w-20 h-20 bg-blue-500/20 rounded-full blur-xl"></div>
         <div className="absolute bottom-10 right-10 w-32 h-32 bg-purple-500/20 rounded-full blur-xl"></div>
       </div>
+
+      {/* Modal de Autenticación */}
+      {showAuthModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowAuthModal(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.8, opacity: 0, y: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 max-w-md w-full mx-4 border border-gray-700 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header del Modal */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
+                  <Lock className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white">Acceso Requerido</h3>
+              </div>
+              <button
+                onClick={() => setShowAuthModal(false)}
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors duration-200"
+              >
+                <X className="w-5 h-5 text-gray-400 hover:text-white" />
+              </button>
+            </div>
+
+            {/* Contenido del Modal */}
+            <div className="text-center mb-8">
+              <p className="text-gray-300 text-lg leading-relaxed">
+                Para acceder a las <span className="text-blue-400 font-semibold">rutinas exclusivas</span> necesitas estar registrado.
+              </p>
+              <p className="text-gray-400 text-sm mt-2">
+                ¡Es gratis y solo toma unos segundos!
+              </p>
+            </div>
+
+            {/* Botones de Acción */}
+            <div className="space-y-4">
+              <button
+                onClick={handleLogin}
+                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                <LogIn className="w-5 h-5" />
+                Iniciar Sesión
+              </button>
+              
+              <button
+                onClick={handleRegister}
+                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                <UserPlus className="w-5 h-5" />
+                Crear Cuenta Gratis
+              </button>
+            </div>
+
+            {/* Footer del Modal */}
+            <div className="mt-6 pt-6 border-t border-gray-700">
+              <p className="text-center text-gray-500 text-sm">
+                ¿Ya tienes cuenta? <button onClick={handleLogin} className="text-blue-400 hover:text-blue-300 font-medium">Inicia sesión aquí</button>
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </motion.section>
   );
 }

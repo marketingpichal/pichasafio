@@ -11,8 +11,11 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Rutinas from "./components/Rutines";
 import Chochasafio from "./components/Chochasafio";
-
+import SexShop from "./components/Sexshop";
 import TerminosYCondiciones from "./components/Terms";
+import GuideStore from "./components/Guides/guideStore";
+import { AuthProvider } from "./context/AuthProvider";
+
 // import PichasahurSidebar from "./components/common/PichasahurSidebar";
 // import PichasahurFloatingButton from "./components/common/PichasahurFloatingButton";
 
@@ -45,42 +48,46 @@ export default function App() {
   // const closePichasahur = () => setIsPichasahurOpen(false);
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      {!isVerified && <AgeVerificationModal onVerified={handleVerification} />}
-      {isVerified && (
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<Page />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/calculadora" element={<FarmingCalculator />} />
-              <Route path="/keguel" element={<KeguelChallengue />} />
-              <Route path="/respiracion" element={<RespirationCalendar />} />
-              <Route path="/testimonios" element={<Testimonials />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/rutinas" element={<Rutinas />} />
-              <Route path="/chochasafio" element={<Chochasafio />} />
-      {/* Pichasahur Floating Button   <Route path="/sexshop" element={<SexShop />} />*/}
-              <Route path="/tyc" element={<TerminosYCondiciones onVerified={setIsVerified} />} />
-      
-            </Routes>
-          </main>
-          
-          {/* Pichasahur Floating Button */}
-          {/* <PichasahurFloatingButton 
-            onClick={openPichasahur} 
-            isVisible={true} 
-          /> */}
-          
-          {/* Pichasahur Sidebar */}
-          {/* <PichasahurSidebar 
-            isOpen={isPichasahurOpen} 
-            onClose={closePichasahur} 
-          /> */}
-        </div>
-      )}
-    </div>
+    <AuthProvider>
+      <div className="min-h-screen bg-gray-900">
+        {!isVerified && <AgeVerificationModal onVerified={handleVerification} />}
+        {isVerified && (
+          <div className="flex flex-col min-h-screen">
+            <Navbar />
+            <main className="flex-1">
+              <Routes>
+                <Route path="/" element={<Page />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/calculadora" element={<FarmingCalculator />} />
+                <Route path="/keguel" element={<KeguelChallengue />} />
+                <Route path="/respiracion" element={<RespirationCalendar />} />
+                <Route path="/testimonios" element={<Testimonials />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/rutinas" element={<Rutinas />} />
+                <Route path="/chochasafio" element={<Chochasafio />} />
+        {/* Pichasahur Floating Button   <Route path="/sexshop" element={<SexShop />} />*/}
+                <Route path="/tyc" element={<TerminosYCondiciones />} />
+                <Route path="/sexshop" element={<SexShop />} />
+                <Route path="/guia" element={<GuideStore />} />
+                
+               </Routes>
+            </main>
+            
+            {/* Pichasahur Floating Button */}
+            {/* <PichasahurFloatingButton 
+              onClick={openPichasahur} 
+              isVisible={true} 
+            /> */}
+            
+            {/* Pichasahur Sidebar */}
+            {/* <PichasahurSidebar 
+              isOpen={isPichasahurOpen} 
+              onClose={closePichasahur} 
+            /> */}
+          </div>
+        )}
+      </div>
+    </AuthProvider>
   );
 }

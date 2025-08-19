@@ -1,8 +1,45 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../../context/AuthProvider";
+import { Lock, User, LogOut, ChevronDown } from "lucide-react";
+import { supabase } from "../../lib/supabaseClient";
+
+// Componente para enlaces protegidos
+const ProtectedLink = ({ to, children, className, onClick, isAuthenticated, showTooltip = true }: {
+  to: string;
+  children: React.ReactNode;
+  className: string;
+  onClick: () => void;
+  isAuthenticated: boolean;
+  showTooltip?: boolean;
+}) => {
+  if (!isAuthenticated) {
+    return (
+      <div className={`${className} cursor-not-allowed opacity-60 ${showTooltip ? 'relative group' : ''}`}>
+        <div className="flex items-center space-x-2">
+          <Lock className="w-4 h-4" />
+          <span>{children}</span>
+        </div>
+        {showTooltip && (
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-50 shadow-lg border border-gray-700">
+            Inicia sesión para acceder
+          </div>
+        )}
+      </div>
+    );
+  }
+  
+  return (
+    <Link to={to} className={className} onClick={onClick}>
+      {children}
+    </Link>
+  );
+};
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isExercisesOpen, setIsExercisesOpen] = useState(false);
+  const { user } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -10,7 +47,19 @@ export default function Navbar() {
 
   const closeMenu = () => {
     setIsMenuOpen(false);
+    setIsExercisesOpen(false);
   };
+
+  const toggleExercises = () => {
+    setIsExercisesOpen(!isExercisesOpen);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    closeMenu();
+  };
+
+  const isAuthenticated = !!user;
 
   return (
     <nav className="bg-gray-800 shadow-lg sticky top-0 z-[10000]">
@@ -37,68 +86,144 @@ export default function Navbar() {
               >
                 Inicio
               </Link>
-              <Link
+              <ProtectedLink
                 to="/calculadora"
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
                 onClick={closeMenu}
+                isAuthenticated={isAuthenticated}
               >
                 Calculadora XP
-              </Link>
-              <Link
-                to="/keguel"
+              </ProtectedLink>
+              
+              {/* Dropdown de Ejercicios */}
+               <div className="relative group">
+                 {!isAuthenticated ? (
+                   <div className="relative">
+                     <div className="text-gray-300 px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-1 cursor-not-allowed opacity-60">
+                       <Lock className="w-4 h-4" />
+                       <span>Ejercicios</span>
+                       <ChevronDown className="w-4 h-4" />
+                     </div>
+                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-50 shadow-lg border border-gray-700">
+                       Inicia sesión para acceder
+                     </div>
+                   </div>
+                 ) : (
+                   <>
+                     <button
+                       className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center space-x-1"
+                       onMouseEnter={() => setIsExercisesOpen(true)}
+                       onMouseLeave={() => setIsExercisesOpen(false)}
+                     >
+                       <span>Ejercicios</span>
+                       <ChevronDown className="w-4 h-4" />
+                     </button>
+                     
+                     <div 
+                       className={`absolute top-full left-0 mt-1 w-48 bg-gray-900 rounded-md shadow-lg border border-gray-700 transition-all duration-200 z-50 ${
+                         isExercisesOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+                       }`}
+                       onMouseEnter={() => setIsExercisesOpen(true)}
+                       onMouseLeave={() => setIsExercisesOpen(false)}
+                     >
+                       <div className="py-1">
+                         <ProtectedLink
+                           to="/keguel"
+                           className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
+                           onClick={closeMenu}
+                           isAuthenticated={isAuthenticated}
+                           showTooltip={false}
+                         >
+                           Reto Keguel
+                         </ProtectedLink>
+                         <ProtectedLink
+                           to="/chochasafio"
+                           className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
+                           onClick={closeMenu}
+                           isAuthenticated={isAuthenticated}
+                           showTooltip={false}
+                         >
+                           Chochasafio
+                         </ProtectedLink>
+                         <ProtectedLink
+                           to="/respiracion"
+                           className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
+                           onClick={closeMenu}
+                           isAuthenticated={isAuthenticated}
+                           showTooltip={false}
+                         >
+                           Respiración
+                         </ProtectedLink>
+                         <ProtectedLink
+                           to="/rutinas"
+                           className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
+                           onClick={closeMenu}
+                           isAuthenticated={isAuthenticated}
+                           showTooltip={false}
+                         >
+                           Rutinas
+                         </ProtectedLink>
+                       </div>
+                     </div>
+                   </>
+                 )}
+               </div>
+              
+              <ProtectedLink
+                to="/sexshop"
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
                 onClick={closeMenu}
+                isAuthenticated={isAuthenticated}
               >
-                Reto Keguel
-              </Link>
-              <Link
-                to="/chochasafio"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                onClick={closeMenu}
-              >
-                Chochasafio
-              </Link>
-              <Link
-                to="/respiracion"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                onClick={closeMenu}
-              >
-                Respiración
-              </Link>
-            
-              <Link
+                SexShop
+              </ProtectedLink>
+              <ProtectedLink
                 to="/testimonios"
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
                 onClick={closeMenu}
+                isAuthenticated={isAuthenticated}
               >
                 Testimonios
-              </Link>
-              <Link
-                to="/rutinas"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                onClick={closeMenu}
-              >
-                Rutinas
-              </Link>
+              </ProtectedLink>
             </div>
           </div>
 
           {/* Auth Buttons Desktop */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link
-              to="/login"
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-              onClick={closeMenu}
-            >
-              Iniciar sesión
-            </Link>
-            <Link
-              to="/register"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-              onClick={closeMenu}
-            >
-              Registrarse
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <div className="flex items-center space-x-2 text-gray-300">
+                  <User className="w-4 h-4" />
+                  <span className="text-sm">
+                    {user?.user_metadata?.username || user?.email?.split('@')[0] || 'Usuario'}
+                  </span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Cerrar sesión</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                  onClick={closeMenu}
+                >
+                  Iniciar sesión
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                  onClick={closeMenu}
+                >
+                  Registrarse
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -141,72 +266,122 @@ export default function Navbar() {
           >
             Inicio
           </Link>
-          <Link
+          <ProtectedLink
             to="/calculadora"
             className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
             onClick={closeMenu}
+            isAuthenticated={isAuthenticated}
           >
             Calculadora XP
-          </Link>
-          <Link
-            to="/keguel"
-            className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-            onClick={closeMenu}
-          >
-            Reto Keguel
-          </Link>
-          <Link
-            to="/chochasafio"
-            className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-            onClick={closeMenu}
-          >
-            Chochasafio
-          </Link>
-          <Link
+          </ProtectedLink>
+          
+          {/* Dropdown de Ejercicios Mobile */}
+          <div>
+            <button
+              onClick={toggleExercises}
+              className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 flex items-center justify-between w-full"
+            >
+              <span>Ejercicios</span>
+              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${
+                isExercisesOpen ? 'rotate-180' : ''
+              }`} />
+            </button>
+            
+            <div className={`pl-4 space-y-1 overflow-hidden transition-all duration-200 ${
+               isExercisesOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+             }`}>
+               <ProtectedLink
+                 to="/keguel"
+                 className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                 onClick={closeMenu}
+                 isAuthenticated={isAuthenticated}
+                 showTooltip={false}
+               >
+                 Reto Keguel
+               </ProtectedLink>
+               <ProtectedLink
+                 to="/chochasafio"
+                 className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                 onClick={closeMenu}
+                 isAuthenticated={isAuthenticated}
+                 showTooltip={false}
+               >
+                 Chochasafio
+               </ProtectedLink>
+               <ProtectedLink
+                 to="/respiracion"
+                 className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                 onClick={closeMenu}
+                 isAuthenticated={isAuthenticated}
+                 showTooltip={false}
+               >
+                 Respiración
+               </ProtectedLink>
+               <ProtectedLink
+                 to="/rutinas"
+                 className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                 onClick={closeMenu}
+                 isAuthenticated={isAuthenticated}
+                 showTooltip={false}
+               >
+                 Rutinas
+               </ProtectedLink>
+             </div>
+          </div>
+          
+          <ProtectedLink
             to="/sexshop"
             className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
             onClick={closeMenu}
+            isAuthenticated={isAuthenticated}
           >
             Sexshop
-          </Link>
-          <Link
-            to="/respiracion"
-            className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-            onClick={closeMenu}
-          >
-            Respiración
-          </Link>
-          <Link
+          </ProtectedLink>
+          <ProtectedLink
             to="/testimonios"
             className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
             onClick={closeMenu}
+            isAuthenticated={isAuthenticated}
           >
             Testimonios
-          </Link>
-          <Link
-            to="/rutinas"
-            className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-            onClick={closeMenu}
-          >
-            Rutinas
-          </Link>
+          </ProtectedLink>
           
           {/* Auth Buttons Mobile */}
           <div className="pt-4 pb-3 border-t border-gray-700">
-            <Link
-              to="/login"
-              className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-              onClick={closeMenu}
-            >
-              Iniciar sesión
-            </Link>
-            <Link
-              to="/register"
-              className="bg-blue-600 hover:bg-blue-700 text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 mt-2"
-              onClick={closeMenu}
-            >
-              Registrarse
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <div className="flex items-center space-x-2 text-gray-300 px-3 py-2">
+                  <User className="w-4 h-4" />
+                  <span className="text-base font-medium">
+                    {user?.user_metadata?.username || user?.email?.split('@')[0] || 'Usuario'}
+                  </span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 mt-2 w-full text-left"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Cerrar sesión</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                  onClick={closeMenu}
+                >
+                  Iniciar sesión
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-blue-600 hover:bg-blue-700 text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 mt-2"
+                  onClick={closeMenu}
+                >
+                  Registrarse
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

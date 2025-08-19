@@ -165,25 +165,42 @@ export default function Register() {
         return;
       }
 
-      // Proceed with registration
-      const { data: authData, error: authError }: AuthResponse =
-        await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              username,
-            },
-            emailRedirectTo: `${import.meta.env.VITE_SITE_URL}/auth/callback`,
+      // Registro inicial con Supabase Auth
+      const { data: authData, error: authError }: AuthResponse = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username,
           },
-        });
+          emailRedirectTo: `${import.meta.env.VITE_SITE_URL}/auth/callback`,
+        },
+      });
 
       if (authError) {
         throw authError;
       }
 
       if (authData.user) {
-        // Check if profile already exists
+        let userExists = false;
+        for (let i = 0; i < 10; i++) {
+          const { data: userCheck } = await supabase
+            .from("auth.users")
+            .select("id")
+            .eq("id", authData.user.id)
+            .single();
+
+          if (userCheck) {
+            userExists = true;
+            break;
+          }
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
+        if (!userExists) {
+          throw new Error("No se pudo confirmar la creación del usuario en auth.users.");
+        }
+
         const { data: existingProfile } = await supabase
           .from("profiles")
           .select("id")
@@ -191,7 +208,6 @@ export default function Register() {
           .single();
 
         if (!existingProfile) {
-          // Only create profile if it doesn't exist
           const { error: profileError }: ProfileResponse = await supabase
             .from("profiles")
             .insert({
@@ -199,13 +215,12 @@ export default function Register() {
               username,
               email: authData.user.email,
               created_at: new Date().toISOString(),
-              "30_days": [],
+              days_30: [],
             });
 
           if (profileError) {
-            // Rollback user creation if profile creation fails
-            await supabase.auth.admin.deleteUser(authData.user.id);
-            throw profileError;
+            console.error('Profile creation error:', profileError);
+            throw new Error(`Error al crear el perfil: ${profileError.message}`);
           }
         }
 
