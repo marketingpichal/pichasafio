@@ -1,0 +1,115 @@
+User-agent: *
+Allow: /
+
+# Permitir acceso a recursos importantes
+Allow: /src/
+Allow: /assets/
+Allow: /images/
+Allow: /videos/
+
+# Permitir acceso a páginas principales
+Allow: /chochasafio
+Allow: /register
+Allow: /login
+Allow: /about
+Allow: /contact
+
+# Bloquear acceso a archivos de desarrollo y configuración
+Disallow: /node_modules/
+Disallow: /.env
+Disallow: /.env.local
+Disallow: /.env.production
+Disallow: /package.json
+Disallow: /package-lock.json
+Disallow: /pnpm-lock.yaml
+Disallow: /tsconfig.json
+Disallow: /vite.config.ts
+Disallow: /tailwind.config.js
+Disallow: /postcss.config.js
+Disallow: /eslint.config.js
+
+# Bloquear acceso a archivos de sistema
+Disallow: /.git/
+Disallow: /.github/
+Disallow: /README.md
+Disallow: /LICENSE
+Disallow: /cors.json
+Disallow: /firebase.json
+
+# Bloquear acceso a directorios de desarrollo
+Disallow: /dist/
+Disallow: /build/
+Disallow: /.vite/
+Disallow: /coverage/
+
+# Bloquear acceso a archivos de configuración de IDE
+Disallow: /.vscode/
+Disallow: /.idea/
+Disallow: /.DS_Store
+Disallow: /Thumbs.db
+
+# Bloquear acceso a archivos temporales
+Disallow: /tmp/
+Disallow: /temp/
+Disallow: /*.log
+Disallow: /*.tmp
+
+# Bloquear acceso a áreas administrativas (si las hay)
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/admin/
+
+# Permitir acceso específico a sitemap
+Allow: /sitemap.xml
+
+# Sitemap location
+Sitemap: https://pichasafio.com/sitemap.xml
+
+# Crawl-delay para ser respetuoso con el servidor
+Crawl-delay: 1
+
+# Reglas específicas para Googlebot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Reglas específicas para Bingbot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Reglas específicas para bots de redes sociales
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Bloquear bots maliciosos conocidos
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+# Permitir bots de análisis legítimos
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-Mobile
+Allow: /
+
+User-agent: Mediapartners-Google
+Allow: /
