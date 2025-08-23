@@ -4,7 +4,8 @@ import { logAdEvent, trackUserAdImpression } from "@/lib/adTracking";
 import { useAuth } from "@/context/AuthProvider";
 import { motion } from "framer-motion";
 import ResponsiveCard from "../common/ResponsiveCard";
-import { Calendar, Play, Target, Trophy, Clock, Star } from "lucide-react";
+import { Calendar, Play, Target, Trophy, Clock, Star, Lock, CheckCircle } from "lucide-react";
+import { challengeService, type UserChallenge, type DailyProgress } from "@/lib/challengeService";
 
 interface Exercise {
   name: string;
@@ -20,6 +21,8 @@ interface DayProps {
   exercise: Exercise;
   onClick: (day: number) => void;
   isActive?: boolean;
+  isUnlocked?: boolean;
+  isCompleted?: boolean;
 }
 
 const exercises: Exercise[] = [
@@ -102,25 +105,53 @@ const exercises: Exercise[] = [
   },
 ];
 
-const Day: React.FC<DayProps> = ({ day, exercise, onClick, isActive }) => {
+const Day: React.FC<DayProps> = ({ day, exercise, onClick, isActive, isUnlocked = true, isCompleted = false }) => {
+  const getDayStyles = () => {
+    if (isCompleted) {
+      return "border-green-500 bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg";
+    }
+    if (isActive) {
+      return "border-pink-500 bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-lg";
+    }
+    if (!isUnlocked) {
+      return "border-gray-500 bg-gray-700 text-gray-400 cursor-not-allowed opacity-50";
+    }
+    return "border-gray-600 bg-gray-800 hover:border-pink-400 hover:bg-gray-700 text-gray-300 hover:text-white";
+  };
+
+  const handleClick = () => {
+    if (!isUnlocked) return;
+    onClick(day);
+  };
+
   return (
     <motion.article
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      onClick={() => onClick(day)}
-      className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 text-center ${
-        isActive
-          ? "border-pink-500 bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-lg"
-          : "border-gray-600 bg-gray-800 hover:border-pink-400 hover:bg-gray-700 text-gray-300 hover:text-white"
-      }`}
+      whileHover={isUnlocked ? { scale: 1.05 } : {}}
+      whileTap={isUnlocked ? { scale: 0.95 } : {}}
+      onClick={handleClick}
+      className={`p-4 border-2 rounded-xl transition-all duration-300 text-center relative ${
+        isUnlocked ? 'cursor-pointer' : 'cursor-not-allowed'
+      } ${getDayStyles()}`}
       role="button"
       aria-label={`Ejercicio del día ${day}: ${exercise.name}`}
-      tabIndex={0}
+      tabIndex={isUnlocked ? 0 : -1}
     >
       <header>
         <h3 className="font-bold text-lg mb-1">Día {day}</h3>
       </header>
       <p className="text-xs sm:text-sm opacity-90">{exercise.name}</p>
+      
+      {!isUnlocked && (
+        <div className="absolute top-2 right-2">
+          <Lock className="w-4 h-4" />
+        </div>
+      )}
+      
+      {isCompleted && (
+        <div className="absolute top-2 right-2">
+          <CheckCircle className="w-4 h-4" />
+        </div>
+      )}
     </motion.article>
   );
 };
@@ -138,6 +169,34 @@ const Chochasafio: React.FC = () => {
     null
   );
   const { user } = useAuth();
+  
+  // Estados para el progreso del reto
+  const [userChallenge, setUserChallenge] = React.useState<UserChallenge | null>(null);
+  const [userProgress, setUserProgress] = React.useState<DailyProgress[]>([]);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  // Cargar progreso del usuario
+  React.useEffect(() => {
+    if (!user?.id) return;
+
+    const loadUserProgress = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const { challenge, progress } = await challengeService.getUserProgress(user.id, 'chochasafio');
+        setUserChallenge(challenge);
+        setUserProgress(progress);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error al cargar el progreso');
+        console.error('Error loading progress:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUserProgress();
+  }, [user?.id]);
 
   const getExerciseForDay = (day: number): Exercise => {
     const exerciseIndex = (day - 1) % exercises.length;
@@ -148,6 +207,17 @@ const Chochasafio: React.FC = () => {
     return day % 3 === 0;
   };
 
+  // Verificar si un día está desbloqueado
+  const isDayUnlocked = (day: number): boolean => {
+    if (!userChallenge) return day === 1; // Solo el día 1 está desbloqueado inicialmente
+    return day <= userChallenge.current_day;
+  };
+
+  // Verificar si un día está completado
+  const isDayCompleted = (day: number): boolean => {
+    return userProgress.some(progress => progress.day_number === day);
+  };
+
   const unlockVideo = (day: number, exercise: Exercise) => {
     setCurrentExercise(exercise);
     setCurrentVideo(exercise.embedUrl || exercise.url);
@@ -155,8 +225,23 @@ const Chochasafio: React.FC = () => {
     setSelectedDay(day);
   };
 
-  const handleDayClick = (day: number) => {
+  const handleDayClick = async (day: number) => {
+    if (!user?.id) return;
+
     const exercise = getExerciseForDay(day);
+    
+    // Verificar si el día está desbloqueado
+    if (!isDayUnlocked(day)) {
+      setError('Este día aún no está desbloqueado. Completa los días anteriores primero.');
+      return;
+    }
+
+    // Verificar si ya está completado
+    if (isDayCompleted(day)) {
+      unlockVideo(day, exercise);
+      return;
+    }
+
     if (shouldGateForDay(day)) {
       pendingRef.current = { day, exercise };
       setShowAdGate(true);
@@ -171,7 +256,26 @@ const Chochasafio: React.FC = () => {
       }).catch(() => void 0);
       return;
     }
-    unlockVideo(day, exercise);
+    
+    await completeDay(day, exercise, false);
+  };
+
+  const completeDay = async (day: number, exercise: Exercise, adWatched: boolean = false) => {
+    if (!user?.id) return;
+
+    try {
+      await challengeService.completeDay(user.id, 'chochasafio', day, exercise.name, adWatched);
+      
+      // Recargar progreso
+      const { challenge, progress } = await challengeService.getUserProgress(user.id, 'chochasafio');
+      setUserChallenge(challenge);
+      setUserProgress(progress);
+      
+      unlockVideo(day, exercise);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al completar el día');
+      console.error('Error completing day:', err);
+    }
   };
 
   // Estructura de datos para SEO
@@ -241,27 +345,67 @@ const Chochasafio: React.FC = () => {
                 <div className="flex justify-center mb-4">
                   <Calendar className="w-8 h-8 text-pink-400" />
                 </div>
-                <h2 id="program-stats" className="text-2xl font-bold text-white mb-2">30</h2>
-                <p className="text-gray-300 text-sm">Días de Entrenamiento</p>
+                <h2 id="program-stats" className="text-2xl font-bold text-white mb-2">
+                  {userChallenge ? userChallenge.completed_days : 0}/30
+                </h2>
+                <p className="text-gray-300 text-sm">Días Completados</p>
               </ResponsiveCard>
 
               <ResponsiveCard className="text-center">
                 <div className="flex justify-center mb-4">
                   <Target className="w-8 h-8 text-pink-400" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">11</h3>
-                <p className="text-gray-300 text-sm">Ejercicios Diferentes</p>
+                <h3 className="text-2xl font-bold text-white mb-2">
+                  {userChallenge ? userChallenge.streak_days : 0}
+                </h3>
+                <p className="text-gray-300 text-sm">Días de Racha</p>
               </ResponsiveCard>
 
               <ResponsiveCard className="text-center">
                 <div className="flex justify-center mb-4">
                   <Trophy className="w-8 h-8 text-pink-400" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">100%</h3>
-                <p className="text-gray-300 text-sm">Resultados Garantizados</p>
+                <h3 className="text-2xl font-bold text-white mb-2">
+                  {userChallenge ? Math.round((userChallenge.completed_days / userChallenge.total_days) * 100) : 0}%
+                </h3>
+                <p className="text-gray-300 text-sm">Progreso del Reto</p>
               </ResponsiveCard>
             </motion.div>
           </section>
+
+          {/* Mensaje de Error */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6"
+            >
+              <ResponsiveCard className="bg-red-900/20 border-red-500">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm">!</span>
+                  </div>
+                  <p className="text-red-300">{error}</p>
+                </div>
+              </ResponsiveCard>
+            </motion.div>
+          )}
+
+          {/* Loading State */}
+          {isLoading && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6"
+            >
+              <ResponsiveCard>
+                <div className="flex items-center justify-center space-x-3">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-pink-500"></div>
+                  <p className="text-gray-300">Cargando tu progreso...</p>
+                </div>
+              </ResponsiveCard>
+            </motion.div>
+          )}
 
           {/* Información Adicional SEO */}
           <section className="mb-12">
@@ -316,6 +460,8 @@ const Chochasafio: React.FC = () => {
                       exercise={getExerciseForDay(day)}
                       onClick={handleDayClick}
                       isActive={selectedDay === day}
+                      isUnlocked={isDayUnlocked(day)}
+                      isCompleted={isDayCompleted(day)}
                     />
                   ))}
                 </div>
@@ -409,7 +555,7 @@ const Chochasafio: React.FC = () => {
             <RewardedAdGate
               isOpen={showAdGate}
               onClose={() => setShowAdGate(false)}
-              onReward={() => {
+              onReward={async () => {
                 const pending = pendingRef.current;
                 if (!pending) return;
                 trackUserAdImpression(user?.id ?? null);
@@ -421,7 +567,7 @@ const Chochasafio: React.FC = () => {
                     exerciseName: pending.exercise.name,
                   },
                 }).catch(() => void 0);
-                unlockVideo(pending.day, pending.exercise);
+                await completeDay(pending.day, pending.exercise, true);
                 pendingRef.current = null;
               }}
               videoContext={{
