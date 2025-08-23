@@ -26,10 +26,13 @@ export default function Register() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(
+    null
+  );
   const [checkingUsername, setCheckingUsername] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
   const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
   const [checkingEmail, setCheckingEmail] = useState<boolean>(false);
 
@@ -70,7 +73,12 @@ export default function Register() {
     const hasSpecialChar = /[!@#$%^&*]/.test(pass);
 
     return {
-      isValid: minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar,
+      isValid:
+        minLength &&
+        hasUpperCase &&
+        hasLowerCase &&
+        hasNumber &&
+        hasSpecialChar,
       errors: {
         minLength,
         hasUpperCase,
@@ -132,19 +140,21 @@ export default function Register() {
       setLoading(false);
       return;
     }
-    
+
     if (!termsAccepted) {
       setError("Debes aceptar los términos y condiciones");
       setLoading(false);
       return;
     }
-    
+
     if (usernameAvailable === false || usernameAvailable === null) {
-      setError("El nombre de usuario no está disponible o aún se está verificando");
+      setError(
+        "El nombre de usuario no está disponible o aún se está verificando"
+      );
       setLoading(false);
       return;
     }
-    
+
     if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       setError("Por favor, ingresa un correo válido");
       setLoading(false);
@@ -212,7 +222,9 @@ export default function Register() {
         setSuccess(true);
       }
     } catch (err: any) {
-      setError(err.message || "Error en el registro. Por favor, intenta de nuevo.");
+      setError(
+        err.message || "Error en el registro. Por favor, intenta de nuevo."
+      );
     } finally {
       setLoading(false);
     }
@@ -255,7 +267,10 @@ export default function Register() {
             <form onSubmit={handleRegister} className="space-y-6">
               {/* Email Field */}
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-300 text-left">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-300 text-left"
+                >
                   Email
                 </label>
                 <div className="relative">
@@ -285,7 +300,11 @@ export default function Register() {
                   )}
                 </div>
                 {email && emailAvailable !== null && !checkingEmail && (
-                  <p className={`text-xs ${emailAvailable ? 'text-green-400' : 'text-red-400'}`}>
+                  <p
+                    className={`text-xs ${
+                      emailAvailable ? "text-green-400" : "text-red-400"
+                    }`}
+                  >
                     {emailAvailable ? "✓ Email disponible" : "✗ Email en uso"}
                   </p>
                 )}
@@ -293,7 +312,10 @@ export default function Register() {
 
               {/* Username Field */}
               <div className="space-y-2">
-                <label htmlFor="username" className="block text-sm font-medium text-gray-300 text-left">
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium text-gray-300 text-left"
+                >
                   Nombre de usuario
                 </label>
                 <div className="relative">
@@ -312,26 +334,39 @@ export default function Register() {
                       <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   )}
-                  {username && usernameAvailable !== null && !checkingUsername && (
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      {usernameAvailable ? (
-                        <Check className="w-5 h-5 text-green-400" />
-                      ) : (
-                        <X className="w-5 h-5 text-red-400" />
-                      )}
-                    </div>
-                  )}
+                  {username &&
+                    usernameAvailable !== null &&
+                    !checkingUsername && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        {usernameAvailable ? (
+                          <Check className="w-5 h-5 text-green-400" />
+                        ) : (
+                          <X className="w-5 h-5 text-red-400" />
+                        )}
+                      </div>
+                    )}
                 </div>
-                {username && usernameAvailable !== null && !checkingUsername && (
-                  <p className={`text-xs ${usernameAvailable ? 'text-green-400' : 'text-red-400'}`}>
-                    {usernameAvailable ? "✓ Usuario disponible" : "✗ Usuario no disponible"}
-                  </p>
-                )}
+                {username &&
+                  usernameAvailable !== null &&
+                  !checkingUsername && (
+                    <p
+                      className={`text-xs ${
+                        usernameAvailable ? "text-green-400" : "text-red-400"
+                      }`}
+                    >
+                      {usernameAvailable
+                        ? "✓ Usuario disponible"
+                        : "✗ Usuario no disponible"}
+                    </p>
+                  )}
               </div>
 
               {/* Password Field */}
               <div className="space-y-2">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-300 text-left">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-300 text-left"
+                >
                   Contraseña
                 </label>
                 <div className="relative">
@@ -350,7 +385,11 @@ export default function Register() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -358,25 +397,57 @@ export default function Register() {
               {/* Password Requirements */}
               {password && (
                 <div className="bg-gray-800/50 rounded-xl p-4 space-y-2">
-                  <p className="text-sm font-medium text-gray-300 mb-3">Requisitos de contraseña:</p>
+                  <p className="text-sm font-medium text-gray-300 mb-3">
+                    Requisitos de contraseña:
+                  </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    <div className={`flex items-center space-x-2 ${validatePassword(password).errors.minLength ? 'text-green-400' : 'text-gray-500'}`}>
+                    <div
+                      className={`flex items-center space-x-2 ${
+                        validatePassword(password).errors.minLength
+                          ? "text-green-400"
+                          : "text-gray-500"
+                      }`}
+                    >
                       <Check className="w-4 h-4" />
                       <span>Mínimo 8 caracteres</span>
                     </div>
-                    <div className={`flex items-center space-x-2 ${validatePassword(password).errors.hasUpperCase ? 'text-green-400' : 'text-gray-500'}`}>
+                    <div
+                      className={`flex items-center space-x-2 ${
+                        validatePassword(password).errors.hasUpperCase
+                          ? "text-green-400"
+                          : "text-gray-500"
+                      }`}
+                    >
                       <Check className="w-4 h-4" />
                       <span>Al menos una mayúscula</span>
                     </div>
-                    <div className={`flex items-center space-x-2 ${validatePassword(password).errors.hasLowerCase ? 'text-green-400' : 'text-gray-500'}`}>
+                    <div
+                      className={`flex items-center space-x-2 ${
+                        validatePassword(password).errors.hasLowerCase
+                          ? "text-green-400"
+                          : "text-gray-500"
+                      }`}
+                    >
                       <Check className="w-4 h-4" />
                       <span>Al menos una minúscula</span>
                     </div>
-                    <div className={`flex items-center space-x-2 ${validatePassword(password).errors.hasNumber ? 'text-green-400' : 'text-gray-500'}`}>
+                    <div
+                      className={`flex items-center space-x-2 ${
+                        validatePassword(password).errors.hasNumber
+                          ? "text-green-400"
+                          : "text-gray-500"
+                      }`}
+                    >
                       <Check className="w-4 h-4" />
                       <span>Al menos un número</span>
                     </div>
-                    <div className={`flex items-center space-x-2 ${validatePassword(password).errors.hasSpecialChar ? 'text-green-400' : 'text-gray-500'}`}>
+                    <div
+                      className={`flex items-center space-x-2 ${
+                        validatePassword(password).errors.hasSpecialChar
+                          ? "text-green-400"
+                          : "text-gray-500"
+                      }`}
+                    >
                       <Check className="w-4 h-4" />
                       <span>Carácter especial (!@#$%^&*)</span>
                     </div>
@@ -386,7 +457,10 @@ export default function Register() {
 
               {/* Confirm Password Field */}
               <div className="space-y-2">
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 text-left">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-gray-300 text-left"
+                >
                   Confirmar contraseña
                 </label>
                 <div className="relative">
@@ -405,11 +479,17 @@ export default function Register() {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
                   >
-                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
                 {confirmPassword && password !== confirmPassword && (
-                  <p className="text-red-400 text-xs">Las contraseñas no coinciden</p>
+                  <p className="text-red-400 text-xs">
+                    Las contraseñas no coinciden
+                  </p>
                 )}
               </div>
 
@@ -424,7 +504,10 @@ export default function Register() {
                 />
                 <label htmlFor="terms" className="text-sm text-gray-300">
                   Acepto los{" "}
-                  <button type="button" className="text-blue-400 hover:text-blue-300 underline">
+                  <button
+                    type="button"
+                    className="text-blue-400 hover:text-blue-300 underline"
+                  >
                     términos y condiciones
                   </button>
                 </label>
@@ -461,7 +544,7 @@ export default function Register() {
                   ¿Ya tienes cuenta?{" "}
                   <button
                     type="button"
-                    onClick={() => window.location.href = "/login"}
+                    onClick={() => (window.location.href = "/login")}
                     className="text-blue-400 hover:text-blue-300 transition-colors duration-200 font-medium"
                   >
                     Inicia sesión aquí

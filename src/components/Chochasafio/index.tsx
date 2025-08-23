@@ -77,7 +77,6 @@ const exercises: Exercise[] = [
     url: "https://free-penis-enlargement-videos.thundersplace.org/videos/webm/inverted-v-a-stretch.webm?view=1",
     description: "Estiramiento en V invertida",
   },
-
 ];
 
 const Day: React.FC<DayProps> = ({ day, exercise, onClick, isActive }) => {
@@ -101,11 +100,15 @@ const Day: React.FC<DayProps> = ({ day, exercise, onClick, isActive }) => {
 const Chochasafio: React.FC = () => {
   const totalDays = 30;
   const [currentVideo, setCurrentVideo] = React.useState<string>("");
-  const [currentExercise, setCurrentExercise] = React.useState<Exercise | null>(null);
+  const [currentExercise, setCurrentExercise] = React.useState<Exercise | null>(
+    null
+  );
   const [showVideo, setShowVideo] = React.useState<boolean>(false);
   const [selectedDay, setSelectedDay] = React.useState<number | null>(null);
   const [showAdGate, setShowAdGate] = React.useState<boolean>(false);
-  const pendingRef = React.useRef<{ day: number; exercise: Exercise } | null>(null);
+  const pendingRef = React.useRef<{ day: number; exercise: Exercise } | null>(
+    null
+  );
   const { user } = useAuth();
 
   const getExerciseForDay = (day: number): Exercise => {
@@ -132,7 +135,10 @@ const Chochasafio: React.FC = () => {
       logAdEvent("gate_required", {
         user_id: user?.id ?? null,
         provider: "juicyads",
-        ad_zone: window.matchMedia && window.matchMedia("(max-width: 768px)").matches ? "1098249" : "1098247",
+        ad_zone:
+          window.matchMedia && window.matchMedia("(max-width: 768px)").matches
+            ? "1098249"
+            : "1098247",
         context: { day, exerciseName: exercise.name },
       }).catch(() => void 0);
       return;
@@ -159,8 +165,9 @@ const Chochasafio: React.FC = () => {
             Chochasafio de 30 Días
           </h1>
           <p className="text-gray-300 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
-            Completa este desafío de 30 días y transforma tu vida. 
-            Cada día tiene un ejercicio específico diseñado para maximizar tus resultados.
+            Completa este desafío de 30 días y transforma tu vida. Cada día
+            tiene un ejercicio específico diseñado para maximizar tus
+            resultados.
           </p>
         </motion.div>
 
@@ -269,10 +276,12 @@ const Chochasafio: React.FC = () => {
                 </div>
 
                 <div className="bg-gray-800/50 rounded-xl p-4">
-                  <h4 className="font-semibold text-white mb-2">Instrucciones:</h4>
+                  <h4 className="font-semibold text-white mb-2">
+                    Instrucciones:
+                  </h4>
                   <p className="text-gray-300 text-sm leading-relaxed">
-                    {currentExercise.description || 
-                     "Sigue las instrucciones del video cuidadosamente. Realiza el ejercicio de manera controlada y respeta los tiempos de descanso."}
+                    {currentExercise.description ||
+                      "Sigue las instrucciones del video cuidadosamente. Realiza el ejercicio de manera controlada y respeta los tiempos de descanso."}
                   </p>
                 </div>
               </div>
@@ -292,12 +301,18 @@ const Chochasafio: React.FC = () => {
               logAdEvent("gate_rewarded", {
                 user_id: user?.id ?? null,
                 provider: "juicyads",
-                context: { day: pending.day, exerciseName: pending.exercise.name },
+                context: {
+                  day: pending.day,
+                  exerciseName: pending.exercise.name,
+                },
               }).catch(() => void 0);
               unlockVideo(pending.day, pending.exercise);
               pendingRef.current = null;
             }}
-            videoContext={{ day: pendingRef.current?.day, exerciseName: pendingRef.current?.exercise.name }}
+            videoContext={{
+              day: pendingRef.current?.day,
+              exerciseName: pendingRef.current?.exercise.name,
+            }}
           />
         )}
 
@@ -314,11 +329,11 @@ const Chochasafio: React.FC = () => {
                 ¡Comienza tu Desafío Hoy!
               </h3>
               <p className="text-gray-300 leading-relaxed">
-                Selecciona el día 1 y comienza tu transformación. 
-                Recuerda ser consistente y seguir las instrucciones al pie de la letra.
+                Selecciona el día 1 y comienza tu transformación. Recuerda ser
+                consistente y seguir las instrucciones al pie de la letra.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
-                <button 
+                <button
                   onClick={() => handleDayClick(1)}
                   className="bg-gradient-to-r from-pink-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-pink-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200"
                 >
@@ -332,23 +347,25 @@ const Chochasafio: React.FC = () => {
           </ResponsiveCard>
         </motion.div>
       </div>
-      {/* Coming Soon Message */}
-      <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-        <div className="bg-gray-800 p-8 rounded-xl max-w-md mx-4 text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">
-            Ejercicios Disponibles Pronto
-          </h2>
-          <p className="text-gray-300 mb-6">
-           crea tu cuenta y mantente pendiente de los próximos ejercicios.
-          </p>
-          <button 
-            onClick={() => window.location.href = '/register'}
-            className="bg-gradient-to-r from-pink-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-pink-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200"
-          >
-            Registrate ahora mismo
-          </button>
+      {/* Coming Soon Message - Solo se muestra si el usuario no está logueado */}
+      {!user && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-8 rounded-xl max-w-md mx-4 text-center">
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Ejercicios Disponibles Pronto
+            </h2>
+            <p className="text-gray-300 mb-6">
+              crea tu cuenta y mantente pendiente de los próximos ejercicios.
+            </p>
+            <button
+              onClick={() => (window.location.href = "/register")}
+              className="bg-gradient-to-r from-pink-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-pink-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200"
+            >
+              Registrate ahora mismo
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
