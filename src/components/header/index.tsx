@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import PichasahurComicBanner from '../common/PichasahurComicBanner';
+// import PichasahurComicBanner from '../common/PichasahurComicBanner';
 import { useAuth } from '../../context/AuthProvider';
 import { useState } from 'react';
 import { Lock, X, LogIn, UserPlus } from 'lucide-react';
@@ -30,65 +30,69 @@ export default function Header() {
   };
 
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-12 sm:py-16 lg:py-20 px-4 sm:px-8 lg:px-12 text-center overflow-hidden"
-    >
-      {/* Background decoration */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
-      
-      <div className="relative z-10 max-w-4xl mx-auto">
-        {/* Pichasahur Comic Banner */}
-        <motion.div
-          initial={{ scale: 0, y: -50 }}
-          animate={{ scale: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, type: "spring", stiffness: 200 }}
-          className="flex justify-center mb-8"
-        >
-          <PichasahurComicBanner size="large" animated={true} variant="action" />
-        </motion.div>
+    <>
+
+      {/* Commented Hero Section */}
+      {/*
+      <motion.section
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-12 sm:py-16 lg:py-20 px-4 sm:px-8 lg:px-12 text-center overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
         
-        <motion.h1
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 leading-tight font-poppins"
-        >
-          Pichasafio.com
-        </motion.h1>
-
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-lg sm:text-xl md:text-2xl text-gray-200 mt-4 sm:mt-6 max-w-2xl mx-auto leading-relaxed font-poppins-light"
-        >
-          Agranda tu chimbo, dura más y no te vengas rápido
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-8 sm:mt-10"
-        >
-          <button
-            onClick={handleClick}
-            className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500/50 font-poppins-semibold"
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <motion.div
+            initial={{ scale: 0, y: -50 }}
+            animate={{ scale: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1, type: "spring", stiffness: 200 }}
+            className="flex justify-center mb-8"
           >
-            <span className="relative z-10">¡CLIC AQUÍ PARA VER LAS NUEVAS RUTINAS!</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-          </button>
-        </motion.div>
+            <PichasahurComicBanner size="large" animated={true} variant="action" />
+          </motion.div>
+          
+          <motion.h1
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 leading-tight font-poppins"
+          >
+            Pichasafio.com
+          </motion.h1>
 
-        {/* Decorative elements */}
-        <div className="absolute top-10 left-10 w-20 h-20 bg-blue-500/20 rounded-full blur-xl"></div>
-        <div className="absolute bottom-10 right-10 w-32 h-32 bg-purple-500/20 rounded-full blur-xl"></div>
-      </div>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-lg sm:text-xl md:text-2xl text-gray-200 mt-4 sm:mt-6 max-w-2xl mx-auto leading-relaxed font-poppins-light"
+          >
+            Agranda tu chimbo, dura más y no te vengas rápido
+          </motion.p>
 
-      {/* Modal de Autenticación */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="mt-8 sm:mt-10"
+          >
+            <button
+              onClick={handleClick}
+              className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-500/50 font-poppins-semibold"
+            >
+              <span className="relative z-10">¡CLIC AQUÍ PARA VER LAS NUEVAS RUTINAS!</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+            </button>
+          </motion.div>
+
+          <div className="absolute top-10 left-10 w-20 h-20 bg-blue-500/20 rounded-full blur-xl"></div>
+          <div className="absolute bottom-10 right-10 w-32 h-32 bg-purple-500/20 rounded-full blur-xl"></div>
+        </div>
+      </motion.section>
+      */}
+
+      {/* Commented Authentication Modal */}
+      {/*
       {showAuthModal && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -105,7 +109,6 @@ export default function Header() {
             className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 max-w-md w-full mx-4 border border-gray-700 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header del Modal */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
@@ -121,7 +124,6 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Contenido del Modal */}
             <div className="text-center mb-8">
               <p className="text-gray-300 text-lg leading-relaxed">
                 Para acceder a las <span className="text-blue-400 font-semibold">rutinas exclusivas</span> necesitas estar registrado.
@@ -131,7 +133,6 @@ export default function Header() {
               </p>
             </div>
 
-            {/* Botones de Acción */}
             <div className="space-y-4">
               <button
                 onClick={handleLogin}
@@ -150,7 +151,6 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Footer del Modal */}
             <div className="mt-6 pt-6 border-t border-gray-700">
               <p className="text-center text-gray-500 text-sm">
                 ¿Ya tienes cuenta? <button onClick={handleLogin} className="text-blue-400 hover:text-blue-300 font-medium">Inicia sesión aquí</button>
@@ -159,6 +159,7 @@ export default function Header() {
           </motion.div>
         </motion.div>
       )}
-    </motion.section>
+      */}
+    </>
   );
 }

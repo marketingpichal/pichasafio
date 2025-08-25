@@ -3,7 +3,8 @@ import Engrosamiento from './Grosor';
 import Alargamiento from './Largor';
 import InstruccionesPene from '../Warning';
 import ResponsiveCard from '../common/ResponsiveCard';
-import { Dumbbell, Target, TrendingUp, Zap } from 'lucide-react';
+import DailyVideos from './DailyVideos';
+import { Dumbbell, Target, TrendingUp, Zap, Play } from 'lucide-react';
 
 export default function Rutinas() {
   return (
@@ -40,6 +41,16 @@ export default function Rutinas() {
           <InstruccionesPene />
         </motion.div>
 
+        {/* Daily Videos Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.25 }}
+          className="mb-12"
+        >
+          <DailyVideos />
+        </motion.div>
+
         {/* Features Grid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -50,6 +61,18 @@ export default function Rutinas() {
           <ResponsiveCard className="text-center">
             <div className="flex justify-center mb-4">
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center">
+                <Play className="w-6 h-6 text-white" />
+              </div>
+            </div>
+            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">Videos Diarios</h3>
+            <p className="text-gray-300 text-sm font-poppins-light">
+              Desbloquea nuevos videos de entrenamiento iniciando sesión cada día
+            </p>
+          </ResponsiveCard>
+
+          <ResponsiveCard className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
                 <Target className="w-6 h-6 text-white" />
               </div>
             </div>
@@ -61,25 +84,13 @@ export default function Rutinas() {
 
           <ResponsiveCard className="text-center">
             <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
                 <TrendingUp className="w-6 h-6 text-white" />
               </div>
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">Resultados Garantizados</h3>
+            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">Progreso Diario</h3>
             <p className="text-gray-300 text-sm font-poppins-light">
-              Sigue las rutinas correctamente y verás resultados en poco tiempo
-            </p>
-          </ResponsiveCard>
-
-          <ResponsiveCard className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">Ejercicios Avanzados</h3>
-            <p className="text-gray-300 text-sm font-poppins-light">
-              Técnicas avanzadas para usuarios experimentados
+              Sigue tu progreso y mantén la constancia con contenido diario
             </p>
           </ResponsiveCard>
         </motion.div>

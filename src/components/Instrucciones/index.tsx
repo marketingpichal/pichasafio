@@ -1,6 +1,6 @@
 import PichasahurMascot from '../common/PichasahurMascot';
 
-export default function Instructions() {
+export default function   Instructions() {
     return (
       <section className="bg-gradient-to-b from-gray-900 to-gray-800 py-12 px-8 shadow-2xl">
         <div className="container mx-auto flex flex-col items-center gap-8">

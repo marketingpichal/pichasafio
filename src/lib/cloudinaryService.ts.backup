@@ -1,0 +1,508 @@
+import { Cloudinary } from '@cloudinary/url-gen';
+import { AdvancedImage } from '@cloudinary/react';
+import { fill } from '@cloudinary/url-gen/actions/resize';
+import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
+
+// Configuración de Cloudinary para frontend
+const cld = new Cloudinary({
+  cloud: {
+    cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+  }
+});
+
+export interface CloudinaryImage {
+  public_id: string;
+  secure_url: string;
+  width: number;
+  height: number;
+  format: string;
+  created_at: string;
+  bytes: number;
+  tags: string[];
+}
+
+export interface PoseImageData {
+  id: string;
+  name: string;
+  url: string;
+  thumbnail: string;
+  width: number;
+  height: number;
+  tags: string[];
+  created_at: string;
+}
+
+// Datos de ejemplo para poses usando URLs reales de Cloudinary
+const mockPoseImages: PoseImageData[] = [
+  {
+    id: 'pose_1',
+    name: 'Pose Romántica 1',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/romantic-pose-1.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/romantic-pose-1.jpg',
+    width: 400,
+    height: 600,
+    tags: ['romantic', 'intimate'],
+    created_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: 'pose_2',
+    name: 'Pose Clásica 1',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/classic-pose-1.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/classic-pose-1.jpg',
+    width: 400,
+    height: 600,
+    tags: ['classic', 'traditional'],
+    created_at: '2024-01-02T00:00:00Z'
+  },
+  {
+    id: 'pose_3',
+    name: 'Pose Aventurera 1',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/adventurous-pose-1.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/adventurous-pose-1.jpg',
+    width: 400,
+    height: 600,
+    tags: ['adventurous', 'exciting'],
+    created_at: '2024-01-03T00:00:00Z'
+  },
+  {
+    id: 'pose_4',
+    name: 'Pose Íntima 1',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/intimate-pose-1.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/intimate-pose-1.jpg',
+    width: 400,
+    height: 600,
+    tags: ['intimate', 'close'],
+    created_at: '2024-01-04T00:00:00Z'
+  },
+  {
+    id: 'pose_5',
+    name: 'Pose Experimental 1',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/experimental-pose-1.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/experimental-pose-1.jpg',
+    width: 400,
+    height: 600,
+    tags: ['experimental', 'creative'],
+    created_at: '2024-01-05T00:00:00Z'
+  },
+  {
+    id: 'pose_6',
+    name: 'Pose Romántica 2',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/romantic-pose-2.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/romantic-pose-2.jpg',
+    width: 400,
+    height: 600,
+    tags: ['romantic', 'gentle'],
+    created_at: '2024-01-06T00:00:00Z'
+  },
+  {
+    id: 'pose_7',
+    name: 'Pose Clásica 2',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/classic-pose-2.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/classic-pose-2.jpg',
+    width: 400,
+    height: 600,
+    tags: ['classic', 'timeless'],
+    created_at: '2024-01-07T00:00:00Z'
+  },
+  {
+    id: 'pose_8',
+    name: 'Pose Aventurera 2',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/adventurous-pose-2.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/adventurous-pose-2.jpg',
+    width: 400,
+    height: 600,
+    tags: ['adventurous', 'bold'],
+    created_at: '2024-01-08T00:00:00Z'
+  },
+  {
+    id: 'pose_9',
+    name: 'Pose Íntima 2',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/intimate-pose-2.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/intimate-pose-2.jpg',
+    width: 400,
+    height: 600,
+    tags: ['intimate', 'tender'],
+    created_at: '2024-01-09T00:00:00Z'
+  },
+  {
+    id: 'pose_10',
+    name: 'Pose Experimental 2',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/experimental-pose-2.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/experimental-pose-2.jpg',
+    width: 400,
+    height: 600,
+    tags: ['experimental', 'unique'],
+    created_at: '2024-01-10T00:00:00Z'
+  },
+  {
+    id: 'pose_11',
+    name: 'Pose Romántica 3',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/romantic-pose-3.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/romantic-pose-3.jpg',
+    width: 400,
+    height: 600,
+    tags: ['romantic', 'passionate'],
+    created_at: '2024-01-11T00:00:00Z'
+  },
+  {
+    id: 'pose_12',
+    name: 'Pose Clásica 3',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/classic-pose-3.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/classic-pose-3.jpg',
+    width: 400,
+    height: 600,
+    tags: ['classic', 'elegant'],
+    created_at: '2024-01-12T00:00:00Z'
+  },
+  {
+    id: 'pose_13',
+    name: 'Pose Aventurera 3',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/adventurous-pose-3.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/adventurous-pose-3.jpg',
+    width: 400,
+    height: 600,
+    tags: ['adventurous', 'dynamic'],
+    created_at: '2024-01-13T00:00:00Z'
+  },
+  {
+    id: 'pose_14',
+    name: 'Pose Íntima 3',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/intimate-pose-3.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/intimate-pose-3.jpg',
+    width: 400,
+    height: 600,
+    tags: ['intimate', 'loving'],
+    created_at: '2024-01-14T00:00:00Z'
+  },
+  {
+    id: 'pose_15',
+    name: 'Pose Experimental 3',
+    url: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/v1735000000/poses/experimental-pose-3.jpg',
+    thumbnail: 'https://res.cloudinary.com/dxqoyqjpx/image/upload/c_thumb,w_200,h_150/v1735000000/poses/experimental-pose-3.jpg',
+    width: 400,
+    height: 600,
+    tags: ['experimental', 'innovative'],
+    created_at: '2024-01-15T00:00:00Z'
+  }
+];
+
+// Cache para las imágenes de Cloudinary
+let cachedPoseImages: PoseImageData[] | null = null;
+let cacheTimestamp: number = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+
+// Persistent client-side cache (localStorage)
+const LOCAL_CACHE_KEY = 'poseImagesCacheV1';
+const RATE_LIMIT_BACKOFF_KEY = 'cloudinaryRateLimitUntil';
+const LOCAL_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas
+
+const canUseLocalStorage = typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+
+const getLocalCache = (): PoseImageData[] | null => {
+  if (!canUseLocalStorage) return null;
+  try {
+    const raw = window.localStorage.getItem(LOCAL_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.images) || typeof parsed.ts !== 'number') return null;
+    if (Date.now() - parsed.ts > LOCAL_CACHE_DURATION) return null;
+    return parsed.images as PoseImageData[];
+  } catch {
+    return null;
+  }
+};
+
+const setLocalCache = (images: PoseImageData[]) => {
+  if (!canUseLocalStorage) return;
+  try {
+    window.localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify({ ts: Date.now(), images }));
+  } catch {}
+};
+
+const setRateLimitBackoff = (msFromNow: number = 60 * 60 * 1000) => {
+  if (!canUseLocalStorage) return;
+  try {
+    window.localStorage.setItem(RATE_LIMIT_BACKOFF_KEY, String(Date.now() + msFromNow));
+  } catch {}
+};
+
+const isInRateLimitBackoff = (): boolean => {
+  if (!canUseLocalStorage) return false;
+  try {
+    const untilStr = window.localStorage.getItem(RATE_LIMIT_BACKOFF_KEY);
+    if (!untilStr) return false;
+    const until = Number(untilStr);
+    if (!Number.isFinite(until)) return false;
+    return Date.now() < until;
+  } catch {
+    return false;
+  }
+};
+/**
+ * Obtiene todas las imágenes de la carpeta 'poses' en Cloudinary usando Supabase Edge Function
+ */
+export const getPoseImages = async (): Promise<PoseImageData[]> => {
+  // Verificar si tenemos datos en caché válidos
+  const now = Date.now();
+  if (cachedPoseImages && (now - cacheTimestamp) < CACHE_DURATION) {
+    console.log('📦 Using cached Cloudinary images');
+    return cachedPoseImages;
+  }
+
+  // Si estamos en backoff por límite de tasa, intentar usar caché persistente antes de red
+  if (isInRateLimitBackoff()) {
+    const persisted = getLocalCache();
+    if (persisted && persisted.length > 0) {
+      console.log('⏳ Rate limit backoff active, using persisted cache');
+      // Actualizar caché en memoria para mejorar UX
+      cachedPoseImages = persisted;
+      cacheTimestamp = Date.now();
+      return persisted;
+    }
+  }
+  
+  // Verificar si Supabase está configurado
+  if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+    console.log('⚠️ Supabase not configured, attempting to use persisted cache or mock images');
+    const persisted = getLocalCache();
+    if (persisted && persisted.length > 0) {
+      cachedPoseImages = persisted;
+      cacheTimestamp = Date.now();
+      return persisted;
+    }
+    return mockPoseImages;
+  }
+  
+  console.log('🔍 Fetching pose images from Supabase Edge Function...');
+  
+  // Función para hacer fetch con reintentos
+  const fetchWithRetry = async (retries = 3): Promise<Response> => {
+    for (let i = 0; i < retries; i++) {
+      try {
+        console.log(`🚀 Fetching pose images from Supabase Edge Function (attempt ${i + 1}/${retries})...`);
+        
+        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cloudinary-poses`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+          },
+          body: JSON.stringify({
+            action: 'getPoses'
+          }),
+          signal: AbortSignal.timeout(10000) // 10 segundos timeout
+        });
+        
+        if (response.ok) {
+          return response;
+        }
+        
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      } catch (error) {
+        console.warn(`⚠️ Attempt ${i + 1} failed:`, error);
+        
+        if (i === retries - 1) {
+          throw error;
+        }
+        
+        // Esperar antes del siguiente intento (backoff exponencial)
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+      }
+    }
+    
+    throw new Error('All retry attempts failed');
+  };
+  
+  try {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      console.warn('❌ Supabase not configured properly, using persisted cache or mock data');
+      const persisted = getLocalCache();
+      if (persisted && persisted.length > 0) {
+        cachedPoseImages = persisted;
+        cacheTimestamp = Date.now();
+        return persisted;
+      }
+      return mockPoseImages;
+    }
+    
+    const response = await fetchWithRetry();
+    
+    console.log('📡 Edge Function response:', {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ Edge Function error details:', errorText);
+      throw new Error(`Edge Function error: ${response.status} - ${errorText}`);
+    }
+    
+    const result = await response.json();
+    console.log('✅ Cloudinary images received:', {
+      count: result.images?.length || 0,
+      firstImage: result.images?.[0]?.name || 'none',
+      sampleImages: result.images?.slice(0, 3).map((img: any) => img.name) || []
+    });
+    
+    if (!result.images || result.images.length === 0) {
+      console.warn('⚠️ No images returned from Cloudinary, using persisted cache or mock data');
+      const persisted = getLocalCache();
+      if (persisted && persisted.length > 0) {
+        cachedPoseImages = persisted;
+        cacheTimestamp = Date.now();
+        return persisted;
+      }
+      return mockPoseImages;
+    }
+    
+    // Filtrar solo imágenes (no archivos ZIP)
+    const imageFiles = result.images.filter((img: any) => {
+      if (!img.url) return false;
+      
+      // Excluir archivos ZIP explícitamente
+      if (img.url.includes('.zip') || img.name?.includes('.zip')) return false;
+      
+      // Incluir archivos que contengan extensiones de imagen o que sean de Cloudinary image upload
+      const hasImageExtension = img.url.includes('.jpg') || img.url.includes('.png') || img.url.includes('.jpeg') || img.url.includes('.webp');
+      const isCloudinaryImage = img.url.includes('/image/upload/') || img.url.includes('/upload/v');
+      
+      return hasImageExtension || isCloudinaryImage;
+    });
+    
+    console.log('✅ Filtered image files:', {
+      total: result.images.length,
+      filtered: imageFiles.length,
+      imageNames: imageFiles.slice(0, 5).map((img: any) => img.name)
+    });
+    
+    const finalImages = imageFiles.length > 0 ? imageFiles : mockPoseImages;
+    
+    // Guardar en caché solo si obtuvimos imágenes reales (no mock)
+    if (imageFiles.length > 0) {
+      cachedPoseImages = finalImages;
+      cacheTimestamp = Date.now();
+      setLocalCache(finalImages);
+      console.log('💾 Cloudinary images cached successfully (memory + localStorage)');
+    }
+    
+    return finalImages;
+  } catch (error) {
+    console.error('💥 Error fetching pose images from Edge Function:', error);
+    
+    // Detectar específicamente el error de límite de API de Cloudinary
+    const errorMessage = error instanceof Error ? error.message : '';
+    if (errorMessage.includes('Rate Limit Exceeded') || errorMessage.includes('420')) {
+      console.warn('⚠️ Cloudinary API rate limit exceeded, using persisted cache or mock data');
+      setRateLimitBackoff();
+      const persisted = getLocalCache();
+      if (persisted && persisted.length > 0) {
+        cachedPoseImages = persisted;
+        cacheTimestamp = Date.now();
+        return persisted;
+      }
+    } else {
+      console.error('❌ Error details:', {
+        message: errorMessage || 'Unknown error',
+        stack: error instanceof Error ? error.stack : 'No stack trace',
+        name: error instanceof Error ? error.name : 'Unknown'
+      });
+    }
+    console.log('🔄 Falling back to mock data');
+    return mockPoseImages;
+  }
+};
+
+/**
+ * Obtiene una imagen específica por su public_id
+ * Por ahora usa los datos mock hasta implementar búsqueda específica en Edge Function
+ */
+export const getPoseImageById = async (publicId: string): Promise<PoseImageData | null> => {
+  try {
+    // Por ahora buscamos en los datos mock
+    // TODO: Implementar búsqueda específica en Edge Function si es necesario
+    return mockPoseImages.find(pose => pose.id === publicId) || null;
+  } catch (error) {
+    console.error('Error fetching pose image by ID:', error);
+    return mockPoseImages.find(pose => pose.id === publicId) || null;
+  }
+};
+
+/**
+ * Genera URL optimizada para una imagen
+ * Por ahora retorna la URL original hasta que se configure Cloudinary
+ */
+export const getOptimizedImageUrl = (publicId: string, options: {
+  width?: number;
+  height?: number;
+  crop?: string;
+  quality?: string;
+  format?: string;
+} = {}) => {
+  // Por ahora retornamos la URL original
+  const pose = mockPoseImages.find(p => p.id === publicId);
+  return pose?.url || '';
+};
+
+/**
+ * Obtiene imágenes paginadas de la carpeta poses usando Supabase Edge Function
+ */
+export const getPoseImagesPaginated = async (nextCursor?: string, limit: number = 20): Promise<{
+  images: PoseImageData[];
+  nextCursor?: string;
+  hasMore: boolean;
+}> => {
+  try {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    
+    if (!supabaseUrl) {
+      const startIndex = nextCursor ? parseInt(nextCursor) : 0;
+      const endIndex = startIndex + limit;
+      const images = mockPoseImages.slice(startIndex, endIndex);
+      
+      return {
+        images,
+        nextCursor: endIndex < mockPoseImages.length ? endIndex.toString() : undefined,
+        hasMore: endIndex < mockPoseImages.length
+      };
+    }
+    
+    const response = await fetch(`${supabaseUrl}/functions/v1/cloudinary-poses`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+      },
+      body: JSON.stringify({
+        action: 'getPosesPaginated',
+        nextCursor,
+        limit
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Edge Function error: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error fetching paginated pose images from Edge Function:', error);
+    // Fallback a datos simulados si hay error
+    const startIndex = nextCursor ? parseInt(nextCursor) : 0;
+    const endIndex = startIndex + limit;
+    const images = mockPoseImages.slice(startIndex, endIndex);
+    
+    return {
+      images,
+      nextCursor: endIndex < mockPoseImages.length ? endIndex.toString() : undefined,
+      hasMore: endIndex < mockPoseImages.length
+    };
+  }
+};
+
+export default cld;

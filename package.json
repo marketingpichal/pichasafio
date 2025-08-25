@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^3.24.2",
+    "@cloudinary/react": "^1.14.3",
+    "@cloudinary/url-gen": "^1.21.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@radix-ui/react-checkbox": "^1.1.4",
@@ -27,7 +29,6 @@
     "button": "^1.1.1",
     "card": "^2.5.4",
     "class-variance-authority": "^0.7.1",
-    "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
     "firebase": "^12.1.0",
