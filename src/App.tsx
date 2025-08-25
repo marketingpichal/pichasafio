@@ -14,6 +14,10 @@ import Chochasafio from "./components/Chochasafio";
 import SexShop from "./components/Sexshop";
 import TerminosYCondiciones from "./components/Terms";
 import GuideStore from "./components/Guides/guideStore";
+import PoseViewer from "./components/PoseViewer";
+import UserProfile from "./components/UserProfile";
+import ThirtyDaysChallenge from "./components/ThirtyDaysChanllenge";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 import { AuthProvider } from "./context/AuthProvider";
 
 // import PichasahurSidebar from "./components/common/PichasahurSidebar";
@@ -70,6 +74,17 @@ export default function App() {
                 <Route path="/tyc" element={<TerminosYCondiciones />} />
                 <Route path="/sexshop" element={<SexShop />} />
                 <Route path="/guia" element={<GuideStore />} />
+                <Route path="/pose/:id" element={
+                  <ProtectedRoute>
+                    <PoseViewer />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile" element={<UserProfile />} />
+                <Route path="/thirty-days-challenge" element={
+                  <ProtectedRoute>
+                    <ThirtyDaysChallenge />
+                  </ProtectedRoute>
+                } />
                 
                </Routes>
             </main>
