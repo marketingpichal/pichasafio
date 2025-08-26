@@ -4,7 +4,38 @@ import { logAdEvent, trackUserAdImpression } from "@/lib/adTracking";
 import { useAuth } from "@/context/AuthProvider";
 import { motion } from "framer-motion";
 import ResponsiveCard from "../common/ResponsiveCard";
-import { Calendar, Play, Target, Trophy } from "lucide-react";
+import {
+  challengeService,
+  type UserChallenge,
+  type DailyProgress,
+} from "@/lib/challengeService";
+import {
+  Calendar,
+  Play,
+  Target,
+  Trophy,
+  Lock,
+  CheckCircle,
+  Star,
+  Flame,
+} from "lucide-react";
+
+// Interfaz para la función de notificación
+interface AchievementNotification {
+  type: "achievement" | "streak" | "level" | "challenge";
+  title: string;
+  message: string;
+  icon: string;
+  points?: number;
+}
+
+declare global {
+  interface Window {
+    showAchievementNotification?: (
+      notification: AchievementNotification
+    ) => void;
+  }
+}
 
 interface Exercise {
   name: string;
@@ -18,6 +49,8 @@ interface DayProps {
   exercise: Exercise;
   onClick: (day: number) => void;
   isActive?: boolean;
+  isUnlocked?: boolean;
+  isCompleted?: boolean;
 }
 
 const exercises: Exercise[] = [
@@ -78,20 +111,60 @@ const exercises: Exercise[] = [
   },
 ];
 
-const Day: React.FC<DayProps> = ({ day, exercise, onClick, isActive }) => {
+const Day: React.FC<DayProps> = ({
+  day,
+  exercise,
+  onClick,
+  isActive,
+  isUnlocked = true,
+  isCompleted = false,
+}) => {
+  const getDayStyles = () => {
+    if (isCompleted) {
+      return "border-green-500 bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg";
+    }
+    if (isActive) {
+      return "border-blue-500 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg";
+    }
+    if (!isUnlocked) {
+      return "border-gray-500 bg-gray-700 text-gray-400 cursor-not-allowed opacity-50";
+    }
+    return "border-gray-600 bg-gray-800 hover:border-blue-400 hover:bg-gray-700 text-gray-300 hover:text-white";
+  };
+
+  const handleClick = () => {
+    if (!isUnlocked) return;
+    onClick(day);
+  };
+
   return (
     <motion.div
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      onClick={() => onClick(day)}
-      className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 text-center ${
-        isActive
-          ? "border-blue-500 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
-          : "border-gray-600 bg-gray-800 hover:border-blue-400 hover:bg-gray-700 text-gray-300 hover:text-white"
-      }`}
+      whileHover={isUnlocked ? { scale: 1.05 } : {}}
+      whileTap={isUnlocked ? { scale: 0.95 } : {}}
+      onClick={handleClick}
+      className={`p-4 border-2 rounded-xl transition-all duration-300 text-center relative ${
+        isUnlocked ? "cursor-pointer" : "cursor-not-allowed"
+      } ${getDayStyles()}`}
+      role="button"
+      aria-label={`Ejercicio del día ${day}: ${exercise.name}`}
+      tabIndex={isUnlocked ? 0 : -1}
     >
-      <div className="font-bold text-lg mb-1">Día {day}</div>
-      <div className="text-xs sm:text-sm opacity-90">{exercise.name}</div>
+      <header>
+        <h3 className="font-bold text-lg mb-1">Día {day}</h3>
+      </header>
+      <p className="text-xs sm:text-sm opacity-90">{exercise.name}</p>
+
+      {!isUnlocked && (
+        <div className="absolute top-2 right-2">
+          <Lock className="w-4 h-4" />
+        </div>
+      )}
+
+      {isCompleted && (
+        <div className="absolute top-2 right-2">
+          <CheckCircle className="w-4 h-4" />
+        </div>
+      )}
     </motion.div>
   );
 };
@@ -99,16 +172,65 @@ const Day: React.FC<DayProps> = ({ day, exercise, onClick, isActive }) => {
 const ThirtyDayChallenge: React.FC = () => {
   const totalDays = 30;
   const [currentVideo, setCurrentVideo] = React.useState<string>("");
-  const [currentExercise, setCurrentExercise] = React.useState<Exercise | null>(null);
+  const [currentExercise, setCurrentExercise] = React.useState<Exercise | null>(
+    null
+  );
   const [showVideo, setShowVideo] = React.useState<boolean>(false);
   const [selectedDay, setSelectedDay] = React.useState<number | null>(null);
   const [showAdGate, setShowAdGate] = React.useState<boolean>(false);
-  const pendingRef = React.useRef<{ day: number; exercise: Exercise } | null>(null);
+  const pendingRef = React.useRef<{ day: number; exercise: Exercise } | null>(
+    null
+  );
   const { user } = useAuth();
+
+  // Estados para el progreso del reto
+  const [userChallenge, setUserChallenge] =
+    React.useState<UserChallenge | null>(null);
+  const [userProgress, setUserProgress] = React.useState<DailyProgress[]>([]);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  // Cargar progreso del usuario
+  React.useEffect(() => {
+    const loadUserProgress = async () => {
+      if (!user?.id) return;
+
+      try {
+        setIsLoading(true);
+        setError(null);
+        const { challenge, progress } = await challengeService.getUserProgress(
+          user.id,
+          "30_days"
+        );
+        setUserChallenge(challenge);
+        setUserProgress(progress);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Error al cargar el progreso"
+        );
+        console.error("Error loading user progress:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUserProgress();
+  }, [user?.id]);
 
   const getExerciseForDay = (day: number): Exercise => {
     const exerciseIndex = (day - 1) % exercises.length;
     return exercises[exerciseIndex];
+  };
+
+  // Verificar si un día está desbloqueado
+  const isDayUnlocked = (day: number): boolean => {
+    if (!userChallenge) return day === 1; // Solo el día 1 está desbloqueado inicialmente
+    return day <= userChallenge.current_day;
+  };
+
+  // Verificar si un día está completado
+  const isDayCompleted = (day: number): boolean => {
+    return userProgress.some((progress) => progress.day_number === day);
   };
 
   const shouldGateForDay = (day: number): boolean => {
@@ -123,20 +245,85 @@ const ThirtyDayChallenge: React.FC = () => {
     setSelectedDay(day);
   };
 
-  const handleDayClick = (day: number) => {
+  const completeDay = async (
+    day: number,
+    exercise: Exercise,
+    adWatched: boolean = false
+  ) => {
+    if (!user?.id) return;
+
+    try {
+      await challengeService.completeDay(
+        user.id,
+        "30_days",
+        day,
+        exercise.name,
+        adWatched
+      );
+
+      // Recargar progreso
+      const { challenge, progress } = await challengeService.getUserProgress(
+        user.id,
+        "30_days"
+      );
+      setUserChallenge(challenge);
+      setUserProgress(progress);
+
+      // Mostrar notificación de logro
+      if (window.showAchievementNotification) {
+        window.showAchievementNotification({
+          type: "challenge",
+          title: "¡Día Completado!",
+          message: `Has completado el día ${day}: ${exercise.name}`,
+          icon: "✅",
+          points: 15,
+        });
+      }
+
+      unlockVideo(day, exercise);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Error al completar el día"
+      );
+      console.error("Error completing day:", err);
+    }
+  };
+
+  const handleDayClick = async (day: number) => {
+    if (!user?.id) return;
+
     const exercise = getExerciseForDay(day);
+
+    // Verificar si el día está desbloqueado
+    if (!isDayUnlocked(day)) {
+      setError(
+        "Este día aún no está desbloqueado. Completa los días anteriores primero."
+      );
+      return;
+    }
+
+    // Verificar si ya está completado
+    if (isDayCompleted(day)) {
+      unlockVideo(day, exercise);
+      return;
+    }
+
     if (shouldGateForDay(day)) {
       pendingRef.current = { day, exercise };
       setShowAdGate(true);
       logAdEvent("gate_required", {
         user_id: user?.id ?? null,
         provider: "juicyads",
-        ad_zone: window.matchMedia && window.matchMedia("(max-width: 768px)").matches ? "1098249" : "1098247",
+        ad_zone:
+          window.matchMedia && window.matchMedia("(max-width: 768px)").matches
+            ? "1098249"
+            : "1098247",
         context: { day, exerciseName: exercise.name },
       }).catch(() => void 0);
       return;
     }
-    unlockVideo(day, exercise);
+
+    await completeDay(day, exercise, false);
   };
 
   return (
@@ -158,8 +345,9 @@ const ThirtyDayChallenge: React.FC = () => {
             Desafío de 30 Días
           </h1>
           <p className="text-gray-300 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
-            Completa este desafío de 30 días y transforma tu vida. 
-            Cada día tiene un ejercicio específico diseñado para maximizar tus resultados.
+            Completa este desafío de 30 días y transforma tu vida. Cada día
+            tiene un ejercicio específico diseñado para maximizar tus
+            resultados.
           </p>
         </motion.div>
 
@@ -206,17 +394,71 @@ const ThirtyDayChallenge: React.FC = () => {
             title="Calendario de Entrenamiento"
             subtitle="Haz clic en cualquier día para ver el ejercicio correspondiente"
           >
-            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-10 gap-3 sm:gap-4">
-              {Array.from({ length: totalDays }, (_, i) => i + 1).map((day) => (
-                <Day
-                  key={day}
-                  day={day}
-                  exercise={getExerciseForDay(day)}
-                  onClick={handleDayClick}
-                  isActive={selectedDay === day}
-                />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+              </div>
+            ) : error ? (
+              <div className="text-center py-8">
+                <div className="text-red-400 mb-4">
+                  <Star className="w-12 h-12 mx-auto" />
+                </div>
+                <p className="text-red-400 font-semibold">{error}</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Estadísticas del Programa */}
+                {userChallenge && (
+                  <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-xl p-6 mb-6">
+                    <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                      <Flame className="w-6 h-6 mr-2 text-orange-400" />
+                      Estadísticas del Programa
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-white">
+                          {userChallenge.completed_days}
+                        </p>
+                        <p className="text-gray-400 text-sm">
+                          Días Completados
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-white">
+                          {userChallenge.streak_days}
+                        </p>
+                        <p className="text-gray-400 text-sm">Racha Actual</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-white">
+                          {Math.round(
+                            (userChallenge.completed_days / totalDays) * 100
+                          )}
+                          %
+                        </p>
+                        <p className="text-gray-400 text-sm">Progreso</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-10 gap-3 sm:gap-4">
+                  {Array.from({ length: totalDays }, (_, i) => i + 1).map(
+                    (day) => (
+                      <Day
+                        key={day}
+                        day={day}
+                        exercise={getExerciseForDay(day)}
+                        onClick={handleDayClick}
+                        isActive={selectedDay === day}
+                        isUnlocked={isDayUnlocked(day)}
+                        isCompleted={isDayCompleted(day)}
+                      />
+                    )
+                  )}
+                </div>
+              </div>
+            )}
           </ResponsiveCard>
         </motion.div>
 
@@ -268,10 +510,12 @@ const ThirtyDayChallenge: React.FC = () => {
                 </div>
 
                 <div className="bg-gray-800/50 rounded-xl p-4">
-                  <h4 className="font-semibold text-white mb-2">Instrucciones:</h4>
+                  <h4 className="font-semibold text-white mb-2">
+                    Instrucciones:
+                  </h4>
                   <p className="text-gray-300 text-sm leading-relaxed">
-                    {currentExercise.description || 
-                     "Sigue las instrucciones del video cuidadosamente. Realiza el ejercicio de manera controlada y respeta los tiempos de descanso."}
+                    {currentExercise.description ||
+                      "Sigue las instrucciones del video cuidadosamente. Realiza el ejercicio de manera controlada y respeta los tiempos de descanso."}
                   </p>
                 </div>
               </div>
@@ -291,12 +535,18 @@ const ThirtyDayChallenge: React.FC = () => {
               logAdEvent("gate_rewarded", {
                 user_id: user?.id ?? null,
                 provider: "juicyads",
-                context: { day: pending.day, exerciseName: pending.exercise.name },
+                context: {
+                  day: pending.day,
+                  exerciseName: pending.exercise.name,
+                },
               }).catch(() => void 0);
-              unlockVideo(pending.day, pending.exercise);
+              completeDay(pending.day, pending.exercise, true);
               pendingRef.current = null;
             }}
-            videoContext={{ day: pendingRef.current?.day, exerciseName: pendingRef.current?.exercise.name }}
+            videoContext={{
+              day: pendingRef.current?.day,
+              exerciseName: pendingRef.current?.exercise.name,
+            }}
           />
         )}
 
@@ -313,11 +563,11 @@ const ThirtyDayChallenge: React.FC = () => {
                 ¡Comienza tu Desafío Hoy!
               </h3>
               <p className="text-gray-300 leading-relaxed">
-                Selecciona el día 1 y comienza tu transformación. 
-                Recuerda ser consistente y seguir las instrucciones al pie de la letra.
+                Selecciona el día 1 y comienza tu transformación. Recuerda ser
+                consistente y seguir las instrucciones al pie de la letra.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
-                <button 
+                <button
                   onClick={() => handleDayClick(1)}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200"
                 >
