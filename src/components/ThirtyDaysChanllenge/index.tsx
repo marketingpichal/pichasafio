@@ -4,6 +4,7 @@ import { logAdEvent, trackUserAdImpression } from "@/lib/adTracking";
 import { useAuth } from "@/context/AuthProvider";
 import { motion } from "framer-motion";
 import ResponsiveCard from "../common/ResponsiveCard";
+import { supabase } from "@/lib/supabaseClient";
 import {
   challengeService,
   type UserChallenge,
@@ -198,12 +199,26 @@ const ThirtyDayChallenge: React.FC = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const { challenge, progress } = await challengeService.getUserProgress(
+        
+        // Obtener o crear el reto del usuario
+        const challenge = await challengeService.getOrCreateUserChallenge(
           user.id,
           "30_days"
         );
+        
+        // Obtener el progreso
+        const { data: progress, error } = await supabase
+          .from('daily_progress')
+          .select('*')
+          .eq('challenge_id', challenge.id)
+          .order('day_number', { ascending: true });
+
+        if (error) {
+          throw error;
+        }
+
         setUserChallenge(challenge);
-        setUserProgress(progress);
+        setUserProgress(progress || []);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Error al cargar el progreso"
@@ -262,12 +277,23 @@ const ThirtyDayChallenge: React.FC = () => {
       );
 
       // Recargar progreso
-      const { challenge, progress } = await challengeService.getUserProgress(
+      const challenge = await challengeService.getOrCreateUserChallenge(
         user.id,
         "30_days"
       );
+      
+      const { data: progress, error } = await supabase
+        .from('daily_progress')
+        .select('*')
+        .eq('challenge_id', challenge.id)
+        .order('day_number', { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+
       setUserChallenge(challenge);
-      setUserProgress(progress);
+      setUserProgress(progress || []);
 
       // Mostrar notificación de logro
       if (window.showAchievementNotification) {
@@ -293,6 +319,8 @@ const ThirtyDayChallenge: React.FC = () => {
     if (!user?.id) return;
 
     const exercise = getExerciseForDay(day);
+
+
 
     // Verificar si el día está desbloqueado
     if (!isDayUnlocked(day)) {

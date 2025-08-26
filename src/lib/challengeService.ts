@@ -82,23 +82,59 @@ export type ChallengeType = 'chochasafio' | '30_days' | 'respiration' | 'keguel'
 class ChallengeService {
   // Obtener o crear el reto activo del usuario
   async getOrCreateUserChallenge(userId: string, challengeType: string): Promise<UserChallenge> {
-    const { data: existingChallenge, error: fetchError } = await supabase
+    // Primero, buscar cualquier reto activo
+    const { data: activeChallenges, error: fetchError } = await supabase
       .from('user_challenges')
       .select('*')
       .eq('user_id', userId)
       .eq('challenge_type', challengeType)
-      .eq('is_active', true)
-      .single();
+      .eq('is_active', true);
 
-    if (fetchError && fetchError.code !== 'PGRST116') {
+    if (fetchError) {
       throw fetchError;
     }
 
-    if (existingChallenge) {
-      return existingChallenge;
+    // Si hay retos activos, usar el más reciente
+    if (activeChallenges && activeChallenges.length > 0) {
+      // Ordenar por fecha de creación y usar el más reciente
+      const sortedChallenges = activeChallenges.sort((a, b) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+      return sortedChallenges[0];
     }
 
-    // Crear nuevo reto
+    // Si no hay retos activos, buscar cualquier reto existente
+    const { data: existingChallenges, error: existingError } = await supabase
+      .from('user_challenges')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('challenge_type', challengeType);
+
+    if (existingError) {
+      throw existingError;
+    }
+
+    // Si hay retos existentes pero inactivos, reactivar el más reciente
+    if (existingChallenges && existingChallenges.length > 0) {
+      const sortedChallenges = existingChallenges.sort((a, b) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+      const mostRecent = sortedChallenges[0];
+      
+      // Reactivar el reto más reciente
+      const { error: reactivateError } = await supabase
+        .from('user_challenges')
+        .update({ is_active: true })
+        .eq('id', mostRecent.id);
+
+      if (reactivateError) {
+        throw reactivateError;
+      }
+
+      return { ...mostRecent, is_active: true };
+    }
+
+    // Si no hay ningún reto, crear uno nuevo
     const { data: newChallenge, error: insertError } = await supabase
       .from('user_challenges')
       .insert({
@@ -369,7 +405,26 @@ class ChallengeService {
       throw error;
     }
 
-    return data || [];
+    // Obtener los usernames de los perfiles
+    const userIds = (data || []).map(entry => entry.user_id);
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, username')
+      .in('id', userIds);
+
+    // Crear un mapa de user_id -> username
+    const usernameMap = {};
+    profiles?.forEach(profile => {
+      usernameMap[profile.id] = profile.username;
+    });
+
+    // Mapear los datos para incluir el username
+    const leaderboardData = (data || []).map(entry => ({
+      ...entry,
+      username: usernameMap[entry.user_id] || null
+    }));
+
+    return leaderboardData;
   }
 
   // Verificar y otorgar logros

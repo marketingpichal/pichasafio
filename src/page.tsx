@@ -1,4 +1,4 @@
-import Header from "./components/header";
+// import Header from "./components/header";
 import PoseScroll from "./components/PoseScroll";
 import Footer from "./components/Footer";
 import PoseList from "./components/Poses/poseList";
