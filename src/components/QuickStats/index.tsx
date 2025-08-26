@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "@/context/AuthProvider";
-import { challengeService } from "@/lib/challengeService";
+
+
 import { motion } from "framer-motion";
-import { Trophy, Target, Flame, Zap, TrendingUp, Users, Award, Star } from "lucide-react";
+import { Trophy, Flame, TrendingUp, Users, Award, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const QuickStats: React.FC = () => {
-  const { user } = useAuth();
+
   const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalUsers: 0,

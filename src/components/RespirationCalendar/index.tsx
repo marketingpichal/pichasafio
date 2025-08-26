@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useSound from 'use-sound';
-import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useUser } from "@supabase/auth-helpers-react";
 import ResponsiveCard from "../common/ResponsiveCard";
 import { challengeService } from "@/lib/challengeService";
 import { 
@@ -191,7 +191,7 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({ phase, progress, time
 };
 
 const RespirationCalendar: React.FC = () => {
-  const supabase = useSupabaseClient();
+
   const user = useUser();
   const [isExercising, setIsExercising] = useState(false);
   const [currentPhase, setCurrentPhase] = useState<'inhale' | 'holdIn' | 'exhale' | 'holdOut' | 'rest'>('rest');
@@ -356,6 +356,7 @@ const RespirationCalendar: React.FC = () => {
       await challengeService.completeSession(
         user.id,
         'respiration',
+        selectedExercise?.name || 'Respiración',
         selectedMinutes,
         {
           exercise: selectedExercise?.name || 'Respiración',

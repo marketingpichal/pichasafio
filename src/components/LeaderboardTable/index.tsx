@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { challengeService, type LeaderboardEntry } from "@/lib/challengeService";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Crown, Medal, Star, TrendingUp, Zap, Target, Flame } from "lucide-react";

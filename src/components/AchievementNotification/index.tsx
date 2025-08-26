@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, Star, Zap, Flame, X } from "lucide-react";
+import { X, Zap } from "lucide-react";
 
 interface Notification {
   id: string;

@@ -90,7 +90,7 @@ export default function CreatePost({ isOpen, onClose, onPostCreated }: CreatePos
         caption: caption.trim() || null
       };
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('posts')
         .insert(postData)
         .select();

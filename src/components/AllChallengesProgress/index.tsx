@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthProvider";
 import { challengeService, type UserChallenge, type ChallengeStats, type ChallengeType } from "@/lib/challengeService";
 import ResponsiveCard from "../common/ResponsiveCard";
-import { Calendar, Target, Trophy, TrendingUp, Clock, CheckCircle, Activity, Zap } from "lucide-react";
+import { Trophy, Clock, Activity, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface ChallengeInfo {

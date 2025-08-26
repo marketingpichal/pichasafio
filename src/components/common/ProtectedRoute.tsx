@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+
 import { useAuth } from '../../context/AuthProvider';
 import { motion } from 'framer-motion';
 import { Lock, LogIn, UserPlus } from 'lucide-react';
@@ -13,10 +13,8 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
-  redirectTo = '/login' 
 }) => {
   const { user } = useAuth();
-  const location = useLocation();
 
   // Si no hay usuario autenticado, mostrar página de acceso restringido
   if (!user) {

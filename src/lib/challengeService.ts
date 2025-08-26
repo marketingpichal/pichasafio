@@ -413,7 +413,7 @@ class ChallengeService {
       .in('id', userIds);
 
     // Crear un mapa de user_id -> username
-    const usernameMap = {};
+    const usernameMap: { [key: string]: string | null } = {};
     profiles?.forEach(profile => {
       usernameMap[profile.id] = profile.username;
     });
@@ -555,7 +555,7 @@ class ChallengeService {
       throw error;
     }
 
-    return data?.map(item => item.achievements).filter(Boolean) || [];
+    return data?.map(item => item.achievements).filter(Boolean) as unknown as Achievement[] || [];
   }
 
   // Actualizar estadísticas del reto
@@ -608,13 +608,13 @@ class ChallengeService {
     progress: DailyProgress[];
     stats: ChallengeStats[];
   }> {
-    const [challenges, progress, stats] = await Promise.all([
+    const [challenges, progressData, stats] = await Promise.all([
       this.getAllUserChallenges(userId),
-      this.getAllUserProgress(userId),
+      this.getAllUserProgressData(userId),
       this.getAllUserStats(userId)
     ]);
 
-    return { challenges, progress, stats };
+    return { challenges, progress: progressData, stats };
   }
 
   // Obtener todas las estadísticas del usuario
