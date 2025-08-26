@@ -25,8 +25,7 @@ export default function PoseFilter({
   filteredCount
 }: PoseFilterProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [sortBy, setSortBy] = useState<'name' | 'popularity' | 'difficulty'>('popularity');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
 
   const updateFilter = (key: keyof PoseFilters, value: string | number) => {
     const newFilters = { ...filters, [key]: value };

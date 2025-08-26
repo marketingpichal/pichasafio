@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, Heart, MoreHorizontal, Reply } from 'lucide-react';
+import { X, Send, MoreHorizontal } from 'lucide-react';
 import { useAuth } from '../../context/AuthProvider';
 import { supabase } from '../../lib/supabaseClient';
 

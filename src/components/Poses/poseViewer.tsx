@@ -31,7 +31,7 @@ interface PoseViewerProps {
 
 export default function PoseViewer({ pose, onClose }: PoseViewerProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [showSteps, setShowSteps] = useState(false);
+
   const [activeTab, setActiveTab] = useState<'info' | 'steps' | 'safety'>('info');
 
   const getDifficultyColor = (level: string) => {

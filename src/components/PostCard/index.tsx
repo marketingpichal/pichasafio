@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Heart, MessageCircle, Share2, Bookmark, MoreHorizontal, Play, Pause } from 'lucide-react';
 import { useAuth } from '../../context/AuthProvider';
 import { supabase } from '../../lib/supabaseClient';
@@ -19,13 +19,7 @@ interface PostCardProps {
   onCommentClick?: (postId: string) => void;
 }
 
-const REACTIONS = [
-  { emoji: '❤️', type: 'like', color: 'text-red-500' },
-  { emoji: '🔥', type: 'fire', color: 'text-orange-500' },
-  { emoji: '😂', type: 'laugh', color: 'text-yellow-500' },
-  { emoji: '😭', type: 'cry', color: 'text-blue-500' },
-  { emoji: '👀', type: 'eyes', color: 'text-purple-500' }
-];
+
 
 export default function PostCard({ post, onCommentClick }: PostCardProps) {
   const { user } = useAuth();
@@ -33,10 +27,7 @@ export default function PostCard({ post, onCommentClick }: PostCardProps) {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [showFullCaption, setShowFullCaption] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null);
   const [likesCount, setLikesCount] = useState(post.likes_count);
-  const [commentsCount, setCommentsCount] = useState(post.comments_count);
-  const [showComments, setShowComments] = useState(false);
 
   const isVideo = post.content_url.includes('.mp4') || post.content_url.includes('.webm') || post.content_url.includes('.mov');
   const timeAgo = getTimeAgo(post.created_at);
@@ -52,7 +43,7 @@ export default function PostCard({ post, onCommentClick }: PostCardProps) {
     if (!user) return;
     
     try {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('post_likes')
         .select('id')
         .eq('post_id', post.id)
@@ -263,12 +254,12 @@ export default function PostCard({ post, onCommentClick }: PostCardProps) {
         )}
 
         {/* Comments Count */}
-        {commentsCount > 0 && (
+        {post.comments_count > 0 && (
           <button
             onClick={() => onCommentClick?.(post.id)}
             className="text-gray-500 text-sm hover:text-gray-700 dark:hover:text-gray-300"
           >
-            Ver los {commentsCount} comentarios
+            Ver los {post.comments_count} comentarios
           </button>
         )}
       </div>

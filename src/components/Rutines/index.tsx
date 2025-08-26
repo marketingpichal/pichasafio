@@ -4,7 +4,7 @@ import Alargamiento from './Largor';
 import InstruccionesPene from '../Warning';
 import ResponsiveCard from '../common/ResponsiveCard';
 import DailyVideos from './DailyVideos';
-import { Dumbbell, Target, TrendingUp, Zap, Play } from 'lucide-react';
+import { Dumbbell, Target, TrendingUp, Play } from 'lucide-react';
 
 export default function Rutinas() {
   return (
