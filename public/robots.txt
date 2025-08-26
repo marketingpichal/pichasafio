@@ -34,7 +34,6 @@ Disallow: /.github/
 Disallow: /README.md
 Disallow: /LICENSE
 Disallow: /cors.json
-Disallow: /firebase.json
 
 # Bloquear acceso a directorios de desarrollo
 Disallow: /dist/
