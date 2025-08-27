@@ -18,7 +18,12 @@ export default function DebugResetPassword() {
       console.log('VITE_SITE_URL:', import.meta.env.VITE_SITE_URL);
       console.log('window.location.origin:', window.location.origin);
       
-      const redirectUrl = `${import.meta.env.VITE_SITE_URL}/reset-password`;
+      const siteUrl = import.meta.env.VITE_SITE_URL;
+      if (!siteUrl) {
+        throw new Error('VITE_SITE_URL no está definida');
+      }
+      
+      const redirectUrl = `${siteUrl}/reset-password`;
       console.log('Redirect URL completa:', redirectUrl);
       
       // Intentar reset password
@@ -33,20 +38,28 @@ export default function DebugResetPassword() {
         error: error?.message || null,
         environment: {
           VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
-          VITE_SITE_URL: import.meta.env.VITE_SITE_URL,
+          VITE_SITE_URL: siteUrl,
           window_origin: window.location.origin,
           redirect_url: redirectUrl
         },
-        supabase_response: { data, error }
+        supabase_response: { data, error },
+        instructions: [
+          '1. Revisa tu email para el enlace de reset',
+          '2. El enlace debería redirigir a: ' + redirectUrl,
+          '3. Si el enlace redirige a pichasafio.com, modifica manualmente la URL',
+          '4. Cambia la parte final de: redirect_to=https://pichasafio.com',
+          '5. A: redirect_to=' + siteUrl + '/reset-password'
+        ]
       };
 
       setDebugInfo(debugData);
       
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error en reset password:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
       setDebugInfo({
         success: false,
-        error: err.message,
+        error: errorMessage,
         caught_error: err
       });
     }

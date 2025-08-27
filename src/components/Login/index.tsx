@@ -76,17 +76,34 @@ export default function Login() {
       return;
     }
 
-    console.log('Enviando reset password para:', email);
-    console.log('Redirect URL:', `${import.meta.env.VITE_SITE_URL}/reset-password`);
-    
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${import.meta.env.VITE_SITE_URL}/reset-password`,
-    });
+    // Verificar que la variable de entorno esté definida
+    const siteUrl = import.meta.env.VITE_SITE_URL;
+    if (!siteUrl) {
+      setError("Error de configuración: VITE_SITE_URL no está definida. Contacta al administrador.");
+      setLoading(false);
+      return;
+    }
 
-    if (error) {
-      setError(error.message);
-    } else {
-      setResetSuccess(true);
+    console.log('Enviando reset password para:', email);
+    console.log('Site URL:', siteUrl);
+    console.log('Redirect URL:', `${siteUrl}/reset-password`);
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${siteUrl}/reset-password`,
+      });
+
+      if (error) {
+        console.error('Error en reset password:', error);
+        setError(`Error al enviar el email: ${error.message}`);
+      } else {
+        console.log('Email de reset enviado exitosamente');
+        setResetSuccess(true);
+      }
+    } catch (err: unknown) {
+      console.error('Error inesperado:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+      setError(`Error inesperado: ${errorMessage}`);
     }
 
     setLoading(false);
