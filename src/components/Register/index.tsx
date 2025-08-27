@@ -207,6 +207,9 @@ export default function Register() {
       }
 
       // Proceed with registration
+      console.log('Iniciando registro con:', { email: data.email, username: data.username });
+      console.log('VITE_SITE_URL:', import.meta.env.VITE_SITE_URL);
+      
       const { data: authData, error: authError }: AuthResponse =
         await supabase.auth.signUp({
           email: data.email,
@@ -219,38 +222,37 @@ export default function Register() {
           },
         });
 
+      console.log('Respuesta de signUp:', { authData, authError });
+
       if (authError) {
+        console.error('Error en signUp:', authError);
         throw authError;
       }
 
       if (authData.user) {
-        // Check if profile already exists
-        const { data: existingProfile } = await supabase
+        console.log('Usuario creado:', authData.user);
+        
+        // Wait a moment for the trigger to create the profile
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Update the profile with the username
+        const { error: profileError }: ProfileResponse = await supabase
           .from("profiles")
-          .select("id")
-          .eq("id", authData.user.id)
-          .single();
+          .update({
+            username: data.username,
+          })
+          .eq("id", authData.user.id);
 
-        if (!existingProfile) {
-          // Only create profile if it doesn't exist
-          const { error: profileError }: ProfileResponse = await supabase
-            .from("profiles")
-            .insert({
-              id: authData.user.id,
-              username: data.username,
-              email: authData.user.email,
-              created_at: new Date().toISOString(),
-              "30_days": [],
-            });
-
-          if (profileError) {
-            // Rollback user creation if profile creation fails
-            await supabase.auth.admin.deleteUser(authData.user.id);
-            throw profileError;
-          }
+        if (profileError) {
+          console.error('Error updating profile:', profileError);
+          // Don't throw here, just log the error as the user is already created
+        } else {
+          console.log('Perfil actualizado correctamente');
         }
 
         setSuccess(true);
+      } else {
+        console.log('No se creó el usuario, pero tampoco hay error');
       }
     } catch (err: any) {
       setError(

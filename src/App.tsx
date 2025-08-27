@@ -9,6 +9,9 @@ import RespirationCalendar from "./components/RespirationCalendar";
 import Testimonials from "./components/TestimoniosAnonimos";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import ResetPassword from "./components/ResetPassword";
+import DebugResetPassword from "./components/DebugResetPassword";
+import CompleteProfile from "./components/CompleteProfile";
 import Rutinas from "./components/Rutines";
 import Chochasafio from "./components/Chochasafio";
 import SexShop from "./components/Sexshop";
@@ -19,6 +22,7 @@ import UserProfile from "./components/UserProfile";
 import ThirtyDaysChallenge from "./components/ThirtyDaysChanllenge";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { AuthProvider } from "./context/AuthProvider";
+import DebugAuth from "./components/DebugAuth";
 
 // import PichasahurSidebar from "./components/common/PichasahurSidebar";
 // import PichasahurFloatingButton from "./components/common/PichasahurFloatingButton";
@@ -68,6 +72,9 @@ export default function App() {
                 <Route path="/testimonios" element={<Testimonials />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/debug-reset-password" element={<DebugResetPassword />} />
+                <Route path="/complete-profile" element={<CompleteProfile />} />
                 <Route path="/rutinas" element={<Rutinas />} />
                 <Route path="/chochasafio" element={<Chochasafio />} />
         {/* Pichasahur Floating Button   <Route path="/sexshop" element={<SexShop />} />*/}
@@ -85,6 +92,7 @@ export default function App() {
                     <ThirtyDaysChallenge />
                   </ProtectedRoute>
                 } />
+                <Route path="/debug-auth" element={<DebugAuth />} />
                 
                </Routes>
             </main>
