@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Eye, Star, ArrowLeft, Share2, Bookmark, ChevronLeft, ChevronRight, ArrowUp } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthProvider';
+
 import { getPoseImages, PoseImage } from '../../lib/cloudinaryService';
-import { PoseImageData } from '../../types/pose';
+
 
 interface Pose {
   id: number;
@@ -123,7 +123,7 @@ const generateRelatedPoses = async (currentId: number, startId: number, count: n
 const PoseViewer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+
   const [pose, setPose] = useState<Pose | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [relatedPoses, setRelatedPoses] = useState<Pose[]>([]);

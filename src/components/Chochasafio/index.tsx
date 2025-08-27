@@ -7,6 +7,21 @@ import ResponsiveCard from "../common/ResponsiveCard";
 import { Calendar, Play, Target, Trophy, Clock, Star, Lock, CheckCircle } from "lucide-react";
 import { challengeService, type UserChallenge, type DailyProgress } from "@/lib/challengeService";
 
+// Interfaz para la función de notificación
+interface AchievementNotification {
+  type: 'achievement' | 'streak' | 'level' | 'challenge';
+  title: string;
+  message: string;
+  icon: string;
+  points?: number;
+}
+
+declare global {
+  interface Window {
+    showAchievementNotification?: (notification: AchievementNotification) => void;
+  }
+}
+
 interface Exercise {
   name: string;
   url: string;
@@ -270,6 +285,17 @@ const Chochasafio: React.FC = () => {
       const { challenge, progress } = await challengeService.getUserProgress(user.id, 'chochasafio');
       setUserChallenge(challenge);
       setUserProgress(progress);
+      
+      // Mostrar notificación de logro
+      if (window.showAchievementNotification) {
+        window.showAchievementNotification({
+          type: 'challenge',
+          title: '¡Día Completado!',
+          message: `Has completado el día ${day}: ${exercise.name}`,
+          icon: '✅',
+          points: 10
+        });
+      }
       
       unlockVideo(day, exercise);
     } catch (err) {

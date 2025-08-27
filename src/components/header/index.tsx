@@ -1,33 +1,8 @@
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 // import PichasahurComicBanner from '../common/PichasahurComicBanner';
-import { useAuth } from '../../context/AuthProvider';
-import { useState } from 'react';
-import { Lock, X, LogIn, UserPlus } from 'lucide-react';
+
 
 export default function Header() {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const isAuthenticated = !!user;
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
-  const handleClick = () => {
-    if (!isAuthenticated) {
-      setShowAuthModal(true);
-      return;
-    }
-    navigate('/rutinas');
-  };
-
-  const handleLogin = () => {
-    setShowAuthModal(false);
-    navigate('/login');
-  };
-
-  const handleRegister = () => {
-    setShowAuthModal(false);
-    navigate('/register');
-  };
 
   return (
     <>

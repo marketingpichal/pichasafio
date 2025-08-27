@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronLeft, ChevronRight, Heart, Star, Zap } from 'lucide-react';
+import { X, Heart, Star, Zap } from 'lucide-react';
 import PichasahurMascot from './PichasahurMascot';
 import PichasahurComicBanner from './PichasahurComicBanner';
 

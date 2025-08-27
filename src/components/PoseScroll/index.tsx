@@ -7,17 +7,7 @@ import PostFeed from '../PostFeed';
 import { PoseScrollItem } from '../../types/pose';
 import { getPoseImages, PoseImage } from '../../lib/cloudinaryService';
 
-// Interfaz temporal para compatibilidad
-interface PoseImageData {
-  id: string;
-  name: string;
-  url: string;
-  thumbnail: string;
-  width: number;
-  height: number;
-  tags: string[];
-  created_at: string;
-}
+
 
 // Función para convertir datos de Supabase a PoseScrollItem
 const convertToPoseScrollItem = (imageData: PoseImage, index: number): PoseScrollItem => {

@@ -1,27 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  User, 
   Edit3, 
   Save, 
   X, 
   Trophy, 
-  Heart, 
-  Flame, 
-  Star, 
   Palette, 
   Camera,
-  Zap,
-  Target,
-  Award,
-  Crown,
-  Sparkles,
-  Plus
+  Plus,
+  AlertCircle
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthProvider';
-import { useNavigate } from 'react-router-dom';
 import CreatePost from '../CreatePost';
 import PostFeed from '../PostFeed';
+import { profileService, type UserProfile as ProfileData, type UserStats as UserStatsData, type ProfileUpdateData } from '../../lib/profileService';
 
 interface UserStats {
   level: number;
@@ -65,54 +57,154 @@ const achievements = [
 
 const UserProfile: React.FC = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [showThemeSelector, setShowThemeSelector] = useState(false);
   const [showAvatarSelector, setShowAvatarSelector] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [postRefreshTrigger, setPostRefreshTrigger] = useState(0);
   const [activeTab, setActiveTab] = useState<'stats' | 'posts'>('stats');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Estado para datos reales del perfil
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [userStats, setUserStats] = useState<UserStatsData | null>(null);
+  
+  // Estado para datos de la UI (combinación de datos reales y UI)
   const [profile, setProfile] = useState<UserProfile>({
     id: user?.id || '1',
-    nickname: user?.user_metadata?.nickname || 'Player_' + Math.floor(Math.random() * 1000),
+    nickname: user?.user_metadata?.username || 'Usuario',
     bio: '¡Hola! Soy nuevo en Pichasafio 🔥',
     avatar: '🦄',
     theme: 'neon',
     stats: {
-      level: 5,
-      experience: 750,
-      maxExperience: 1000,
-      totalLikes: 234,
-      streak: 12,
-      posesCompleted: 28,
-      achievements: ['first_pose', 'week_streak']
+      level: 1,
+      experience: 0,
+      maxExperience: 100,
+      totalLikes: 0,
+      streak: 0,
+      posesCompleted: 0,
+      achievements: []
     }
   });
-  const [editForm, setEditForm] = useState({ nickname: '', bio: '' });
+  const [editForm, setEditForm] = useState({ nickname: '' });
+
+  // Cargar datos del perfil
+  useEffect(() => {
+    const loadProfileData = async () => {
+      if (!user?.id) return;
+
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Cargar perfil del usuario
+        const profileData = await profileService.getUserProfile(user.id);
+        if (profileData) {
+          setProfileData(profileData);
+          
+          // Actualizar estado de la UI
+          setProfile(prev => ({
+            ...prev,
+            id: profileData.id,
+            nickname: profileData.username || 'Usuario',
+            bio: profileData.bio || '¡Hola! Soy nuevo en Pichasafio 🔥',
+            avatar: profileData.avatar || profileData.avatar_url || '🦄',
+            theme: profileData.theme || 'neon'
+          }));
+        }
+
+        // Cargar estadísticas del usuario
+        const stats = await profileService.getUserStats(user.id);
+        setUserStats(stats);
+        
+        // Cargar logros del usuario
+        const userAchievements = await profileService.getUserAchievements(user.id);
+        
+        // Actualizar estadísticas en la UI
+        setProfile(prev => ({
+          ...prev,
+          stats: {
+            level: stats.level,
+            experience: stats.total_points % 100,
+            maxExperience: 100,
+            totalLikes: stats.total_points,
+            streak: stats.current_streak,
+            posesCompleted: stats.total_sessions,
+            achievements: userAchievements.map(achievement => achievement.id)
+          }
+        }));
+
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error al cargar el perfil');
+        console.error('Error loading profile:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProfileData();
+  }, [user?.id]);
 
   useEffect(() => {
     if (isEditing) {
-      setEditForm({ nickname: profile.nickname, bio: profile.bio });
+      setEditForm({ nickname: profile.nickname });
     }
   }, [isEditing, profile]);
 
-  const handleSave = () => {
-    setProfile(prev => ({
-      ...prev,
-      nickname: editForm.nickname,
-      bio: editForm.bio
-    }));
-    setIsEditing(false);
+  const handleSave = async () => {
+    if (!user?.id) return;
+
+    try {
+      setIsLoading(true);
+      
+      const updateData: ProfileUpdateData = {
+        username: editForm.nickname
+      };
+
+      const updatedProfile = await profileService.updateUserProfile(user.id, updateData);
+      
+      if (updatedProfile) {
+        setProfileData(updatedProfile);
+        setProfile(prev => ({
+          ...prev,
+          nickname: updatedProfile.username || 'Usuario'
+        }));
+        setIsEditing(false);
+        setError(null); // Limpiar errores previos
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al guardar el perfil';
+      setError(errorMessage);
+      console.error('Error saving profile:', err);
+      
+      // Si el error es por campos que no existen, mostrar mensaje informativo
+      if (errorMessage.includes('Could not find the')) {
+        setError('Solo se puede editar el nombre de usuario por ahora.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleThemeChange = (themeId: string) => {
+  const handleThemeChange = async (themeId: string) => {
+    // Por ahora solo actualizar el estado local ya que el campo theme no existe en la BD
     setProfile(prev => ({ ...prev, theme: themeId }));
     setShowThemeSelector(false);
+    
+    // Mostrar mensaje informativo
+    setError('La personalización de tema se guardará localmente por ahora.');
+    setTimeout(() => setError(null), 3000);
   };
 
-  const handleAvatarChange = (avatar: string) => {
+  const handleAvatarChange = async (avatar: string) => {
+    // Por ahora solo actualizar el estado local ya que el campo avatar no existe en la BD
     setProfile(prev => ({ ...prev, avatar }));
     setShowAvatarSelector(false);
+    
+    // Mostrar mensaje informativo
+    setError('La personalización de avatar se guardará localmente por ahora.');
+    setTimeout(() => setError(null), 3000);
   };
 
   const containerVariants = {
@@ -139,6 +231,31 @@ const UserProfile: React.FC = () => {
 
   const currentTheme = themes.find(t => t.id === profile.theme) || themes[0];
   const progressPercentage = (profile.stats.experience / profile.stats.maxExperience) * 100;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400 font-medium">Cargando perfil...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-8 h-8 text-red-400" />
+          </div>
+          <p className="text-red-400 font-medium mb-2">Error al cargar el perfil</p>
+          <p className="text-gray-400 text-sm">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-4">
@@ -203,12 +320,9 @@ const UserProfile: React.FC = () => {
                       className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-white w-full focus:border-pink-500 focus:outline-none"
                       placeholder="Tu nickname"
                     />
-                    <textarea
-                      value={editForm.bio}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, bio: e.target.value }))}
-                      className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-white w-full h-20 resize-none focus:border-pink-500 focus:outline-none"
-                      placeholder="Cuéntanos sobre ti..."
-                    />
+                    <div className="text-sm text-gray-400 text-center md:text-left">
+                      <p>💡 Solo puedes editar tu nombre de usuario por ahora</p>
+                    </div>
                     <div className="flex gap-2 justify-center md:justify-start">
                       <motion.button
                         whileHover={{ scale: 1.05 }}
@@ -244,6 +358,16 @@ const UserProfile: React.FC = () => {
                       </motion.button>
                     </div>
                     <p className="text-gray-300 mb-4">{profile.bio}</p>
+                    
+                    {/* Información adicional del perfil */}
+                    {profileData && (
+                      <div className="mb-4 text-sm text-gray-400">
+                        <p>Miembro desde: {new Date(profileData.created_at).toLocaleDateString()}</p>
+                        {profileData.updated_at && (
+                          <p>Última actualización: {new Date(profileData.updated_at).toLocaleDateString()}</p>
+                        )}
+                      </div>
+                    )}
                     
                     {/* Level Progress */}
                     <div className="mb-4">
@@ -385,6 +509,32 @@ const UserProfile: React.FC = () => {
                 <Trophy className="w-6 h-6 text-yellow-400" />
                 Logros Desbloqueados
               </h3>
+              
+              {/* Información adicional de estadísticas */}
+              {userStats && (
+                <div className="mb-6 p-4 bg-gray-700/50 rounded-xl">
+                  <h4 className="text-lg font-semibold text-white mb-3">Estadísticas Detalladas</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <p className="text-gray-400">Puntos Totales</p>
+                      <p className="text-white font-bold">{userStats.total_points}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400">Racha Más Larga</p>
+                      <p className="text-white font-bold">{userStats.longest_streak} días</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400">Minutos Totales</p>
+                      <p className="text-white font-bold">{userStats.total_minutes}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400">Retos Completados</p>
+                      <p className="text-white font-bold">{userStats.challenges_completed}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {achievements.map((achievement) => {
                   const isUnlocked = profile.stats.achievements.includes(achievement.id);

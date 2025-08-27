@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useSound from 'use-sound';
-import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useUser } from "@supabase/auth-helpers-react";
 import ResponsiveCard from "../common/ResponsiveCard";
+import { challengeService } from "@/lib/challengeService";
 import { 
   Clock, 
   Target, 
@@ -16,6 +17,21 @@ import {
   Brain,
   Wind
 } from "lucide-react";
+
+// Interfaz para la función de notificación
+interface AchievementNotification {
+  type: 'achievement' | 'streak' | 'level' | 'challenge';
+  title: string;
+  message: string;
+  icon: string;
+  points?: number;
+}
+
+declare global {
+  interface Window {
+    showAchievementNotification?: (notification: AchievementNotification) => void;
+  }
+}
 
 interface Exercise {
   name: string;
@@ -175,7 +191,7 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({ phase, progress, time
 };
 
 const RespirationCalendar: React.FC = () => {
-  const supabase = useSupabaseClient();
+
   const user = useUser();
   const [isExercising, setIsExercising] = useState(false);
   const [currentPhase, setCurrentPhase] = useState<'inhale' | 'holdIn' | 'exhale' | 'holdOut' | 'rest'>('rest');
@@ -336,50 +352,28 @@ const RespirationCalendar: React.FC = () => {
         total: xpGanada
       });
       
-      const { data: existingUser, error: userError } = await supabase
-        .from('leaderboard')
-        .select('points, level, rank')
-        .eq('profileId', user.id)
-        .single();
+      // Usar challengeService para completar la sesión
+      await challengeService.completeSession(
+        user.id,
+        'respiration',
+        selectedExercise?.name || 'Respiración',
+        selectedMinutes,
+        {
+          exercise: selectedExercise?.name || 'Respiración',
+          rounds: selectedExercise?.rounds || 0,
+          effect: selectedExercise?.effect || 'BALANCING'
+        }
+      );
 
-      if (userError && userError.code !== 'PGRST116') {
-        throw new Error('Error fetching user data');
-      }
-
-      const currentPoints = existingUser?.points || 0;
-      const newPoints = currentPoints + xpGanada;
-      const newLevel = Math.floor(newPoints / 1000) + 1;
-      
-      let newRank = 'Novato';
-      if (newPoints >= 5000) newRank = 'Maestro';
-      else if (newPoints >= 3000) newRank = 'Experto';
-      else if (newPoints >= 1000) newRank = 'Avanzado';
-      else if (newPoints >= 500) newRank = 'Intermedio';
-
-      if (existingUser) {
-        const { error: updateError } = await supabase
-          .from('leaderboard')
-          .update({
-            points: newPoints,
-            level: newLevel,
-            rank: newRank,
-            last_activity: new Date().toISOString(),
-          })
-          .eq('profileId', user.id);
-
-        if (updateError) throw new Error('Error updating points');
-      } else {
-        const { error: insertError } = await supabase
-          .from('leaderboard')
-          .insert([{
-            profileId: user.id,
-            points: xpGanada,
-            level: 1,
-            rank: 'Novato',
-            last_activity: new Date().toISOString(),
-          }]);
-
-        if (insertError) throw new Error('Error inserting new user');
+      // Mostrar notificación de logro
+      if (window.showAchievementNotification) {
+        window.showAchievementNotification({
+          type: 'challenge',
+          title: '¡Sesión Completada!',
+          message: `Has completado ${selectedMinutes} minutos de respiración`,
+          icon: '🧘',
+          points: xpGanada
+        });
       }
 
       setShowCompletionModal(true);

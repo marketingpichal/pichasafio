@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { supabase } from "../../lib/supabaseClient";
 import { motion } from "framer-motion";
 import ResponsiveCard from "../common/ResponsiveCard";
@@ -17,12 +20,51 @@ interface ProfileResponse {
   error: any | null;
 }
 
+interface RegisterFormData {
+  email: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+  termsAccepted: boolean;
+}
+
+// Esquema de validación con Yup
+const registerSchema = yup.object({
+  email: yup
+    .string()
+    .email("Por favor, ingresa un correo válido")
+    .required("El email es obligatorio"),
+  username: yup
+    .string()
+    .min(3, "El nombre de usuario debe tener al menos 3 caracteres")
+    .max(20, "El nombre de usuario no puede tener más de 20 caracteres")
+    .matches(
+      /^[a-zA-Z0-9_]+$/,
+      "Solo se permiten letras, números y guiones bajos"
+    )
+    .required("El nombre de usuario es obligatorio"),
+  password: yup
+    .string()
+    .min(8, "La contraseña debe tener al menos 8 caracteres")
+    .matches(/[A-Z]/, "Debe contener al menos una mayúscula")
+    .matches(/[a-z]/, "Debe contener al menos una minúscula")
+    .matches(/[0-9]/, "Debe contener al menos un número")
+    .matches(
+      /[!@#$%^&*]/,
+      "Debe contener al menos un carácter especial (!@#$%^&*)"
+    )
+    .required("La contraseña es obligatoria"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password")], "Las contraseñas deben coincidir")
+    .required("Confirma tu contraseña"),
+  termsAccepted: yup
+    .boolean()
+    .oneOf([true], "Debes aceptar los términos y condiciones")
+    .required("Debes aceptar los términos y condiciones"),
+});
+
 export default function Register() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
-  const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -36,16 +78,30 @@ export default function Register() {
   const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
   const [checkingEmail, setCheckingEmail] = useState<boolean>(false);
 
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isValid },
+  } = useForm<RegisterFormData>({
+    resolver: yupResolver(registerSchema),
+    mode: "onChange",
+  });
+
+  const watchedEmail = watch("email");
+  const watchedUsername = watch("username");
+  const watchedPassword = watch("password");
+
   // Validar disponibilidad del nombre de usuario
   useEffect(() => {
     const checkUsername = async () => {
-      if (username.length > 0) {
+      if (watchedUsername && watchedUsername.length >= 3) {
         setCheckingUsername(true);
         setUsernameAvailable(null);
         const { data, error } = await supabase
           .from("profiles")
           .select("username")
-          .eq("username", username)
+          .eq("username", watchedUsername)
           .single();
 
         if (error && error.code !== "PGRST116") {
@@ -62,9 +118,37 @@ export default function Register() {
 
     const timeout = setTimeout(checkUsername, 500);
     return () => clearTimeout(timeout);
-  }, [username]);
+  }, [watchedUsername]);
 
-  // Password validation
+  // Email validation effect
+  useEffect(() => {
+    const checkEmail = async () => {
+      if (watchedEmail && watchedEmail.includes("@")) {
+        setCheckingEmail(true);
+        setEmailAvailable(null);
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("email")
+          .eq("email", watchedEmail)
+          .single();
+
+        if (error && error.code !== "PGRST116") {
+          setError("Error al verificar el email");
+          setEmailAvailable(null);
+        } else if (data) {
+          setEmailAvailable(false);
+        } else {
+          setEmailAvailable(true);
+        }
+        setCheckingEmail(false);
+      }
+    };
+
+    const timeout = setTimeout(checkEmail, 500);
+    return () => clearTimeout(timeout);
+  }, [watchedEmail]);
+
+  // Password validation helper
   const validatePassword = (pass: string) => {
     const minLength = pass.length >= 8;
     const hasUpperCase = /[A-Z]/.test(pass);
@@ -89,64 +173,11 @@ export default function Register() {
     };
   };
 
-  // Email validation effect
-  useEffect(() => {
-    const checkEmail = async () => {
-      if (email.length > 0 && email.includes("@")) {
-        setCheckingEmail(true);
-        setEmailAvailable(null);
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("email")
-          .eq("email", email)
-          .single();
-
-        if (error && error.code !== "PGRST116") {
-          setError("Error al verificar el email");
-          setEmailAvailable(null);
-        } else if (data) {
-          setEmailAvailable(false);
-        } else {
-          setEmailAvailable(true);
-        }
-        setCheckingEmail(false);
-      }
-    };
-
-    const timeout = setTimeout(checkEmail, 500);
-    return () => clearTimeout(timeout);
-  }, [email]);
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
     setError(null);
 
-    // Enhanced validation
-    if (password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
-      setLoading(false);
-      return;
-    }
-
-    if (username.length < 3) {
-      setError("El nombre de usuario debe tener al menos 3 caracteres");
-      setLoading(false);
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden");
-      setLoading(false);
-      return;
-    }
-
-    if (!termsAccepted) {
-      setError("Debes aceptar los términos y condiciones");
-      setLoading(false);
-      return;
-    }
-
+    // Validaciones adicionales del servidor
     if (usernameAvailable === false || usernameAvailable === null) {
       setError(
         "El nombre de usuario no está disponible o aún se está verificando"
@@ -155,8 +186,8 @@ export default function Register() {
       return;
     }
 
-    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      setError("Por favor, ingresa un correo válido");
+    if (emailAvailable === false) {
+      setError("Este email ya está registrado");
       setLoading(false);
       return;
     }
@@ -166,7 +197,7 @@ export default function Register() {
       const { data: existingUser } = await supabase
         .from("profiles")
         .select("email")
-        .eq("email", email)
+        .eq("email", data.email)
         .single();
 
       if (existingUser) {
@@ -178,11 +209,11 @@ export default function Register() {
       // Proceed with registration
       const { data: authData, error: authError }: AuthResponse =
         await supabase.auth.signUp({
-          email,
-          password,
+          email: data.email,
+          password: data.password,
           options: {
             data: {
-              username,
+              username: data.username,
             },
             emailRedirectTo: `${import.meta.env.VITE_SITE_URL}/auth/callback`,
           },
@@ -206,7 +237,7 @@ export default function Register() {
             .from("profiles")
             .insert({
               id: authData.user.id,
-              username,
+              username: data.username,
               email: authData.user.email,
               created_at: new Date().toISOString(),
               "30_days": [],
@@ -264,7 +295,7 @@ export default function Register() {
               </p>
             </motion.div>
           ) : (
-            <form onSubmit={handleRegister} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Email Field */}
               <div className="space-y-2">
                 <label
@@ -277,11 +308,11 @@ export default function Register() {
                   <input
                     id="email"
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...register("email")}
                     placeholder="tu@email.com"
-                    required
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                      errors.email ? "border-red-500" : "border-gray-600"
+                    }`}
                     disabled={loading}
                   />
                   {checkingEmail && (
@@ -289,25 +320,33 @@ export default function Register() {
                       <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   )}
-                  {email && emailAvailable !== null && !checkingEmail && (
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      {emailAvailable ? (
-                        <Check className="w-5 h-5 text-green-400" />
-                      ) : (
-                        <X className="w-5 h-5 text-red-400" />
-                      )}
-                    </div>
-                  )}
+                  {watchedEmail &&
+                    emailAvailable !== null &&
+                    !checkingEmail && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        {emailAvailable ? (
+                          <Check className="w-5 h-5 text-green-400" />
+                        ) : (
+                          <X className="w-5 h-5 text-red-400" />
+                        )}
+                      </div>
+                    )}
                 </div>
-                {email && emailAvailable !== null && !checkingEmail && (
-                  <p
-                    className={`text-xs ${
-                      emailAvailable ? "text-green-400" : "text-red-400"
-                    }`}
-                  >
-                    {emailAvailable ? "✓ Email disponible" : "✗ Email en uso"}
-                  </p>
+                {errors.email && (
+                  <p className="text-red-400 text-xs">{errors.email.message}</p>
                 )}
+                {watchedEmail &&
+                  emailAvailable !== null &&
+                  !checkingEmail &&
+                  !errors.email && (
+                    <p
+                      className={`text-xs ${
+                        emailAvailable ? "text-green-400" : "text-red-400"
+                      }`}
+                    >
+                      {emailAvailable ? "✓ Email disponible" : "✗ Email en uso"}
+                    </p>
+                  )}
               </div>
 
               {/* Username Field */}
@@ -316,17 +355,17 @@ export default function Register() {
                   htmlFor="username"
                   className="block text-sm font-medium text-gray-300 text-left"
                 >
-                  Nombre de usuario
+                  Nombre de usuario *
                 </label>
                 <div className="relative">
                   <input
                     id="username"
                     type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    {...register("username")}
                     placeholder="Tu nombre de usuario"
-                    required
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
+                      errors.username ? "border-red-500" : "border-gray-600"
+                    }`}
                     disabled={loading}
                   />
                   {checkingUsername && (
@@ -334,7 +373,7 @@ export default function Register() {
                       <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   )}
-                  {username &&
+                  {watchedUsername &&
                     usernameAvailable !== null &&
                     !checkingUsername && (
                       <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -346,9 +385,15 @@ export default function Register() {
                       </div>
                     )}
                 </div>
-                {username &&
+                {errors.username && (
+                  <p className="text-red-400 text-xs">
+                    {errors.username.message}
+                  </p>
+                )}
+                {watchedUsername &&
                   usernameAvailable !== null &&
-                  !checkingUsername && (
+                  !checkingUsername &&
+                  !errors.username && (
                     <p
                       className={`text-xs ${
                         usernameAvailable ? "text-green-400" : "text-red-400"
@@ -373,11 +418,11 @@ export default function Register() {
                   <input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    {...register("password")}
                     placeholder="Tu contraseña"
-                    required
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12"
+                    className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12 ${
+                      errors.password ? "border-red-500" : "border-gray-600"
+                    }`}
                     disabled={loading}
                   />
                   <button
@@ -392,10 +437,15 @@ export default function Register() {
                     )}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="text-red-400 text-xs">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
               {/* Password Requirements */}
-              {password && (
+              {watchedPassword && (
                 <div className="bg-gray-800/50 rounded-xl p-4 space-y-2">
                   <p className="text-sm font-medium text-gray-300 mb-3">
                     Requisitos de contraseña:
@@ -403,7 +453,7 @@ export default function Register() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     <div
                       className={`flex items-center space-x-2 ${
-                        validatePassword(password).errors.minLength
+                        validatePassword(watchedPassword).errors.minLength
                           ? "text-green-400"
                           : "text-gray-500"
                       }`}
@@ -413,7 +463,7 @@ export default function Register() {
                     </div>
                     <div
                       className={`flex items-center space-x-2 ${
-                        validatePassword(password).errors.hasUpperCase
+                        validatePassword(watchedPassword).errors.hasUpperCase
                           ? "text-green-400"
                           : "text-gray-500"
                       }`}
@@ -423,7 +473,7 @@ export default function Register() {
                     </div>
                     <div
                       className={`flex items-center space-x-2 ${
-                        validatePassword(password).errors.hasLowerCase
+                        validatePassword(watchedPassword).errors.hasLowerCase
                           ? "text-green-400"
                           : "text-gray-500"
                       }`}
@@ -433,7 +483,7 @@ export default function Register() {
                     </div>
                     <div
                       className={`flex items-center space-x-2 ${
-                        validatePassword(password).errors.hasNumber
+                        validatePassword(watchedPassword).errors.hasNumber
                           ? "text-green-400"
                           : "text-gray-500"
                       }`}
@@ -443,7 +493,7 @@ export default function Register() {
                     </div>
                     <div
                       className={`flex items-center space-x-2 ${
-                        validatePassword(password).errors.hasSpecialChar
+                        validatePassword(watchedPassword).errors.hasSpecialChar
                           ? "text-green-400"
                           : "text-gray-500"
                       }`}
@@ -467,11 +517,13 @@ export default function Register() {
                   <input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    {...register("confirmPassword")}
                     placeholder="Confirma tu contraseña"
-                    required
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12"
+                    className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12 ${
+                      errors.confirmPassword
+                        ? "border-red-500"
+                        : "border-gray-600"
+                    }`}
                     disabled={loading}
                   />
                   <button
@@ -486,9 +538,9 @@ export default function Register() {
                     )}
                   </button>
                 </div>
-                {confirmPassword && password !== confirmPassword && (
+                {errors.confirmPassword && (
                   <p className="text-red-400 text-xs">
-                    Las contraseñas no coinciden
+                    {errors.confirmPassword.message}
                   </p>
                 )}
               </div>
@@ -498,8 +550,7 @@ export default function Register() {
                 <input
                   id="terms"
                   type="checkbox"
-                  checked={termsAccepted}
-                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  {...register("termsAccepted")}
                   className="mt-1 w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
                 />
                 <label htmlFor="terms" className="text-sm text-gray-300">
@@ -512,6 +563,11 @@ export default function Register() {
                   </button>
                 </label>
               </div>
+              {errors.termsAccepted && (
+                <p className="text-red-400 text-xs">
+                  {errors.termsAccepted.message}
+                </p>
+              )}
 
               {error && (
                 <motion.div
@@ -525,7 +581,7 @@ export default function Register() {
 
               <ResponsiveButton
                 type="submit"
-                disabled={loading || checkingUsername}
+                disabled={loading || checkingUsername || !isValid}
                 className="w-full"
                 size="lg"
               >

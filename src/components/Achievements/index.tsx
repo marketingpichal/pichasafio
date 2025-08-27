@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthProvider";
 import { challengeService, type Achievement } from "@/lib/challengeService";
 import ResponsiveCard from "../common/ResponsiveCard";
-import { Trophy, Star, Target, Award } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Achievements: React.FC = () => {
