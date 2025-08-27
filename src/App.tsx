@@ -23,6 +23,7 @@ import ThirtyDaysChallenge from "./components/ThirtyDaysChanllenge";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { AuthProvider } from "./context/AuthProvider";
 import DebugAuth from "./components/DebugAuth";
+// import ConfigChecker from "./components/ConfigChecker";
 
 // import PichasahurSidebar from "./components/common/PichasahurSidebar";
 // import PichasahurFloatingButton from "./components/common/PichasahurFloatingButton";
@@ -58,6 +59,7 @@ export default function App() {
   return (
     <AuthProvider>
       <div className="min-h-screen bg-gray-900">
+        {/* <ConfigChecker /> */}
         {!isVerified && <AgeVerificationModal onVerified={handleVerification} />}
         {isVerified && (
           <div className="flex flex-col min-h-screen">

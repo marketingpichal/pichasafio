@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -14,8 +14,10 @@ export default function ResetPassword() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
+  const [isValidRecoveryLink, setIsValidRecoveryLink] = useState<boolean>(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const recoveryTokensRef = useRef<{accessToken: string, refreshToken: string} | null>(null);
 
   useEffect(() => {
     // Debug: mostrar todos los parámetros de la URL
@@ -32,17 +34,19 @@ export default function ResetPassword() {
     console.log('Refresh token:', refreshToken ? 'Presente' : 'No encontrado');
     console.log('Type:', type);
     
-    if (accessToken && refreshToken) {
-      console.log('Estableciendo sesión con tokens...');
-      // Establecer la sesión con los tokens de recuperación
-      supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      }).then(({ data, error }) => {
-        console.log('Resultado setSession:', { data, error });
-      });
+    if (accessToken && refreshToken && type === 'recovery') {
+      console.log('Enlace de recuperación válido detectado');
+      // Guardar los tokens para usarlos más tarde, pero NO establecer la sesión aquí
+      recoveryTokensRef.current = { accessToken, refreshToken };
+      setIsValidRecoveryLink(true);
     } else {
-      console.log('No se encontraron tokens válidos en la URL');
+      console.log('No se encontraron tokens válidos de recuperación en la URL');
+      setIsValidRecoveryLink(false);
+      if (!accessToken || !refreshToken) {
+        setError('Enlace de recuperación inválido. Los tokens de acceso no están presentes.');
+      } else if (type !== 'recovery') {
+        setError('Enlace de recuperación inválido. Tipo de operación incorrecto.');
+      }
     }
   }, [searchParams]);
 
@@ -64,26 +68,98 @@ export default function ResetPassword() {
       return;
     }
 
+    if (!recoveryTokensRef.current) {
+      setError("No se encontraron tokens de recuperación válidos.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const { error } = await supabase.auth.updateUser({
+      console.log('Estableciendo sesión temporal para reset de contraseña...');
+      
+      // Establecer la sesión temporalmente solo para el reset
+      const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+        access_token: recoveryTokensRef.current.accessToken,
+        refresh_token: recoveryTokensRef.current.refreshToken,
+      });
+
+      if (sessionError) {
+        console.error('Error al establecer sesión temporal:', sessionError);
+        setError(`Error al establecer sesión: ${sessionError.message}`);
+        setLoading(false);
+        return;
+      }
+
+      console.log('Sesión temporal establecida, actualizando contraseña...');
+
+      // Ahora actualizar la contraseña
+      const { error: updateError } = await supabase.auth.updateUser({
         password: password
       });
 
-      if (error) {
-        setError(error.message);
+      if (updateError) {
+        console.error('Error al actualizar contraseña:', updateError);
+        setError(`Error al actualizar contraseña: ${updateError.message}`);
       } else {
+        console.log('Contraseña actualizada exitosamente');
         setSuccess(true);
+        
+        // Cerrar la sesión temporal después del reset
+        await supabase.auth.signOut();
+        
         // Redirigir al login después de 3 segundos
         setTimeout(() => {
           navigate('/login');
         }, 3000);
       }
-    } catch (err: any) {
-      setError(err.message || "Error al actualizar la contraseña.");
+    } catch (err: unknown) {
+      console.error('Error inesperado:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+      setError(`Error inesperado: ${errorMessage}`);
     }
 
     setLoading(false);
   };
+
+  // Si no es un enlace de recuperación válido, mostrar error
+  if (!isValidRecoveryLink && !success) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md"
+        >
+          <ResponsiveCard
+            title="Enlace Inválido"
+            subtitle="Este enlace de recuperación no es válido"
+            className="text-center"
+          >
+            <div className="space-y-4">
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-red-500/10 border border-red-500/20 rounded-xl p-4"
+                >
+                  <p className="text-red-400 text-sm">{error}</p>
+                </motion.div>
+              )}
+              
+              <ResponsiveButton
+                onClick={() => navigate('/login')}
+                className="w-full"
+                size="lg"
+              >
+                Volver al Inicio de Sesión
+              </ResponsiveButton>
+            </div>
+          </ResponsiveCard>
+        </motion.div>
+      </div>
+    );
+  }
 
   if (success) {
     return (
