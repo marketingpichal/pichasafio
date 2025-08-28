@@ -210,7 +210,7 @@ export default function Login() {
               )}
             </ResponsiveButton>
 
-            <div className="text-center space-y-3">
+            {/* <div className="text-center space-y-3">
               {!resetMode && (
                 <button
                   type="button"
@@ -251,7 +251,7 @@ export default function Login() {
                   </button>
                 </p>
               )}
-            </div>
+            </div> */}
           </form>
         </ResponsiveCard>
       </motion.div>
