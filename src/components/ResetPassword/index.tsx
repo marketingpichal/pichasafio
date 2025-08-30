@@ -16,29 +16,79 @@ export default function ResetPassword() {
   const [success, setSuccess] = useState<boolean>(false);
   const [isValidToken, setIsValidToken] = useState<boolean>(false);
   const [isCheckingToken, setIsCheckingToken] = useState<boolean>(true);
+  const [debugInfo, setDebugInfo] = useState<string>('');
   
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
     checkResetToken();
+    
+    // Escuchar cambios en el hash de la URL
+    const handleHashChange = () => {
+      console.log('Hash cambiado, verificando token nuevamente...');
+      setIsCheckingToken(true);
+      checkResetToken();
+    };
+    
+    window.addEventListener('hashchange', handleHashChange);
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
   }, []);
 
   const checkResetToken = async () => {
     try {
-      // Obtener la sesión actual para verificar si hay un token válido
-      const { data: { session }, error } = await supabase.auth.getSession();
+      // Extraer el token del hash de la URL
+      const hash = window.location.hash;
+      const urlParams = new URLSearchParams(hash.substring(1)); // Remover el # inicial
       
-      if (error) {
-        console.error('Error al verificar sesión:', error);
-        setError('Error al verificar el enlace de recuperación. Por favor, solicita un nuevo enlace.');
-        setIsValidToken(false);
-      } else if (session) {
-        // Si hay una sesión, significa que el token es válido
-        setIsValidToken(true);
+      const accessToken = urlParams.get('access_token');
+      const refreshToken = urlParams.get('refresh_token');
+      const tokenType = urlParams.get('type');
+      
+      console.log('Hash de la URL:', hash);
+      console.log('Access Token:', accessToken ? 'Presente' : 'No presente');
+      console.log('Refresh Token:', refreshToken ? 'Presente' : 'No presente');
+      console.log('Token Type:', tokenType);
+      
+      // Información de debug para desarrollo
+      setDebugInfo(`Hash: ${hash.substring(0, 50)}... | Token: ${accessToken ? 'Presente' : 'No presente'} | Type: ${tokenType}`);
+      
+      if (accessToken && tokenType === 'recovery') {
+        // Si tenemos un token de recuperación válido, establecer la sesión
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken || ''
+        });
+        
+        if (error) {
+          console.error('Error al establecer sesión:', error);
+          setError('Error al procesar el enlace de recuperación. Por favor, solicita un nuevo enlace.');
+          setIsValidToken(false);
+        } else if (data.session) {
+          console.log('Sesión establecida correctamente');
+          setIsValidToken(true);
+        } else {
+          setError('El enlace de recuperación no es válido o ha expirado. Por favor, solicita un nuevo enlace.');
+          setIsValidToken(false);
+        }
       } else {
-        setError('El enlace de recuperación no es válido o ha expirado. Por favor, solicita un nuevo enlace.');
-        setIsValidToken(false);
+        // Si no hay token en el hash, verificar si ya hay una sesión válida
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error al verificar sesión:', error);
+          setError('Error al verificar el enlace de recuperación. Por favor, solicita un nuevo enlace.');
+          setIsValidToken(false);
+        } else if (session) {
+          console.log('Sesión existente válida');
+          setIsValidToken(true);
+        } else {
+          setError('El enlace de recuperación no es válido o ha expirado. Por favor, solicita un nuevo enlace.');
+          setIsValidToken(false);
+        }
       }
     } catch (err) {
       console.error('Error inesperado al verificar token:', err);
@@ -98,6 +148,13 @@ export default function ResetPassword() {
     navigate("/login");
   };
 
+  const simulateTokenFromUrl = () => {
+    // Simular el token que viene en la URL del email
+    const mockHash = '#access_token=mock_token&refresh_token=mock_refresh&type=recovery';
+    window.location.hash = mockHash;
+    console.log('Simulando token de URL:', mockHash);
+  };
+
   if (isCheckingToken) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -115,6 +172,12 @@ export default function ResetPassword() {
             <div className="flex items-center justify-center py-8">
               <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
+            
+            {debugInfo && (
+              <div className="bg-gray-800 rounded-lg p-3 mt-4">
+                <p className="text-xs text-gray-400">Debug: {debugInfo}</p>
+              </div>
+            )}
           </ResponsiveCard>
         </motion.div>
       </div>
@@ -142,6 +205,14 @@ export default function ResetPassword() {
               
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
                 <p className="text-red-400 text-sm">{error}</p>
+                <p className="text-gray-400 text-xs mt-2">
+                  Si el problema persiste, verifica que estés usando el enlace completo del email.
+                </p>
+                {debugInfo && (
+                  <div className="bg-gray-800 rounded p-2 mt-3">
+                    <p className="text-xs text-gray-400">Debug: {debugInfo}</p>
+                  </div>
+                )}
               </div>
 
               <ResponsiveButton
@@ -151,6 +222,16 @@ export default function ResetPassword() {
               >
                 Solicitar Nuevo Enlace
               </ResponsiveButton>
+              
+              {/* Botón de debug solo en desarrollo */}
+              {import.meta.env.DEV && (
+                <button
+                  onClick={simulateTokenFromUrl}
+                  className="w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 text-sm"
+                >
+                  [DEBUG] Simular Token
+                </button>
+              )}
             </div>
           </ResponsiveCard>
         </motion.div>
