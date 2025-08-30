@@ -35,8 +35,9 @@ const About = () => (
         Acerca de Nosotros
       </h2>
       <p className="text-lg sm:text-xl text-gray-300 leading-relaxed">
-        Pichasafio.com es tu comunidad para mejorar tu salud íntima y bienestar personal.
-        Ofrecemos recursos, rutinas y herramientas para ayudarte en tu viaje de automejora.
+        Pichasafio.com es tu comunidad para mejorar tu salud íntima y bienestar
+        personal. Ofrecemos recursos, rutinas y herramientas para ayudarte en tu
+        viaje de automejora.
       </p>
     </div>
   </div>
@@ -60,7 +61,9 @@ export default function App() {
     <AuthProvider>
       <div className="min-h-screen bg-gray-900">
         {/* <ConfigChecker /> */}
-        {!isVerified && <AgeVerificationModal onVerified={handleVerification} />}
+        {!isVerified && (
+          <AgeVerificationModal onVerified={handleVerification} />
+        )}
         {isVerified && (
           <div className="flex flex-col min-h-screen">
             <Navbar />
@@ -75,36 +78,44 @@ export default function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/debug-reset-password" element={<DebugResetPassword />} />
+                <Route
+                  path="/debug-reset-password"
+                  element={<DebugResetPassword />}
+                />
                 <Route path="/complete-profile" element={<CompleteProfile />} />
                 <Route path="/rutinas" element={<Rutinas />} />
                 <Route path="/chochasafio" element={<Chochasafio />} />
-        {/* Pichasahur Floating Button   <Route path="/sexshop" element={<SexShop />} />*/}
+                {/* Pichasahur Floating Button   <Route path="/sexshop" element={<SexShop />} />*/}
                 <Route path="/tyc" element={<TerminosYCondiciones />} />
                 <Route path="/sexshop" element={<SexShop />} />
                 <Route path="/guia" element={<GuideStore />} />
-                <Route path="/pose/:id" element={
-                  <ProtectedRoute>
-                    <PoseViewer />
-                  </ProtectedRoute>
-                } />
+                <Route
+                  path="/pose/:id"
+                  element={
+                    <ProtectedRoute>
+                      <PoseViewer />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/profile" element={<UserProfile />} />
-                <Route path="/thirty-days-challenge" element={
-                  <ProtectedRoute>
-                    <ThirtyDaysChallenge />
-                  </ProtectedRoute>
-                } />
+                <Route
+                  path="/thirty-days-challenge"
+                  element={
+                    <ProtectedRoute>
+                      <ThirtyDaysChallenge />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/debug-auth" element={<DebugAuth />} />
-                
-               </Routes>
+              </Routes>
             </main>
-            
+
             {/* Pichasahur Floating Button */}
             {/* <PichasahurFloatingButton 
               onClick={openPichasahur} 
               isVisible={true} 
             /> */}
-            
+
             {/* Pichasahur Sidebar */}
             {/* <PichasahurSidebar 
               isOpen={isPichasahurOpen} 
