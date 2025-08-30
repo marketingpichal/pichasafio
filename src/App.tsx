@@ -10,8 +10,6 @@ import Testimonials from "./components/TestimoniosAnonimos";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import ResetPassword from "./components/ResetPassword";
-import DebugResetPassword from "./components/DebugResetPassword";
-import ResetPasswordDebug from "./components/ResetPasswordDebug";
 import CompleteProfile from "./components/CompleteProfile";
 import Rutinas from "./components/Rutines";
 import Chochasafio from "./components/Chochasafio";
@@ -79,12 +77,7 @@ export default function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
-                <Route
-                  path="/debug-reset-password"
-                  element={<DebugResetPassword />}
-                />
-                <Route path="/test-route" element={<div className="min-h-screen bg-gray-900 flex items-center justify-center text-white">Ruta de prueba funcionando</div>} />
-                <Route path="/debug-reset-vercel" element={<ResetPasswordDebug />} />
+
                 <Route path="/complete-profile" element={<CompleteProfile />} />
                 <Route path="/rutinas" element={<Rutinas />} />
                 <Route path="/chochasafio" element={<Chochasafio />} />

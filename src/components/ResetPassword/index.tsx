@@ -16,7 +16,7 @@ export default function ResetPassword() {
   const [success, setSuccess] = useState<boolean>(false);
   const [isValidToken, setIsValidToken] = useState<boolean>(false);
   const [isCheckingToken, setIsCheckingToken] = useState<boolean>(true);
-  const [debugInfo, setDebugInfo] = useState<string>('');
+
   
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -26,7 +26,7 @@ export default function ResetPassword() {
     
     // Escuchar cambios en el hash de la URL
     const handleHashChange = () => {
-      console.log('Hash cambiado, verificando token nuevamente...');
+      if (import.meta.env.DEV) console.log('Hash cambiado, verificando token nuevamente...');
       setIsCheckingToken(true);
       checkResetToken();
     };
@@ -48,13 +48,12 @@ export default function ResetPassword() {
       const refreshToken = urlParams.get('refresh_token');
       const tokenType = urlParams.get('type');
       
-      console.log('Hash de la URL:', hash);
-      console.log('Access Token:', accessToken ? 'Presente' : 'No presente');
-      console.log('Refresh Token:', refreshToken ? 'Presente' : 'No presente');
-      console.log('Token Type:', tokenType);
-      
-      // Información de debug para desarrollo
-      setDebugInfo(`Hash: ${hash.substring(0, 50)}... | Token: ${accessToken ? 'Presente' : 'No presente'} | Type: ${tokenType}`);
+      // Logs de debug solo en desarrollo
+      if (import.meta.env.DEV) {
+        console.log('Hash de la URL:', hash);
+        console.log('Access Token:', accessToken ? 'Presente' : 'No presente');
+        console.log('Token Type:', tokenType);
+      }
       
       if (accessToken && tokenType === 'recovery') {
         // Si tenemos un token de recuperación válido, establecer la sesión
@@ -64,34 +63,34 @@ export default function ResetPassword() {
         });
         
         if (error) {
-          console.error('Error al establecer sesión:', error);
+          if (import.meta.env.DEV) console.error('Error al establecer sesión:', error);
           setError('Error al procesar el enlace de recuperación. Por favor, solicita un nuevo enlace.');
           setIsValidToken(false);
         } else if (data.session) {
-          console.log('Sesión establecida correctamente');
+          if (import.meta.env.DEV) console.log('Sesión establecida correctamente');
           setIsValidToken(true);
         } else {
           setError('El enlace de recuperación no es válido o ha expirado. Por favor, solicita un nuevo enlace.');
           setIsValidToken(false);
         }
-      } else {
-        // Si no hay token en el hash, verificar si ya hay una sesión válida
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Error al verificar sesión:', error);
-          setError('Error al verificar el enlace de recuperación. Por favor, solicita un nuevo enlace.');
-          setIsValidToken(false);
-        } else if (session) {
-          console.log('Sesión existente válida');
-          setIsValidToken(true);
-        } else {
-          setError('El enlace de recuperación no es válido o ha expirado. Por favor, solicita un nuevo enlace.');
-          setIsValidToken(false);
+              } else {
+          // Si no hay token en el hash, verificar si ya hay una sesión válida
+          const { data: { session }, error } = await supabase.auth.getSession();
+          
+          if (error) {
+            if (import.meta.env.DEV) console.error('Error al verificar sesión:', error);
+            setError('Error al verificar el enlace de recuperación. Por favor, solicita un nuevo enlace.');
+            setIsValidToken(false);
+          } else if (session) {
+            if (import.meta.env.DEV) console.log('Sesión existente válida');
+            setIsValidToken(true);
+          } else {
+            setError('El enlace de recuperación no es válido o ha expirado. Por favor, solicita un nuevo enlace.');
+            setIsValidToken(false);
+          }
         }
-      }
     } catch (err) {
-      console.error('Error inesperado al verificar token:', err);
+      if (import.meta.env.DEV) console.error('Error inesperado al verificar token:', err);
       setError('Error inesperado al verificar el enlace. Por favor, intenta nuevamente.');
       setIsValidToken(false);
     } finally {
@@ -124,10 +123,10 @@ export default function ResetPassword() {
       });
 
       if (error) {
-        console.error('Error al actualizar contraseña:', error);
+        if (import.meta.env.DEV) console.error('Error al actualizar contraseña:', error);
         setError(`Error al actualizar la contraseña: ${error.message}`);
       } else {
-        console.log('Contraseña actualizada exitosamente');
+        if (import.meta.env.DEV) console.log('Contraseña actualizada exitosamente');
         setSuccess(true);
         
         // Redirigir al login después de 3 segundos
@@ -136,7 +135,7 @@ export default function ResetPassword() {
         }, 3000);
       }
     } catch (err: unknown) {
-      console.error('Error inesperado:', err);
+      if (import.meta.env.DEV) console.error('Error inesperado:', err);
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
       setError(`Error inesperado: ${errorMessage}`);
     }
@@ -148,12 +147,7 @@ export default function ResetPassword() {
     navigate("/login");
   };
 
-  const simulateTokenFromUrl = () => {
-    // Simular el token que viene en la URL del email
-    const mockHash = '#access_token=mock_token&refresh_token=mock_refresh&type=recovery';
-    window.location.hash = mockHash;
-    console.log('Simulando token de URL:', mockHash);
-  };
+
 
   if (isCheckingToken) {
     return (
@@ -172,12 +166,6 @@ export default function ResetPassword() {
             <div className="flex items-center justify-center py-8">
               <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
-            
-            {debugInfo && (
-              <div className="bg-gray-800 rounded-lg p-3 mt-4">
-                <p className="text-xs text-gray-400">Debug: {debugInfo}</p>
-              </div>
-            )}
           </ResponsiveCard>
         </motion.div>
       </div>
@@ -208,11 +196,6 @@ export default function ResetPassword() {
                 <p className="text-gray-400 text-xs mt-2">
                   Si el problema persiste, verifica que estés usando el enlace completo del email.
                 </p>
-                {debugInfo && (
-                  <div className="bg-gray-800 rounded p-2 mt-3">
-                    <p className="text-xs text-gray-400">Debug: {debugInfo}</p>
-                  </div>
-                )}
               </div>
 
               <ResponsiveButton
@@ -223,15 +206,7 @@ export default function ResetPassword() {
                 Solicitar Nuevo Enlace
               </ResponsiveButton>
               
-              {/* Botón de debug solo en desarrollo */}
-              {import.meta.env.DEV && (
-                <button
-                  onClick={simulateTokenFromUrl}
-                  className="w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 text-sm"
-                >
-                  [DEBUG] Simular Token
-                </button>
-              )}
+
             </div>
           </ResponsiveCard>
         </motion.div>
