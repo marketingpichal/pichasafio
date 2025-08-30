@@ -87,9 +87,11 @@ export default function Login() {
       return;
     }
 
-    console.log('Enviando reset password para:', email);
-    console.log('Site URL:', siteUrl);
-    console.log('Redirect URL:', `${siteUrl}/reset-password`);
+    if (import.meta.env.DEV) {
+      console.log('Enviando reset password para:', email);
+      console.log('Site URL:', siteUrl);
+      console.log('Redirect URL:', `${siteUrl}/reset-password`);
+    }
     
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -97,14 +99,14 @@ export default function Login() {
       });
 
       if (error) {
-        console.error('Error en reset password:', error);
+        if (import.meta.env.DEV) console.error('Error en reset password:', error);
         setError(`Error al enviar el email: ${error.message}`);
       } else {
-        console.log('Email de reset enviado exitosamente');
+        if (import.meta.env.DEV) console.log('Email de reset enviado exitosamente');
         setResetSuccess(true);
       }
     } catch (err: unknown) {
-      console.error('Error inesperado:', err);
+      if (import.meta.env.DEV) console.error('Error inesperado:', err);
       const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
       setError(`Error inesperado: ${errorMessage}`);
     }
