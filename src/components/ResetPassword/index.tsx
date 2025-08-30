@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, CheckCircle, AlertCircle } from "lucide-react";
 import ResponsiveCard from "../common/ResponsiveCard";
 import ResponsiveButton from "../common/ResponsiveButton";
 
@@ -14,41 +14,40 @@ export default function ResetPassword() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
-  const [isValidRecoveryLink, setIsValidRecoveryLink] = useState<boolean>(false);
+  const [isValidToken, setIsValidToken] = useState<boolean>(false);
+  const [isCheckingToken, setIsCheckingToken] = useState<boolean>(true);
+  
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const recoveryTokensRef = useRef<{accessToken: string, refreshToken: string} | null>(null);
 
   useEffect(() => {
-    // Debug: mostrar todos los parámetros de la URL
-    console.log('=== DEBUG RESET PASSWORD ===');
-    console.log('URL completa:', window.location.href);
-    console.log('Search params:', Object.fromEntries(searchParams.entries()));
-    
-    // Verificar si hay tokens de recuperación en la URL
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
-    const type = searchParams.get('type');
-    
-    console.log('Access token:', accessToken ? 'Presente' : 'No encontrado');
-    console.log('Refresh token:', refreshToken ? 'Presente' : 'No encontrado');
-    console.log('Type:', type);
-    
-    if (accessToken && refreshToken && type === 'recovery') {
-      console.log('Enlace de recuperación válido detectado');
-      // Guardar los tokens para usarlos más tarde, pero NO establecer la sesión aquí
-      recoveryTokensRef.current = { accessToken, refreshToken };
-      setIsValidRecoveryLink(true);
-    } else {
-      console.log('No se encontraron tokens válidos de recuperación en la URL');
-      setIsValidRecoveryLink(false);
-      if (!accessToken || !refreshToken) {
-        setError('Enlace de recuperación inválido. Los tokens de acceso no están presentes.');
-      } else if (type !== 'recovery') {
-        setError('Enlace de recuperación inválido. Tipo de operación incorrecto.');
+    checkResetToken();
+  }, []);
+
+  const checkResetToken = async () => {
+    try {
+      // Obtener la sesión actual para verificar si hay un token válido
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error('Error al verificar sesión:', error);
+        setError('Error al verificar el enlace de recuperación. Por favor, solicita un nuevo enlace.');
+        setIsValidToken(false);
+      } else if (session) {
+        // Si hay una sesión, significa que el token es válido
+        setIsValidToken(true);
+      } else {
+        setError('El enlace de recuperación no es válido o ha expirado. Por favor, solicita un nuevo enlace.');
+        setIsValidToken(false);
       }
+    } catch (err) {
+      console.error('Error inesperado al verificar token:', err);
+      setError('Error inesperado al verificar el enlace. Por favor, intenta nuevamente.');
+      setIsValidToken(false);
+    } finally {
+      setIsCheckingToken(false);
     }
-  }, [searchParams]);
+  };
 
   const handlePasswordReset = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -68,48 +67,22 @@ export default function ResetPassword() {
       return;
     }
 
-    if (!recoveryTokensRef.current) {
-      setError("No se encontraron tokens de recuperación válidos.");
-      setLoading(false);
-      return;
-    }
-
     try {
-      console.log('Estableciendo sesión temporal para reset de contraseña...');
-      
-      // Establecer la sesión temporalmente solo para el reset
-      const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-        access_token: recoveryTokensRef.current.accessToken,
-        refresh_token: recoveryTokensRef.current.refreshToken,
-      });
-
-      if (sessionError) {
-        console.error('Error al establecer sesión temporal:', sessionError);
-        setError(`Error al establecer sesión: ${sessionError.message}`);
-        setLoading(false);
-        return;
-      }
-
-      console.log('Sesión temporal establecida, actualizando contraseña...');
-
-      // Ahora actualizar la contraseña
-      const { error: updateError } = await supabase.auth.updateUser({
+      // Actualizar la contraseña del usuario
+      const { error } = await supabase.auth.updateUser({
         password: password
       });
 
-      if (updateError) {
-        console.error('Error al actualizar contraseña:', updateError);
-        setError(`Error al actualizar contraseña: ${updateError.message}`);
+      if (error) {
+        console.error('Error al actualizar contraseña:', error);
+        setError(`Error al actualizar la contraseña: ${error.message}`);
       } else {
         console.log('Contraseña actualizada exitosamente');
         setSuccess(true);
         
-        // Cerrar la sesión temporal después del reset
-        await supabase.auth.signOut();
-        
         // Redirigir al login después de 3 segundos
         setTimeout(() => {
-          navigate('/login');
+          navigate("/login");
         }, 3000);
       }
     } catch (err: unknown) {
@@ -121,8 +94,34 @@ export default function ResetPassword() {
     setLoading(false);
   };
 
-  // Si no es un enlace de recuperación válido, mostrar error
-  if (!isValidRecoveryLink && !success) {
+  const handleRequestNewLink = () => {
+    navigate("/login");
+  };
+
+  if (isCheckingToken) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md"
+        >
+          <ResponsiveCard
+            title="Verificando enlace..."
+            subtitle="Estamos validando tu enlace de recuperación"
+            className="text-center"
+          >
+            <div className="flex items-center justify-center py-8">
+              <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          </ResponsiveCard>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (!isValidToken) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <motion.div
@@ -133,26 +132,24 @@ export default function ResetPassword() {
         >
           <ResponsiveCard
             title="Enlace Inválido"
-            subtitle="Este enlace de recuperación no es válido"
+            subtitle="El enlace de recuperación no es válido o ha expirado"
             className="text-center"
           >
-            <div className="space-y-4">
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="bg-red-500/10 border border-red-500/20 rounded-xl p-4"
-                >
-                  <p className="text-red-400 text-sm">{error}</p>
-                </motion.div>
-              )}
+            <div className="space-y-6">
+              <div className="flex items-center justify-center">
+                <AlertCircle className="w-16 h-16 text-red-500" />
+              </div>
               
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+                <p className="text-red-400 text-sm">{error}</p>
+              </div>
+
               <ResponsiveButton
-                onClick={() => navigate('/login')}
+                onClick={handleRequestNewLink}
                 className="w-full"
                 size="lg"
               >
-                Volver al Inicio de Sesión
+                Solicitar Nuevo Enlace
               </ResponsiveButton>
             </div>
           </ResponsiveCard>
@@ -172,22 +169,22 @@ export default function ResetPassword() {
         >
           <ResponsiveCard
             title="¡Contraseña Actualizada!"
-            subtitle="Tu contraseña ha sido cambiada exitosamente"
+            subtitle="Tu contraseña ha sido restablecida exitosamente"
             className="text-center"
           >
-            <div className="space-y-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-green-500/10 border border-green-500/20 rounded-xl p-4"
-              >
-                <p className="text-green-400 text-sm">
-                  Serás redirigido al inicio de sesión en unos segundos...
-                </p>
-              </motion.div>
+            <div className="space-y-6">
+              <div className="flex items-center justify-center">
+                <CheckCircle className="w-16 h-16 text-green-500" />
+              </div>
               
+              <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
+                <p className="text-green-400 text-sm">
+                  Tu contraseña ha sido actualizada correctamente. Serás redirigido al inicio de sesión en unos segundos.
+                </p>
+              </div>
+
               <ResponsiveButton
-                onClick={() => navigate('/login')}
+                onClick={() => navigate("/login")}
                 className="w-full"
                 size="lg"
               >
@@ -209,7 +206,7 @@ export default function ResetPassword() {
         className="w-full max-w-md"
       >
         <ResponsiveCard
-          title="Nueva Contraseña"
+          title="Restablecer Contraseña"
           subtitle="Ingresa tu nueva contraseña"
           className="text-center"
         >
@@ -224,7 +221,7 @@ export default function ResetPassword() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Tu nueva contraseña"
                   required
                   className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12"
                   disabled={loading}
@@ -241,6 +238,7 @@ export default function ResetPassword() {
                   )}
                 </button>
               </div>
+              <p className="text-xs text-gray-400">Mínimo 6 caracteres</p>
             </div>
 
             <div className="space-y-2">
@@ -253,7 +251,7 @@ export default function ResetPassword() {
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Repite tu nueva contraseña"
+                  placeholder="Confirma tu nueva contraseña"
                   required
                   className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12"
                   disabled={loading}
@@ -301,7 +299,7 @@ export default function ResetPassword() {
             <div className="text-center">
               <button
                 type="button"
-                onClick={() => navigate('/login')}
+                onClick={() => navigate("/login")}
                 className="text-blue-400 hover:text-blue-300 transition-colors duration-200 font-medium text-sm"
               >
                 Volver al inicio de sesión
