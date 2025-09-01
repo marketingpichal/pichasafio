@@ -239,8 +239,8 @@ const ThirtyDayChallenge: React.FC = () => {
 
   // Verificar si un día está desbloqueado
   const isDayUnlocked = (day: number): boolean => {
-    if (!userChallenge) return day === 1; // Solo el día 1 está desbloqueado inicialmente
-    return day <= userChallenge.current_day;
+    // Todos los días están desbloqueados para permitir acceso libre
+    return true;
   };
 
   // Verificar si un día está completado

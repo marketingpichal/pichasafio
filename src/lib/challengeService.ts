@@ -159,10 +159,8 @@ class ChallengeService {
 
   // Verificar si un día está desbloqueado
   async isDayUnlocked(userId: string, challengeType: string, dayNumber: number): Promise<boolean> {
-    const challenge = await this.getOrCreateUserChallenge(userId, challengeType);
-    
-    // El día está desbloqueado si es el día actual o anterior
-    return dayNumber <= challenge.current_day;
+    // Todos los días están desbloqueados para permitir acceso libre
+    return true;
   }
 
   // Completar un día del reto
