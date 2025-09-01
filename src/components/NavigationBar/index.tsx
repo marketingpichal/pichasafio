@@ -36,6 +36,8 @@ const ProtectedLink = ({ to, children, className, onClick, isAuthenticated, show
   );
 };
 
+
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isExercisesOpen, setIsExercisesOpen] = useState(false);
@@ -86,14 +88,7 @@ export default function Navbar() {
               >
                 Inicio
               </Link>
-              <ProtectedLink
-                to="/calculadora"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                onClick={closeMenu}
-                isAuthenticated={isAuthenticated}
-              >
-                Calculadora XP
-              </ProtectedLink>
+
               
               {/* Dropdown de Ejercicios */}
                <div className="relative group">
@@ -155,13 +150,32 @@ export default function Navbar() {
                            Respiración
                          </ProtectedLink>
                          <ProtectedLink
-                           to="/rutinas"
+                            to="/rutinas"
+                            className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
+                            onClick={closeMenu}
+                            isAuthenticated={isAuthenticated}
+                            showTooltip={false}
+                          >
+                            Rutinas
+                          </ProtectedLink>
+                         <div className="border-t border-gray-700 my-1"></div>
+                         <ProtectedLink
+                           to="/calculadora"
                            className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
                            onClick={closeMenu}
                            isAuthenticated={isAuthenticated}
                            showTooltip={false}
                          >
-                           Rutinas
+                           Calculadora XP
+                         </ProtectedLink>
+                         <ProtectedLink
+                           to="/testimonios"
+                           className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
+                           onClick={closeMenu}
+                           isAuthenticated={isAuthenticated}
+                           showTooltip={false}
+                         >
+                           Testimonios
                          </ProtectedLink>
                        </div>
                      </div>
@@ -176,14 +190,6 @@ export default function Navbar() {
                 isAuthenticated={isAuthenticated}
               >
                 SexShop
-              </ProtectedLink>
-              <ProtectedLink
-                to="/testimonios"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                onClick={closeMenu}
-                isAuthenticated={isAuthenticated}
-              >
-                Testimonios
               </ProtectedLink>
             </div>
           </div>
@@ -270,14 +276,8 @@ export default function Navbar() {
           >
             Inicio
           </Link>
-          <ProtectedLink
-            to="/calculadora"
-            className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-            onClick={closeMenu}
-            isAuthenticated={isAuthenticated}
-          >
-            Calculadora XP
-          </ProtectedLink>
+          
+
           
           {/* Dropdown de Ejercicios Mobile */}
           <div>
@@ -340,14 +340,6 @@ export default function Navbar() {
             isAuthenticated={isAuthenticated}
           >
             Sexshop
-          </ProtectedLink>
-          <ProtectedLink
-            to="/testimonios"
-            className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-            onClick={closeMenu}
-            isAuthenticated={isAuthenticated}
-          >
-            Testimonios
           </ProtectedLink>
           
           {/* Auth Buttons Mobile */}
