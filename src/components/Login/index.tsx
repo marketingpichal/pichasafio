@@ -46,22 +46,8 @@ export default function Login() {
     }
 
     if (data.user) {
-      // Verificar si el usuario tiene un perfil con username
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("username")
-        .eq("id", data.user.id)
-        .single();
-
-      if (profileError || !profile || !profile.username) {
-        // Si no tiene perfil o no tiene username, redirigir a completar perfil
-        setError("Debes completar tu nombre de usuario para continuar.");
-        setLoading(false);
-        navigate("/complete-profile");
-        return;
-      }
-
       console.log("Usuario logueado:", data.user);
+      // El AuthProvider se encargará de verificar el perfil y redirigir si es necesario
       navigate("/rutinas");
     }
     

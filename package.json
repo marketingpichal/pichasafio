@@ -4,10 +4,19 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode development",
+    "dev:prod": "vite --mode production",
     "build": "tsc -b && vite build",
+    "build:dev": "tsc -b && vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "migrate:dev": "node scripts/migrate.js development",
+    "migrate:prod": "node scripts/migrate.js production",
+    "sync:compare": "node scripts/sync-environments.js compare",
+    "sync:export:dev": "node scripts/sync-environments.js export development schema-dev.sql",
+    "sync:export:prod": "node scripts/sync-environments.js export production schema-prod.sql",
+    "sync:dev-to-prod": "node scripts/sync-environments.js sync development production",
+    "env:check": "node -e \"console.log('Environment:', process.env.NODE_ENV || 'development'); console.log('Vite Mode:', process.env.VITE_APP_ENV || 'auto');\""
   },
   "dependencies": {
     "@chakra-ui/react": "^3.24.2",

@@ -1,15 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { createClient } from '@supabase/supabase-js'
 import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-const supabase = createClient(supabaseUrl, supabaseKey)
+import { supabase } from './lib/supabaseClient'
 
 const root = createRoot(document.getElementById("root")!);
 

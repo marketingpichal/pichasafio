@@ -57,8 +57,35 @@ export default function Navbar() {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    closeMenu();
+    try {
+      console.log('🚪 Iniciando logout...');
+      
+      // Cerrar menú inmediatamente para feedback visual
+      closeMenu();
+      
+      // Ejecutar signOut
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('❌ Error en logout:', error);
+        // Mostrar error al usuario si es necesario
+        alert('Error al cerrar sesión. Por favor, intenta de nuevo.');
+        return;
+      }
+      
+      console.log('✅ Logout exitoso');
+      
+      // Limpiar cualquier estado local si es necesario
+      localStorage.removeItem('supabase.auth.token');
+      sessionStorage.clear();
+      
+      // Redirección explícita a la página principal
+      window.location.href = '/';
+      
+    } catch (error) {
+      console.error('❌ Error inesperado en logout:', error);
+      alert('Error inesperado al cerrar sesión. Por favor, recarga la página.');
+    }
   };
 
   const isAuthenticated = !!user;

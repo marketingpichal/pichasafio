@@ -50,13 +50,22 @@ class ProfileService {
   // Actualizar perfil del usuario
   async updateUserProfile(userId: string, updateData: ProfileUpdateData): Promise<UserProfile | null> {
     // Solo actualizar campos que sabemos que existen en la tabla
-    const validUpdateData: any = {
-      updated_at: new Date().toISOString()
-    };
+    const validUpdateData: any = {};
 
     // Solo incluir username ya que es el único campo que sabemos que existe
     if (updateData.username !== undefined) {
       validUpdateData.username = updateData.username;
+    }
+
+    // Solo incluir otros campos si están definidos
+    if (updateData.bio !== undefined) {
+      validUpdateData.bio = updateData.bio;
+    }
+    if (updateData.avatar !== undefined) {
+      validUpdateData.avatar_url = updateData.avatar;
+    }
+    if (updateData.theme !== undefined) {
+      validUpdateData.theme = updateData.theme;
     }
 
     const { data, error } = await supabase
