@@ -60,7 +60,6 @@ const CompleteProfile = () => {
         .upsert({
           id: user.id,
           username: username,
-          updated_at: new Date().toISOString(),
         });
 
       if (updateError) {

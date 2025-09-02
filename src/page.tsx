@@ -5,22 +5,52 @@ import PoseList from "./components/Poses/poseList";
 import LeaderboardTable from "./components/LeaderboardTable";
 import QuickStats from "./components/QuickStats";
 import AchievementNotification from "./components/AchievementNotification";
+import RewardsPanel from "./components/RewardsPanel";
+import SpinWheel from "./components/SpinWheel";
+import DailyXPButton from "./components/DailyXPButton";
 import { useState } from "react";
 import { useAuth } from "./context/AuthProvider";
 import { useNavigate } from "react-router-dom";
 
 export default function Page() {
   const [showPoses, setShowPoses] = useState(false);
+  const [showSpinWheel, setShowSpinWheel] = useState(false);
   const { user } = useAuth();
   const isAuthenticated = !!user;
   const navigate = useNavigate();
+
+  const handleDailyXPClaim = () => {
+    setShowSpinWheel(true);
+  };
 
   if (showPoses) {
     return <PoseList onBack={() => setShowPoses(false)} />;
   }
 
+  const handleSpinWheelClose = () => {
+    setShowSpinWheel(false);
+  };
+
+  const handleRewardClaimed = (xp: number) => {
+    console.log(`Usuario ganó ${xp} XP de la ruleta`);
+    // Aquí podrías agregar lógica adicional como mostrar notificaciones
+  };
+
   return (
     <div className="min-h-screen bg-gray-900">
+      {/* Botón flotante para reclamar XP diario */}
+      {isAuthenticated && (
+        <DailyXPButton onClaimClick={handleDailyXPClaim} />
+      )}
+      
+      {/* Ruleta de Premios - Solo para usuarios autenticados */}
+      {isAuthenticated && showSpinWheel && (
+        <SpinWheel 
+          onClose={handleSpinWheelClose}
+          onRewardClaimed={handleRewardClaimed}
+        />
+      )}
+      
       {/* Notificaciones de Logros - Solo para usuarios autenticados */}
       {isAuthenticated && <AchievementNotification />}
 
@@ -46,6 +76,15 @@ export default function Page() {
         <section className="py-12 sm:py-16">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <LeaderboardTable />
+          </div>
+        </section>
+      )}
+
+      {/* Rewards Section - Solo para usuarios autenticados */}
+      {isAuthenticated && (
+        <section className="py-12 sm:py-16">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <RewardsPanel />
           </div>
         </section>
       )}

@@ -17,26 +17,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   const checkUserProfile = async (user: any) => {
-    if (!user || location.pathname === '/complete-profile') return;
+    console.log('🔍 AuthProvider: Verificando perfil del usuario...', { userId: user?.id, currentPath: location.pathname });
+    
+    if (!user || location.pathname === '/complete-profile') {
+      console.log('⏭️ AuthProvider: Saltando verificación', { hasUser: !!user, isCompletePage: location.pathname === '/complete-profile' });
+      return;
+    }
     
     setIsCheckingProfile(true);
     try {
+      console.log('📡 AuthProvider: Consultando perfil en base de datos...');
       const { data: profile, error } = await supabase
         .from("profiles")
         .select("username")
         .eq("id", user.id)
         .single();
 
+      console.log('📊 AuthProvider: Resultado de consulta', { profile, error });
+
       if (error || !profile || !profile.username) {
+        console.log('❌ AuthProvider: Perfil incompleto, redirigiendo...', { error, profile, hasUsername: profile?.username });
         // Solo redirigir si no estamos ya en páginas de auth
         if (!['/login', '/register', '/complete-profile'].includes(location.pathname)) {
+          console.log('🔄 AuthProvider: Redirigiendo a /complete-profile');
           navigate('/complete-profile');
         }
+      } else {
+        console.log('✅ AuthProvider: Perfil completo', { username: profile.username });
       }
     } catch (error) {
-      console.error('Error checking user profile:', error);
+      console.error('❌ AuthProvider: Error checking user profile:', error);
     } finally {
       setIsCheckingProfile(false);
+      console.log('🏁 AuthProvider: Verificación completada');
     }
   };
 

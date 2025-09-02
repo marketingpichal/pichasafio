@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
 import ResponsiveCard from "../common/ResponsiveCard";
@@ -74,6 +74,41 @@ const FarmingCalculator = () => {
       color: "from-purple-500 to-pink-500",
       icon: "🏆",
     },
+    {
+      value: "prima",
+      text: "Prima",
+      xp: 15,
+      color: "from-orange-500 to-red-500",
+      icon: "👩‍👧‍👦",
+    },
+    {
+      value: "flaca",
+      text: "Flaca",
+      xp: 30,
+      color: "from-green-500 to-teal-500",
+      icon: "🌿",
+    },
+    {
+      value: "alta",
+      text: "Alta",
+      xp: 25,
+      color: "from-indigo-500 to-purple-500",
+      icon: "📏",
+    },
+    {
+      value: "discapacitada",
+      text: "Discapacitada",
+      xp: 50,
+      color: "from-blue-500 to-indigo-500",
+      icon: "♿",
+    },
+    {
+      value: "anciana",
+      text: "Anciana",
+      xp: 35,
+      color: "from-gray-500 to-slate-500",
+      icon: "👵",
+    },
   ];
 
   const penalizaciones = [
@@ -125,6 +160,51 @@ const FarmingCalculator = () => {
   const [historial, setHistorial] = useState<string[]>([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [lastXpGained, setLastXpGained] = useState(0);
+  const [lastUsage, setLastUsage] = useState<Date | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState<string>("");
+
+  // Verificar último uso y calcular tiempo restante
+  useEffect(() => {
+    const checkLastUsage = async () => {
+      if (!user?.id) return;
+      
+      try {
+        const { data: userData } = await supabase
+          .from("leaderboard")
+          .select("last_activity")
+          .eq("user_id", user.id)
+          .single();
+        
+        if (userData?.last_activity) {
+          const lastActivity = new Date(userData.last_activity);
+          setLastUsage(lastActivity);
+          
+          const now = new Date();
+          const timeDiff = now.getTime() - lastActivity.getTime();
+          const twelveHours = 12 * 60 * 60 * 1000; // 12 horas en milisegundos
+          
+          if (timeDiff < twelveHours) {
+            setCanSubmit(false);
+            const remaining = twelveHours - timeDiff;
+            const hours = Math.floor(remaining / (60 * 60 * 1000));
+            const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+            setTimeRemaining(`${hours}h ${minutes}m`);
+          } else {
+            setCanSubmit(true);
+            setTimeRemaining("");
+          }
+        }
+      } catch (error) {
+        console.error("Error checking last usage:", error);
+      }
+    };
+    
+    checkLastUsage();
+    
+    // Actualizar cada minuto
+    const interval = setInterval(checkLastUsage, 60000);
+    return () => clearInterval(interval);
+  }, [user?.id, supabase]);
 
   const calcularXP = async () => {
     if (!user?.id || !canSubmit || isLoading) return;
@@ -155,51 +235,59 @@ const FarmingCalculator = () => {
     try {
       const { data: existingUser, error: userError } = await supabase
         .from("leaderboard")
-        .select("points, level")
-        .eq("profileId", user.id)
+        .select("total_points, level, username")
+        .eq("user_id", user.id)
         .single();
 
       if (userError && userError.code !== "PGRST116") {
         throw userError;
       }
 
-      const currentPoints = existingUser?.points || 0;
+      const currentPoints = existingUser?.total_points || 0;
       const newPoints = currentPoints + xpGanada;
-      const newLevel = Math.floor(newPoints / 1000) + 1;
+      const newLevel = Math.floor(newPoints / 100) + 1;
+      const now = new Date().toISOString();
 
       if (existingUser) {
         await supabase
           .from("leaderboard")
           .update({
-            points: newPoints,
+            total_points: newPoints,
             level: newLevel,
-            last_activity: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            last_activity: now,
+            updated_at: now,
           })
-          .eq("profileId", user.id);
+          .eq("user_id", user.id);
       } else {
+        // Obtener username del perfil
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", user.id)
+          .single();
+        
         await supabase.from("leaderboard").insert({
-          profileId: user.id,
-          points: xpGanada,
+          user_id: user.id,
+          username: profile?.username || "Usuario",
+          total_points: xpGanada,
           level: 1,
           rank: "Novato",
-          last_activity: new Date().toISOString(),
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+          last_activity: now,
+          created_at: now,
+          updated_at: now,
         });
       }
 
       setXpAcumulada(newPoints);
       setLastXpGained(xpGanada);
-      setDailyCount((prev) => prev + 1);
-      setCanSubmit((prev) => {
-        // Si prev es true (puede enviar), lo convertimos a 1 y sumamos 1, si es false (0), sumamos 1 igualmente.
-        // Solo permitimos enviar si el contador es menor que 2.
-        // Por claridad, deberíamos usar un contador numérico, pero respetando el estado actual:
-        // Si prev es booleano, lo convertimos a número.
-        const count = typeof prev === "boolean" ? (prev ? 1 : 0) : prev;
-        return count + 1 < 2;
-      });
+      setCanSubmit(false); // Bloquear por 12 horas
+      setLastUsage(new Date());
+      
+      // Calcular tiempo restante (12 horas)
+      const twelveHours = 12 * 60 * 60 * 1000;
+      const hours = Math.floor(twelveHours / (60 * 60 * 1000));
+      setTimeRemaining(`${hours}h 0m`);
+      
       setShowSuccess(true);
       setHistorial((prev) => [
         `${categoriaSeleccionada.icon} ${categoriaSeleccionada.text} con ${
@@ -390,8 +478,8 @@ const FarmingCalculator = () => {
                 </ResponsiveButton>
               </div>
 
-              {/* Daily Limit Warning */}
-              {!canSubmit && (
+              {/* 12 Hour Limit Warning */}
+              {!canSubmit && timeRemaining && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -401,11 +489,10 @@ const FarmingCalculator = () => {
                     <Clock className="w-5 h-5 text-yellow-400" />
                     <div>
                       <p className="text-yellow-400 font-semibold font-poppins-semibold">
-                        Límite Diario Alcanzado
+                        Calculadora en Cooldown
                       </p>
                       <p className="text-gray-300 text-sm font-poppins-light">
-                        Has alcanzado el límite de 2 registros diarios. ¡Vuelve
-                        mañana!
+                        Podrás usar la calculadora nuevamente en {timeRemaining}.
                       </p>
                     </div>
                   </div>

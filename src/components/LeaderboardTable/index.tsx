@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Crown, Medal, Star, TrendingUp, Zap, Target, Flame } from "lucide-react";
 
 const LeaderboardTable = () => {
+  console.log('🎯 LeaderboardTable: Componente renderizado');
   const supabase = useSupabaseClient();
   const user = useUser();
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
@@ -13,14 +14,18 @@ const LeaderboardTable = () => {
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
+      console.log('🔍 LeaderboardTable: Iniciando carga de datos...');
       setIsLoading(true);
       try {
+        console.log('📡 LeaderboardTable: Llamando a challengeService.getLeaderboard...');
         const leaderboardData = await challengeService.getLeaderboard(10);
+        console.log('✅ LeaderboardTable: Datos recibidos:', leaderboardData);
         setLeaderboard(leaderboardData);
       } catch (error) {
-        console.error("Error al obtener la tabla de líderes:", error);
+        console.error("❌ LeaderboardTable: Error al obtener la tabla de líderes:", error);
       } finally {
         setIsLoading(false);
+        console.log('🏁 LeaderboardTable: Carga completada');
       }
     };
 
