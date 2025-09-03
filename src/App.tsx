@@ -19,6 +19,9 @@ import GuideStore from "./components/Guides/guideStore";
 import PoseViewer from "./components/PoseViewer";
 import UserProfile from "./components/UserProfile";
 import ThirtyDaysChallenge from "./components/ThirtyDaysChanllenge";
+import Asesorias from "./components/Asesorias";
+import AsesoriasWidget from "./components/common/AsesoriasWidget";
+import AsesoriasBanner from "./components/common/AsesoriasBanner";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { AuthProvider } from "./context/AuthProvider";
 import DebugAuth from "./components/DebugAuth";
@@ -65,6 +68,7 @@ export default function App() {
         )}
         {isVerified && (
           <div className="flex flex-col min-h-screen">
+            <AsesoriasBanner variant="top" />
             <Navbar />
             <main className="flex-1">
               <Routes>
@@ -84,6 +88,7 @@ export default function App() {
                 {/* Pichasahur Floating Button   <Route path="/sexshop" element={<SexShop />} />*/}
                 <Route path="/tyc" element={<TerminosYCondiciones />} />
                 <Route path="/sexshop" element={<SexShop />} />
+                <Route path="/asesorias" element={<Asesorias />} />
                 <Route path="/guia" element={<GuideStore />} />
                 <Route
                   path="/pose/:id"
@@ -119,6 +124,9 @@ export default function App() {
             /> */}
           </div>
         )}
+        
+        {/* Widget de Asesorías - Visible en todas las páginas */}
+        <AsesoriasWidget />
       </div>
     </AuthProvider>
   );

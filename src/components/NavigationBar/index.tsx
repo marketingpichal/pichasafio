@@ -218,6 +218,14 @@ export default function Navbar() {
               >
                 SexShop
               </ProtectedLink>
+              
+              <Link
+                to="/asesorias"
+                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                onClick={closeMenu}
+              >
+                Asesorías
+              </Link>
             </div>
           </div>
 
@@ -368,6 +376,14 @@ export default function Navbar() {
           >
             Sexshop
           </ProtectedLink>
+          
+          <Link
+            to="/asesorias"
+            className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+            onClick={closeMenu}
+          >
+            Asesorías
+          </Link>
           
           {/* Auth Buttons Mobile */}
           <div className="pt-4 pb-3 border-t border-gray-700">
