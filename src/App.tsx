@@ -19,6 +19,7 @@ import GuideStore from "./components/Guides/guideStore";
 import PoseViewer from "./components/PoseViewer";
 import UserProfile from "./components/UserProfile";
 import ThirtyDaysChallenge from "./components/ThirtyDaysChanllenge";
+import Asesorias from "./components/Asesorias";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { AuthProvider } from "./context/AuthProvider";
 import DebugAuth from "./components/DebugAuth";
@@ -84,6 +85,7 @@ export default function App() {
                 {/* Pichasahur Floating Button   <Route path="/sexshop" element={<SexShop />} />*/}
                 <Route path="/tyc" element={<TerminosYCondiciones />} />
                 <Route path="/sexshop" element={<SexShop />} />
+                <Route path="/asesorias" element={<Asesorias />} />
                 <Route path="/guia" element={<GuideStore />} />
                 <Route
                   path="/pose/:id"
