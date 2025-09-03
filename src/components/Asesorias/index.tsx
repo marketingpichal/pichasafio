@@ -21,7 +21,9 @@ const Asesorias: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -36,23 +38,24 @@ const Asesorias: React.FC = () => {
 
     try {
       // Construir el mensaje para WhatsApp
-      const mensaje = `*Nueva Solicitud de Asesoría*%0A%0A` +
+      const mensaje =
+        `*Nueva Solicitud de Asesoría*%0A%0A` +
         `*Nombre:* ${formData.nombre}%0A` +
         `*Teléfono:* ${formData.telefono}%0A` +
         `*Motivo:* ${formData.motivo}%0A` +
         `*Descripción:* ${formData.descripcion}%0A%0A` +
-        `*Fecha:* ${new Date().toLocaleDateString('es-ES')}%0A` +
-        `*Hora:* ${new Date().toLocaleTimeString('es-ES')}`;
+        `*Fecha:* ${new Date().toLocaleDateString("es-ES")}%0A` +
+        `*Hora:* ${new Date().toLocaleTimeString("es-ES")}`;
 
       // Número de WhatsApp (reemplaza con el número real)
       const whatsappNumber = "573008607992"; // TODO: Cambia este número por el número real de WhatsApp
-      
+
       // Crear URL de WhatsApp
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${mensaje}`;
-      
+
       // Redirigir a WhatsApp
-      window.open(whatsappUrl, '_blank');
-      
+      window.open(whatsappUrl, "_blank");
+
       // Resetear formulario
       setFormData({
         nombre: "",
@@ -60,7 +63,6 @@ const Asesorias: React.FC = () => {
         motivo: "",
         descripcion: "",
       });
-
     } catch (error) {
       console.error("Error al enviar formulario:", error);
     } finally {
@@ -78,7 +80,7 @@ const Asesorias: React.FC = () => {
     "Problemas de confianza",
     "Relaciones de pareja",
     "Salud sexual general",
-    "Otro (especificar en descripción)"
+    "Otro (especificar en descripción)",
   ];
 
   return (
@@ -100,8 +102,9 @@ const Asesorias: React.FC = () => {
             Asesorías Personalizadas
           </h1>
           <p className="text-gray-300 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
-            Obtén orientación experta y personalizada para mejorar tu salud íntima. 
-            Nuestros especialistas están aquí para ayudarte en tu viaje de automejora.
+            Recibe acompañamiento cercano y experiencias compartidas para
+            mejorar tu salud íntima. Mujeres con recorrido en este tema estarán
+            ahí para orientarte en tu proceso de automejora
           </p>
           <div className="mt-6 bg-gradient-to-r from-green-500/20 to-blue-500/20 border border-green-500/30 rounded-xl p-4">
             <p className="text-white font-semibold text-lg">
@@ -122,15 +125,21 @@ const Asesorias: React.FC = () => {
               <User className="w-8 h-8 text-blue-400" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Personalizado</h3>
-            <p className="text-gray-300 text-sm">Atención individualizada según tus necesidades específicas</p>
+            <p className="text-gray-300 text-sm">
+              Atención individualizada según tus necesidades específicas
+            </p>
           </ResponsiveCard>
 
           <ResponsiveCard className="text-center">
             <div className="flex justify-center mb-4">
               <Clock className="w-8 h-8 text-green-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Disponible 24/7</h3>
-            <p className="text-gray-300 text-sm">Consulta cuando más te convenga, sin horarios fijos</p>
+            <h3 className="text-xl font-bold text-white mb-2">
+              Disponible 24/7
+            </h3>
+            <p className="text-gray-300 text-sm">
+              Consulta cuando más te convenga, sin horarios fijos
+            </p>
           </ResponsiveCard>
 
           <ResponsiveCard className="text-center">
@@ -138,7 +147,9 @@ const Asesorias: React.FC = () => {
               <Phone className="w-8 h-8 text-purple-400" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Vía WhatsApp</h3>
-            <p className="text-gray-300 text-sm">Comunicación directa y rápida por tu app favorita</p>
+            <p className="text-gray-300 text-sm">
+              Comunicación directa y rápida por tu app favorita
+            </p>
           </ResponsiveCard>
 
           <ResponsiveCard className="text-center">
@@ -148,7 +159,9 @@ const Asesorias: React.FC = () => {
               </div>
             </div>
             <h3 className="text-xl font-bold text-white mb-2">$50.000 COP</h3>
-            <p className="text-gray-300 text-sm">Por 30 minutos de asesoría personalizada</p>
+            <p className="text-gray-300 text-sm">
+              Por 30 minutos de asesoría personalizada
+            </p>
           </ResponsiveCard>
         </motion.div>
 
@@ -167,7 +180,10 @@ const Asesorias: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Nombre */}
                 <div>
-                  <label htmlFor="nombre" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label
+                    htmlFor="nombre"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
                     Nombre Completo *
                   </label>
                   <input
@@ -181,10 +197,13 @@ const Asesorias: React.FC = () => {
                     placeholder="Tu nombre completo"
                   />
                 </div>
-              
+
                 {/* Teléfono */}
                 <div>
-                  <label htmlFor="telefono" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label
+                    htmlFor="telefono"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
                     Teléfono *
                   </label>
                   <input
@@ -203,7 +222,10 @@ const Asesorias: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Motivo */}
                 <div>
-                  <label htmlFor="motivo" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label
+                    htmlFor="motivo"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
                     Motivo Principal *
                   </label>
                   <select
@@ -226,7 +248,10 @@ const Asesorias: React.FC = () => {
 
               {/* Descripción */}
               <div>
-                <label htmlFor="descripcion" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="descripcion"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Descripción Detallada *
                 </label>
                 <textarea
@@ -284,19 +309,31 @@ const Asesorias: React.FC = () => {
                 </div>
                 <div className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
-                  <p>Un especialista revisará tu solicitud en las próximas 24 horas</p>
+                  <p>
+                    Un especialista revisará tu solicitud en las próximas 24
+                    horas
+                  </p>
                 </div>
                 <div className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
-                  <p>Se programará una consulta personalizada según tu disponibilidad</p>
+                  <p>
+                    Se programará una consulta personalizada según tu
+                    disponibilidad
+                  </p>
                 </div>
                 <div className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
-                  <p>Recibirás orientación específica y un plan de acción personalizado</p>
+                  <p>
+                    Recibirás orientación específica y un plan de acción
+                    personalizado
+                  </p>
                 </div>
                 <div className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div>
-                  <p><strong>Importante:</strong> La asesoría tiene un costo de $50.000 COP por 30 minutos</p>
+                  <p>
+                    <strong>Importante:</strong> La asesoría tiene un costo de
+                    $50.000 COP por 30 minutos
+                  </p>
                 </div>
               </div>
             </div>
