@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import ResponsiveCard from "../common/ResponsiveCard";
 import { MessageCircle, Phone, Clock, User, Send } from "lucide-react";
+import { asesoriasLogService } from "../../lib/asesoriasLogService";
 
 interface FormData {
   nombre: string;
@@ -52,6 +53,22 @@ const Asesorias: React.FC = () => {
 
       // Crear URL de WhatsApp
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${mensaje}`;
+
+      // 📊 LOGGING: Registrar la solicitud en Supabase para análisis de marketing y KPIs
+      const logSuccess = await asesoriasLogService.logAsesoriaSubmission({
+        nombre: formData.nombre,
+        telefono: formData.telefono,
+        motivo: formData.motivo,
+        descripcion: formData.descripcion,
+        whatsappUrl,
+        whatsappNumber,
+      });
+
+      if (logSuccess) {
+        console.log("✅ Solicitud de asesoría registrada para análisis de marketing");
+      } else {
+        console.warn("⚠️ No se pudo registrar la solicitud para análisis (el usuario aún será redirigido)");
+      }
 
       // Redirigir a WhatsApp
       window.open(whatsappUrl, "_blank");
