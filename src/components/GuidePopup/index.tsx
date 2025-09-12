@@ -1,5 +1,6 @@
 import { ShieldCloseIcon, Clock, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
+import { asesoriasLogService } from "../../lib/asesoriasLogService";
 
 export default function GuidePopup() {
   const [isVisible, setIsVisible] = useState(false);
@@ -34,13 +35,29 @@ export default function GuidePopup() {
     setIsVisible(false);
   };
 
-  const handleWhatsAppClick = () => {
+  const handleWhatsAppClick = async () => {
     const phoneNumber = "573004048012";
-    const message = encodeURIComponent("¡Hola! Estoy interesado en la guía de iniciación. ¿Podrías decirme cómo es el método de pago y qué incluye exactamente? ¡Gracias!");
-    window.open(
-      `https://wa.me/${phoneNumber}?text=${message}`,
-      "_blank"
-    );
+    const message = "¡Hola! Estoy interesado en la guía de iniciación. ¿Podrías decirme cómo es el método de pago y qué incluye exactamente? ¡Gracias!";
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
+    try {
+      // Log the interaction
+      await asesoriasLogService.logAsesoriaSubmission({
+        nombre: "Interesado en Guía",
+        telefono: "No proporcionado",
+        motivo: "Consulta sobre Guía de Iniciación",
+        descripcion: "Usuario interesado en la guía de iniciación",
+        whatsappUrl: whatsappUrl,
+        whatsappNumber: phoneNumber
+      });
+    } catch (error) {
+      console.error("Error al registrar la interacción:", error);
+      // Continue with the flow even if logging fails
+    }
+    
+    // Open WhatsApp
+    window.open(whatsappUrl, "_blank");
+    
     // Decrease counter and close if no more guides
     setGuidesLeft(prev => {
       if (prev <= 1) {
