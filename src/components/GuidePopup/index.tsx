@@ -122,7 +122,7 @@ export default function GuidePopup() {
           {/* Image */}
           <div className="mb-6 relative group">
             <img
-              src="/image.png"
+              src="src/assets/image.png"
               alt="Guía de Iniciación"
               className="w-full h-auto rounded-lg border-2 border-amber-500/50 shadow-lg transform transition-transform group-hover:scale-[1.02]"
             />
