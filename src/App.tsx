@@ -25,6 +25,7 @@ import AsesoriasBanner from "./components/common/AsesoriasBanner";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { AuthProvider } from "./context/AuthProvider";
 import DebugAuth from "./components/DebugAuth";
+import GuidePopup from "./components/GuidePopup";
 // import ConfigChecker from "./components/ConfigChecker";
 
 // import PichasahurSidebar from "./components/common/PichasahurSidebar";
@@ -66,6 +67,7 @@ export default function App() {
         {!isVerified && (
           <AgeVerificationModal onVerified={handleVerification} />
         )}
+        {isVerified && <GuidePopup />}
         {isVerified && (
           <div className="flex flex-col min-h-screen">
             <AsesoriasBanner variant="top" />
