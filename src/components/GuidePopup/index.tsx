@@ -5,7 +5,7 @@ import Image from "../../assets/image.png"
 
 export default function GuidePopup() {
   const [isVisible, setIsVisible] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(1 * 60); // 1 minute in seconds
+  const [timeLeft, setTimeLeft] = useState(5 * 60); // 1 minute in seconds
   const [guidesLeft, setGuidesLeft] = useState(20); // Initial number of guides available
 
   useEffect(() => {
