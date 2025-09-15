@@ -1,12 +1,14 @@
 import { ShieldCloseIcon, Clock, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { asesoriasLogService } from "../../lib/asesoriasLogService";
-import Image from "../../assets/image.png"
+import Image from "../../assets/image.png";
+import AgrandamientoGuia from "../../assets/agrandamiento-guia.png";
 
 export default function GuidePopup() {
   const [isVisible, setIsVisible] = useState(false);
   const [timeLeft, setTimeLeft] = useState(5 * 60); // 1 minute in seconds
-  const [guidesLeft, setGuidesLeft] = useState(20); // Initial number of guides available
+  const [guidesLeft, setGuidesLeft] = useState(15); // Initial number of guides available
+  const [offerType, setOfferType] = useState<'single' | 'double'>('single');
 
   useEffect(() => {
     // Show popup after 1 second
@@ -38,16 +40,18 @@ export default function GuidePopup() {
 
   const handleWhatsAppClick = async () => {
     const phoneNumber = "573004048012";
-    const message = "¡Hola! Estoy interesado en la guía de iniciación. ¿Podrías decirme cómo es el método de pago y qué incluye exactamente? ¡Gracias!";
+    const message = offerType === 'single' 
+      ? "¡Hola! Estoy interesado en la guía de iniciación. ¿Podrías decirme cómo es el método de pago y qué incluye exactamente? ¡Gracias!"
+      : "¡Hola! Estoy interesado en la oferta de 2 guías por 35.000. ¿Podrías darme más detalles sobre el pago y qué incluyen ambas guías? ¡Gracias!";
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     
     try {
       // Log the interaction
       await asesoriasLogService.logAsesoriaSubmission({
-        nombre: "Interesado en Guía",
+        nombre: offerType === 'single' ? "Interesado en Guía" : "Interesado en 2 Guías",
         telefono: "No proporcionado",
-        motivo: "Consulta sobre Guía de Iniciación",
-        descripcion: "Usuario interesado en la guía de iniciación",
+        motivo: offerType === 'single' ? "Consulta sobre Guía de Iniciación" : "Consulta sobre Oferta 2 Guías",
+        descripcion: offerType === 'single' ? "Usuario interesado en la guía de iniciación" : "Usuario interesado en la oferta de 2 guías",
         whatsappUrl: whatsappUrl,
         whatsappNumber: phoneNumber
       });
@@ -108,8 +112,8 @@ export default function GuidePopup() {
           <div className="bg-gray-900/50 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6 border border-gray-700">
             <div className="flex items-end justify-center gap-2 sm:gap-4 mb-1 sm:mb-2">
               <div className="text-center">
-                <div className="text-gray-400 text-xs sm:text-sm line-through">$45.999</div>
-                <div className="text-3xl sm:text-4xl font-bold text-white">$19.999</div>
+                <div className="text-gray-400 text-xs sm:text-sm line-through">{offerType === 'single' ? '$34.999' : '$75.000'}</div>
+                <div className="text-3xl sm:text-4xl font-bold text-white">{offerType === 'single' ? '$19.999' : '$35.000'}</div>
               </div>
             </div>
             <div className="text-center text-green-400 text-xs sm:text-sm font-medium mb-2">
@@ -121,11 +125,22 @@ export default function GuidePopup() {
           </div>
 
           {/* Image */}
-          <div className="mb-6 relative group">
+          <div className="flex justify-center items-center space-x-2 mb-4">
+            <button onClick={() => setOfferType('single')} className={`px-4 py-2 rounded-lg text-sm font-bold ${offerType === 'single' ? 'bg-amber-500 text-white' : 'bg-gray-700 text-gray-300'}`}>1 Guía</button>
+            <button onClick={() => setOfferType('double')} className={`px-4 py-2 rounded-lg text-sm font-bold ${offerType === 'double' ? 'bg-amber-500 text-white' : 'bg-gray-700 text-gray-300'}`}>2 Guías</button>
+          </div>
+
+          {/* Image */}
+          <div className="mb-6 relative group flex justify-center items-center space-x-2">
             <img
               src={Image}
               alt="Guía de Iniciación"
-              className="w-full h-auto rounded-lg border-2 border-amber-500/50 shadow-lg transform transition-transform group-hover:scale-[1.02]"
+              className={`w-1/2 h-auto rounded-lg border-2 ${offerType === 'single' ? 'border-amber-500' : 'border-gray-700'} shadow-lg transform transition-transform group-hover:scale-[1.02]`}
+            />
+            <img
+              src={AgrandamientoGuia}
+              alt="Guía de Agrandamiento"
+              className={`w-1/2 h-auto rounded-lg border-2 ${offerType === 'double' ? 'border-amber-500' : 'border-gray-700'} shadow-lg transform transition-transform group-hover:scale-[1.02]`}
             />
             <div className="absolute -top-3 -right-3 bg-amber-500 text-black font-bold px-3 py-1 rounded-full text-sm animate-bounce">
               ¡NUEVO!
