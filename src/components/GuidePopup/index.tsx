@@ -1,5 +1,6 @@
 import { MessageCircle, AlertTriangle, Clock, Users } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { asesoriasLogService } from "../../lib/asesoriasLogService";
 
 export default function GuidePopup() {
@@ -44,6 +45,36 @@ export default function GuidePopup() {
       clearInterval(countdown);
       clearInterval(spotTimer);
     };
+  }, []);
+
+  // Obtener la ruta actual
+  const location = useLocation();
+
+  // Efecto para detectar cambios de ruta
+  useEffect(() => {
+    const targetRoutes = ['/login', '/register', '/rutinas', '/keguel', '/respiracion', '/chochasafio'];
+    
+    // Verificar si la ruta actual está en la lista de rutas objetivo
+    if (targetRoutes.some(route => location.pathname.startsWith(route))) {
+      // Esperar un momento para asegurar que la página se haya cargado
+      const timer = setTimeout(() => {
+        // Reiniciar el temporizador y mostrar el popup
+        setTimeLeft(120);
+        setAvailableSpots(Math.floor(Math.random() * 10) + 5);
+        setIsVisible(true);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname]);
+  
+  // Efecto para mostrar el popup después de 3 segundos en cualquier página
+  useEffect(() => {
+    const showTimer = setTimeout(() => {
+      setIsVisible(true);
+    }, 3000);
+
+    return () => clearTimeout(showTimer);
   }, []);
 
   const handleWhatsAppClick = async () => {
