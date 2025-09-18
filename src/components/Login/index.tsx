@@ -111,7 +111,7 @@ export default function Login() {
         <ResponsiveCard
           title={resetMode ? "Recuperar Contraseña" : "Iniciar Sesión"}
           subtitle={resetMode ? "Te enviaremos un enlace para restablecer tu contraseña" : "Accede a tu cuenta para continuar"}
-          className="text-center"
+          className="text-center bg-gray-800 border border-gray-700"
         >
           <form onSubmit={resetMode ? handlePasswordReset : handleLogin} className="space-y-6">
             <div className="space-y-2">
@@ -125,7 +125,7 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu@email.com"
                 required
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300"
                 disabled={loading}
               />
             </div>
@@ -143,13 +143,13 @@ export default function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Tu contraseña"
                     required
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300 pr-12"
                     disabled={loading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors duration-300"
                   >
                     {showPassword ? (
                       <EyeOff className="w-5 h-5" />

@@ -21,8 +21,8 @@ const ProtectedLink = ({ to, children, className, onClick, isAuthenticated, show
           <span>{children}</span>
         </div>
         {showTooltip && (
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-50 shadow-lg border border-gray-700">
-            Inicia sesión para acceder
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-50">
+            🔒 Inicia sesión para acceder
           </div>
         )}
       </div>
@@ -91,14 +91,14 @@ export default function Navbar() {
   const isAuthenticated = !!user;
 
   return (
-    <nav className="bg-gray-800 shadow-lg sticky top-0 z-[10000]">
+    <nav className="bg-gray-800 shadow-lg sticky top-0 z-[10000] border-b border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link 
               to="/" 
-              className="text-white text-xl font-bold hover:text-blue-400 transition-colors duration-200"
+              className="text-white text-xl font-bold hover:text-blue-400 transition-colors duration-300"
               onClick={closeMenu}
             >
               Pichasafio
@@ -110,7 +110,7 @@ export default function Navbar() {
             <div className="ml-10 flex items-baseline space-x-4">
               <Link
                 to="/"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
                 onClick={closeMenu}
               >
                 Inicio
@@ -126,14 +126,14 @@ export default function Navbar() {
                        <span>Ejercicios</span>
                        <ChevronDown className="w-4 h-4" />
                      </div>
-                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-50 shadow-lg border border-gray-700">
-                       Inicia sesión para acceder
+                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-50">
+                       🔒 Inicia sesión para acceder
                      </div>
                    </div>
                  ) : (
                    <>
                      <button
-                       className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center space-x-1"
+                       className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300 flex items-center space-x-1"
                        onMouseEnter={() => setIsExercisesOpen(true)}
                        onMouseLeave={() => setIsExercisesOpen(false)}
                      >
@@ -142,7 +142,7 @@ export default function Navbar() {
                      </button>
                      
                      <div 
-                       className={`absolute top-full left-0 mt-1 w-48 bg-gray-900 rounded-md shadow-lg border border-gray-700 transition-all duration-200 z-50 ${
+                       className={`absolute top-full left-0 mt-1 w-48 bg-gray-800 rounded-lg shadow-lg border border-gray-700 transition-all duration-200 z-50 ${
                          isExercisesOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
                        }`}
                        onMouseEnter={() => setIsExercisesOpen(true)}
@@ -151,7 +151,7 @@ export default function Navbar() {
                        <div className="py-1">
                          <ProtectedLink
                            to="/keguel"
-                           className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
+                           className="text-gray-300 hover:text-white hover:bg-gray-700 block px-4 py-2 text-sm transition-colors duration-300"
                            onClick={closeMenu}
                            isAuthenticated={isAuthenticated}
                            showTooltip={false}
@@ -160,7 +160,7 @@ export default function Navbar() {
                          </ProtectedLink>
                          <ProtectedLink
                            to="/chochasafio"
-                           className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
+                           className="text-gray-300 hover:text-white hover:bg-gray-700 block px-4 py-2 text-sm transition-colors duration-300"
                            onClick={closeMenu}
                            isAuthenticated={isAuthenticated}
                            showTooltip={false}
@@ -169,7 +169,7 @@ export default function Navbar() {
                          </ProtectedLink>
                          <ProtectedLink
                            to="/respiracion"
-                           className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
+                           className="text-gray-300 hover:text-white hover:bg-gray-700 block px-4 py-2 text-sm transition-colors duration-300"
                            onClick={closeMenu}
                            isAuthenticated={isAuthenticated}
                            showTooltip={false}
@@ -178,7 +178,7 @@ export default function Navbar() {
                          </ProtectedLink>
                          <ProtectedLink
                             to="/rutinas"
-                            className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
+                            className="text-gray-300 hover:text-white hover:bg-gray-700 block px-4 py-2 text-sm transition-colors duration-300"
                             onClick={closeMenu}
                             isAuthenticated={isAuthenticated}
                             showTooltip={false}
@@ -188,7 +188,7 @@ export default function Navbar() {
                          <div className="border-t border-gray-700 my-1"></div>
                          <ProtectedLink
                            to="/calculadora"
-                           className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
+                           className="text-gray-300 hover:text-white hover:bg-gray-700 block px-4 py-2 text-sm transition-colors duration-300"
                            onClick={closeMenu}
                            isAuthenticated={isAuthenticated}
                            showTooltip={false}
@@ -197,7 +197,7 @@ export default function Navbar() {
                          </ProtectedLink>
                          <ProtectedLink
                            to="/testimonios"
-                           className="text-gray-300 hover:text-white hover:bg-gray-800 block px-4 py-2 text-sm transition-colors duration-200"
+                           className="text-gray-300 hover:text-white hover:bg-gray-700 block px-4 py-2 text-sm transition-colors duration-300"
                            onClick={closeMenu}
                            isAuthenticated={isAuthenticated}
                            showTooltip={false}
@@ -212,7 +212,7 @@ export default function Navbar() {
               
               <ProtectedLink
                 to="/sexshop"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
                 onClick={closeMenu}
                 isAuthenticated={isAuthenticated}
               >
@@ -221,7 +221,7 @@ export default function Navbar() {
               
               <Link
                 to="/asesorias"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
                 onClick={closeMenu}
               >
                 Asesorías
@@ -235,7 +235,7 @@ export default function Navbar() {
               <>
                 <Link
                   to="/profile"
-                  className="flex items-center space-x-2 text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                  className="flex items-center space-x-2 text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
                   onClick={closeMenu}
                 >
                   <User className="w-4 h-4" />
@@ -245,7 +245,7 @@ export default function Navbar() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center space-x-2 text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                  className="flex items-center space-x-2 text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Cerrar sesión</span>
@@ -255,14 +255,14 @@ export default function Navbar() {
               <>
                 <Link
                   to="/login"
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                  className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
                   onClick={closeMenu}
                 >
                   Iniciar sesión
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300"
                   onClick={closeMenu}
                 >
                   Registrarse

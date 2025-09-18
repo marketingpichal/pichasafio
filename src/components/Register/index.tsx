@@ -274,9 +274,9 @@ export default function Register() {
         <ResponsiveCard
           title="Crear Cuenta"
           subtitle="Únete a nuestra comunidad"
-          className="text-center"
+          className="text-center bg-gray-800 border-gray-700"
         >
-          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
             <p className="text-blue-400 text-sm font-medium">
               REVISAR TU CORREO PARA VERIFICAR TU CUENTA
             </p>
@@ -286,13 +286,13 @@ export default function Register() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-green-500/10 border border-green-500/20 rounded-xl p-6 text-center"
+              className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 text-center"
             >
               <Check className="w-12 h-12 text-green-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-green-400 mb-2">
                 ¡Registro Exitoso!
               </h3>
-              <p className="text-green-300 text-sm">
+              <p className="text-gray-400 text-sm">
                 Por favor, revisa tu correo para confirmar tu cuenta.
               </p>
             </motion.div>
@@ -312,14 +312,14 @@ export default function Register() {
                     type="email"
                     {...register("email")}
                     placeholder="tu@email.com"
-                    className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                      errors.email ? "border-red-500" : "border-gray-600"
+                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ${
+                      errors.email ? "border-red-500" : "border-gray-600/30"
                     }`}
                     disabled={loading}
                   />
                   {checkingEmail && (
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   )}
                   {watchedEmail &&
@@ -346,7 +346,7 @@ export default function Register() {
                         emailAvailable ? "text-green-400" : "text-red-400"
                       }`}
                     >
-                      {emailAvailable ? "✓ Email disponible" : "✗ Email en uso"}
+                      {emailAvailable ? "Email disponible" : "Email en uso"}
                     </p>
                   )}
               </div>
@@ -357,22 +357,22 @@ export default function Register() {
                   htmlFor="username"
                   className="block text-sm font-medium text-gray-300 text-left"
                 >
-                  Nombre de usuario *
+                  Nombre de Usuario
                 </label>
                 <div className="relative">
                   <input
                     id="username"
                     type="text"
                     {...register("username")}
-                    placeholder="Tu nombre de usuario"
-                    className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-                      errors.username ? "border-red-500" : "border-gray-600"
+                    placeholder="tu_usuario"
+                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ${
+                      errors.username ? "border-red-500" : "border-gray-600/30"
                     }`}
                     disabled={loading}
                   />
                   {checkingUsername && (
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   )}
                   {watchedUsername &&
@@ -402,8 +402,8 @@ export default function Register() {
                       }`}
                     >
                       {usernameAvailable
-                        ? "✓ Usuario disponible"
-                        : "✗ Usuario no disponible"}
+                        ? "Usuario disponible"
+                        : "Usuario en uso"}
                     </p>
                   )}
               </div>
@@ -422,15 +422,15 @@ export default function Register() {
                     type={showPassword ? "text" : "password"}
                     {...register("password")}
                     placeholder="Tu contraseña"
-                    className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12 ${
-                      errors.password ? "border-red-500" : "border-gray-600"
+                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 pr-12 ${
+                      errors.password ? "border-red-500" : "border-gray-600/30"
                     }`}
                     disabled={loading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-400 transition-colors"
                   >
                     {showPassword ? (
                       <EyeOff className="w-5 h-5" />
@@ -448,7 +448,7 @@ export default function Register() {
 
               {/* Password Requirements */}
               {watchedPassword && (
-                <div className="bg-gray-800/50 rounded-xl p-4 space-y-2">
+                <div className="bg-gray-800/50 border border-gray-600/30 rounded-xl p-4 space-y-2">
                   <p className="text-sm font-medium text-gray-300 mb-3">
                     Requisitos de contraseña:
                   </p>
@@ -457,7 +457,7 @@ export default function Register() {
                       className={`flex items-center space-x-2 ${
                         validatePassword(watchedPassword).errors.minLength
                           ? "text-green-400"
-                          : "text-gray-500"
+                          : "text-gray-400"
                       }`}
                     >
                       <Check className="w-4 h-4" />
@@ -467,17 +467,17 @@ export default function Register() {
                       className={`flex items-center space-x-2 ${
                         validatePassword(watchedPassword).errors.hasUpperCase
                           ? "text-green-400"
-                          : "text-gray-500"
+                          : "text-gray-400"
                       }`}
                     >
-                      <Check className="w-4 h-4" />
+                      <Check className="w-4 h-4 drop-shadow-glow" />
                       <span>Al menos una mayúscula</span>
                     </div>
                     <div
                       className={`flex items-center space-x-2 ${
                         validatePassword(watchedPassword).errors.hasLowerCase
                           ? "text-green-400"
-                          : "text-gray-500"
+                          : "text-gray-400"
                       }`}
                     >
                       <Check className="w-4 h-4" />
@@ -487,7 +487,7 @@ export default function Register() {
                       className={`flex items-center space-x-2 ${
                         validatePassword(watchedPassword).errors.hasNumber
                           ? "text-green-400"
-                          : "text-gray-500"
+                          : "text-gray-400"
                       }`}
                     >
                       <Check className="w-4 h-4" />
@@ -497,7 +497,7 @@ export default function Register() {
                       className={`flex items-center space-x-2 ${
                         validatePassword(watchedPassword).errors.hasSpecialChar
                           ? "text-green-400"
-                          : "text-gray-500"
+                          : "text-gray-400"
                       }`}
                     >
                       <Check className="w-4 h-4" />
@@ -513,7 +513,7 @@ export default function Register() {
                   htmlFor="confirmPassword"
                   className="block text-sm font-medium text-gray-300 text-left"
                 >
-                  Confirmar contraseña
+                  Confirmar Contraseña
                 </label>
                 <div className="relative">
                   <input
@@ -521,17 +521,16 @@ export default function Register() {
                     type={showConfirmPassword ? "text" : "password"}
                     {...register("confirmPassword")}
                     placeholder="Confirma tu contraseña"
-                    className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12 ${
-                      errors.confirmPassword
-                        ? "border-red-500"
-                        : "border-gray-600"
+                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 pr-12 ${
+                      errors.confirmPassword ? "border-red-500" : "border-gray-600/30"
                     }`}
                     disabled={loading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors duration-200"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-400 transition-colors"
+                    disabled={loading}
                   >
                     {showConfirmPassword ? (
                       <EyeOff className="w-5 h-5" />
@@ -553,16 +552,24 @@ export default function Register() {
                   id="terms"
                   type="checkbox"
                   {...register("termsAccepted")}
-                  className="mt-1 w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
+                  className="mt-1 w-4 h-4 text-blue-500 bg-gray-700/60 border-gray-600/30 rounded focus:ring-blue-500 focus:ring-2"
+                  disabled={loading}
                 />
-                <label htmlFor="terms" className="text-sm text-gray-300">
+                <label htmlFor="terms" className="text-sm text-gray-300 leading-relaxed">
                   Acepto los{" "}
-                  <button
-                    type="button"
+                  <a
+                    href="#"
                     className="text-blue-400 hover:text-blue-300 underline"
                   >
                     términos y condiciones
-                  </button>
+                  </a>{" "}
+                  y la{" "}
+                  <a
+                    href="#"
+                    className="text-blue-400 hover:text-blue-300 underline"
+                  >
+                    política de privacidad
+                  </a>
                 </label>
               </div>
               {errors.termsAccepted && (
@@ -575,7 +582,7 @@ export default function Register() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-red-500/10 border border-red-500/20 rounded-xl p-4"
+                  className="bg-red-500/10 border border-red-500/30 rounded-xl p-4"
                 >
                   <p className="text-red-400 text-sm">{error}</p>
                 </motion.div>

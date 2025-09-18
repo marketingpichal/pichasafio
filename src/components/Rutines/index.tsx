@@ -1,12 +1,38 @@
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import Engrosamiento from './Grosor';
 import Alargamiento from './Largor';
 import InstruccionesPene from '../Warning';
 import ResponsiveCard from '../common/ResponsiveCard';
 import DailyVideos from './DailyVideos';
+import RecipesPopup from '../RecipesPopup';
 import { Dumbbell, Target, TrendingUp, Play } from 'lucide-react';
 
 export default function Rutinas() {
+  const [showRecipesPopup, setShowRecipesPopup] = useState(false);
+
+  useEffect(() => {
+    // Mostrar popup después de 2 segundos de entrar a la página
+    const timer = setTimeout(() => {
+      setShowRecipesPopup(true);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleCloseRecipesPopup = () => {
+    setShowRecipesPopup(false);
+  };
+
+  const handleJoinWhatsAppForRecipes = () => {
+    const phoneNumber = "573004048012";
+    const message = "Quiero unirme al canal del WhatsApp por las recetas afrodisíacas";
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
+    window.open(whatsappUrl, '_blank');
+    setShowRecipesPopup(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 py-8 sm:py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -170,6 +196,13 @@ export default function Rutinas() {
           </ResponsiveCard>
         </motion.div>
       </div>
+
+      {/* Popup de Recetas Afrodisíacas */}
+      <RecipesPopup
+        isOpen={showRecipesPopup}
+        onClose={handleCloseRecipesPopup}
+        onJoinWhatsApp={handleJoinWhatsAppForRecipes}
+      />
     </div>
   );
 }

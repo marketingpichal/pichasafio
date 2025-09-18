@@ -2,17 +2,28 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { useNavigate, useLocation } from "react-router-dom";
+import WhatsAppCommunityPopup from "../components/WhatsAppCommunityPopup";
 
 const AuthContext = createContext<{
   session: any;
   user: any;
   isCheckingProfile: boolean;
-}>({ session: null, user: null, isCheckingProfile: false });
+  showWhatsAppPopup: boolean;
+  setShowWhatsAppPopup: (show: boolean) => void;
+}>({ 
+  session: null, 
+  user: null, 
+  isCheckingProfile: false,
+  showWhatsAppPopup: false,
+  setShowWhatsAppPopup: () => {}
+});
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   const [isCheckingProfile, setIsCheckingProfile] = useState(false);
+  const [showWhatsAppPopup, setShowWhatsAppPopup] = useState(false);
+  const [hasShownPopupForUser, setHasShownPopupForUser] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -66,20 +77,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      const previousUser = user;
       setSession(session);
       setUser(session?.user ?? null);
+      
       if (session?.user) {
         checkUserProfile(session.user);
+        
+        // Mostrar popup de WhatsApp solo si es un nuevo login/registro y no se ha mostrado antes para este usuario
+        if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && 
+            previousUser?.id !== session.user.id && 
+            hasShownPopupForUser !== session.user.id) {
+          setTimeout(() => {
+            setShowWhatsAppPopup(true);
+            setHasShownPopupForUser(session.user.id);
+          }, 2000); // Mostrar después de 2 segundos
+        }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, user, hasShownPopupForUser]);
+
+  const handleCloseWhatsAppPopup = () => {
+    setShowWhatsAppPopup(false);
+  };
+
+  const handleJoinWhatsApp = () => {
+    const message = encodeURIComponent('Me quiero unir al canal de WhatsApp');
+    window.open(`https://wa.me/573004048012?text=${message}`, '_blank');
+    setShowWhatsAppPopup(false);
+  };
 
   return (
-    <AuthContext.Provider value={{ session, user, isCheckingProfile }}>
+    <AuthContext.Provider value={{ 
+      session, 
+      user, 
+      isCheckingProfile, 
+      showWhatsAppPopup, 
+      setShowWhatsAppPopup 
+    }}>
       {children}
+      {showWhatsAppPopup && (
+        <WhatsAppCommunityPopup
+          isOpen={showWhatsAppPopup}
+          onClose={handleCloseWhatsAppPopup}
+          onJoinWhatsApp={handleJoinWhatsApp}
+        />
+      )}
     </AuthContext.Provider>
   );
 };

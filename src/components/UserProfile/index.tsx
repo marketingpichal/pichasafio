@@ -35,11 +35,12 @@ interface UserProfile {
 }
 
 const themes = [
-  { id: 'neon', name: 'Neon Vibes', colors: 'from-pink-500 via-purple-500 to-cyan-500' },
-  { id: 'sunset', name: 'Sunset Glow', colors: 'from-orange-400 via-red-500 to-pink-500' },
-  { id: 'ocean', name: 'Ocean Wave', colors: 'from-blue-400 via-teal-500 to-green-400' },
-  { id: 'galaxy', name: 'Galaxy Dream', colors: 'from-purple-600 via-blue-600 to-indigo-800' },
-  { id: 'fire', name: 'Fire Storm', colors: 'from-red-500 via-orange-500 to-yellow-400' }
+  { id: 'default', name: 'Clásico', colors: 'from-blue-500 via-purple-500 to-cyan-500' },
+  { id: 'neon', name: 'Neón', colors: 'from-pink-500 via-purple-500 to-cyan-500' },
+  { id: 'sunset', name: 'Atardecer', colors: 'from-orange-400 via-red-500 to-pink-500' },
+  { id: 'ocean', name: 'Océano', colors: 'from-blue-400 via-teal-500 to-green-400' },
+  { id: 'galaxy', name: 'Galaxia', colors: 'from-purple-600 via-blue-600 to-indigo-800' },
+  { id: 'fire', name: 'Fuego', colors: 'from-red-500 via-orange-500 to-yellow-400' }
 ];
 
 const avatars = [
@@ -74,9 +75,9 @@ const UserProfile: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile>({
     id: user?.id || '1',
     nickname: user?.user_metadata?.username || 'Usuario',
-    bio: '¡Hola! Soy nuevo en Pichasafio 🔥',
-    avatar: '🦄',
-    theme: 'neon',
+    bio: '¡Hola! Soy nuevo en Pichasafio',
+    avatar: '🌟',
+    theme: 'default',
     stats: {
       level: 1,
       experience: 0,
@@ -108,9 +109,9 @@ const UserProfile: React.FC = () => {
             ...prev,
             id: profileData.id,
             nickname: profileData.username || 'Usuario',
-            bio: profileData.bio || '¡Hola! Soy nuevo en Pichasafio 🔥',
-            avatar: profileData.avatar || profileData.avatar_url || '🦄',
-            theme: profileData.theme || 'neon'
+            bio: profileData.bio || '🌟 ¡Hola! Soy nuevo en el universo Pichasafio 🚀',
+            avatar: profileData.avatar || profileData.avatar_url || '🌟',
+            theme: profileData.theme || 'cosmic'
           }));
         }
 
@@ -268,7 +269,7 @@ const UserProfile: React.FC = () => {
         {/* Header */}
         <motion.div variants={itemVariants} className="text-center mb-8">
           <motion.h1 
-            className={`text-4xl font-bold bg-gradient-to-r ${currentTheme.colors} bg-clip-text text-transparent mb-2`}
+            className={`text-5xl font-bold bg-gradient-to-r ${currentTheme.colors} bg-clip-text text-transparent mb-2`}
             animate={{ 
               backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
             }}
@@ -276,7 +277,7 @@ const UserProfile: React.FC = () => {
           >
             Mi Perfil
           </motion.h1>
-          <p className="text-gray-400">Personaliza tu experiencia en Pichasafio</p>
+          <p className="text-blue-400 text-lg">Personaliza tu experiencia en Pichasafio</p>
         </motion.div>
 
         {/* Profile Card */}
@@ -284,7 +285,7 @@ const UserProfile: React.FC = () => {
           variants={itemVariants}
           className={`bg-gradient-to-br ${currentTheme.colors} p-1 rounded-3xl`}
         >
-          <div className="bg-gray-900 rounded-3xl p-8">
+          <div className="bg-gray-800/90 backdrop-blur-sm rounded-3xl p-8 border border-gray-600/30">
             <div className="flex flex-col md:flex-row items-center gap-6">
               {/* Avatar */}
               <motion.div 
@@ -303,9 +304,9 @@ const UserProfile: React.FC = () => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setShowAvatarSelector(true)}
-                  className="absolute -bottom-2 -right-2 bg-gray-700 hover:bg-gray-600 rounded-full p-2 transition-colors"
+                  className="absolute -bottom-2 -right-2 bg-blue-600/80 hover:bg-blue-600 rounded-full p-2 transition-colors border border-blue-400/50"
                 >
-                  <Camera className="w-4 h-4" />
+                  <Camera className="w-4 h-4 text-blue-400" />
                 </motion.button>
               </motion.div>
 
@@ -317,18 +318,18 @@ const UserProfile: React.FC = () => {
                       type="text"
                       value={editForm.nickname}
                       onChange={(e) => setEditForm(prev => ({ ...prev, nickname: e.target.value }))}
-                      className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-white w-full focus:border-pink-500 focus:outline-none"
+                      className="bg-gray-800/80 border border-gray-600/50 rounded-xl px-4 py-2 text-white w-full focus:border-blue-400 focus:outline-none placeholder-gray-400"
                       placeholder="Tu nickname"
                     />
-                    <div className="text-sm text-gray-400 text-center md:text-left">
-                      <p>💡 Solo puedes editar tu nombre de usuario por ahora</p>
+                    <div className="text-sm text-blue-400/80 text-center md:text-left">
+                      <p>Solo puedes editar tu nombre de usuario por ahora</p>
                     </div>
                     <div className="flex gap-2 justify-center md:justify-start">
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={handleSave}
-                        className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl flex items-center gap-2 transition-colors"
+                        className="bg-gradient-to-r from-blue-600 to-blue-400 px-4 py-2 rounded-xl flex items-center gap-2 transition-all text-white border border-blue-400/30"
                       >
                         <Save className="w-4 h-4" />
                         Guardar
@@ -337,7 +338,7 @@ const UserProfile: React.FC = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setIsEditing(false)}
-                        className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-xl flex items-center gap-2 transition-colors"
+                        className="bg-gray-800/80 hover:bg-gray-700/50 px-4 py-2 rounded-xl flex items-center gap-2 transition-colors text-gray-300 border border-gray-600/50"
                       >
                         <X className="w-4 h-4" />
                         Cancelar
@@ -347,21 +348,21 @@ const UserProfile: React.FC = () => {
                 ) : (
                   <div>
                     <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
-                      <h2 className="text-2xl font-bold">{profile.nickname}</h2>
+                      <h2 className="text-2xl font-bold text-blue-400">{profile.nickname}</h2>
                       <motion.button
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => setIsEditing(true)}
-                        className="text-gray-400 hover:text-white transition-colors"
+                        className="text-blue-600 hover:text-blue-400 transition-colors"
                       >
                         <Edit3 className="w-5 h-5" />
                       </motion.button>
                     </div>
-                    <p className="text-gray-300 mb-4">{profile.bio}</p>
+                    <p className="text-blue-400/90 mb-4">{profile.bio}</p>
                     
                     {/* Información adicional del perfil */}
                     {profileData && (
-                      <div className="mb-4 text-sm text-gray-400">
+                      <div className="mb-4 text-sm text-blue-400/70">
                         <p>Miembro desde: {new Date(profileData.created_at).toLocaleDateString()}</p>
                         {profileData.updated_at && (
                           <p>Última actualización: {new Date(profileData.updated_at).toLocaleDateString()}</p>
@@ -372,10 +373,10 @@ const UserProfile: React.FC = () => {
                     {/* Level Progress */}
                     <div className="mb-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-400">Nivel {profile.stats.level}</span>
-                        <span className="text-sm text-gray-400">{profile.stats.experience}/{profile.stats.maxExperience} XP</span>
+                        <span className="text-sm text-blue-400">Nivel {profile.stats.level}</span>
+                        <span className="text-sm text-purple-400">{profile.stats.experience}/{profile.stats.maxExperience} XP</span>
                       </div>
-                      <div className="w-full bg-gray-700 rounded-full h-3">
+                      <div className="w-full bg-gray-800/60 rounded-full h-3 border border-gray-600/30">
                         <motion.div
                           className={`h-3 bg-gradient-to-r ${currentTheme.colors} rounded-full`}
                           initial={{ width: 0 }}
@@ -390,7 +391,7 @@ const UserProfile: React.FC = () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setShowThemeSelector(true)}
-                      className="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-xl flex items-center gap-2 transition-colors mx-auto md:mx-0"
+                      className="bg-gradient-to-r from-blue-600/80 to-blue-500/80 px-4 py-2 rounded-xl flex items-center gap-2 transition-all mx-auto md:mx-0 border border-blue-400/30 text-blue-400"
                     >
                       <Palette className="w-4 h-4" />
                       Cambiar Tema
@@ -404,23 +405,23 @@ const UserProfile: React.FC = () => {
 
         {/* Tabs and Create Post Button */}
         <motion.div variants={itemVariants} className="flex items-center justify-between mb-6">
-          <div className="flex bg-gray-800 rounded-xl p-1 border border-gray-700">
+          <div className="flex bg-gray-800/80 rounded-xl p-1 border border-gray-600/50 backdrop-blur-sm">
             <button
               onClick={() => setActiveTab('stats')}
-              className={`px-6 py-2 rounded-lg font-medium transition-all ${
+              className={`px-6 py-2 rounded-lg transition-all ${
                 activeTab === 'stats'
-                  ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-400 text-white'
+                  : 'text-blue-400/70 hover:text-blue-400 hover:bg-blue-600/20'
               }`}
             >
               Estadísticas
             </button>
             <button
               onClick={() => setActiveTab('posts')}
-              className={`px-6 py-2 rounded-lg font-medium transition-all ${
+              className={`px-6 py-2 rounded-lg transition-all ${
                 activeTab === 'posts'
-                  ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-400 text-white'
+                  : 'text-blue-400/70 hover:text-blue-400 hover:bg-blue-600/20'
               }`}
             >
               Mis Posts
@@ -431,7 +432,7 @@ const UserProfile: React.FC = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowCreatePost(true)}
-            className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-6 py-3 rounded-xl font-medium flex items-center gap-2 hover:shadow-lg hover:shadow-pink-500/25 transition-all"
+            className="bg-gradient-to-r from-blue-600 to-blue-400 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all border border-blue-400/30"
           >
             <Plus className="w-5 h-5" />
             Crear Post
@@ -444,92 +445,68 @@ const UserProfile: React.FC = () => {
             <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <motion.div
                 whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-gray-800 rounded-2xl p-6 text-center border border-gray-700 hover:border-pink-500 transition-all"
+                className="bg-gray-800/80 rounded-2xl p-6 text-center border border-gray-600/50 hover:border-blue-400 transition-all backdrop-blur-sm"
               >
-                <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="text-3xl mb-2"
-                >
-                  ❤️
-                </motion.div>
-                <div className="text-2xl font-bold text-pink-400 mb-1">{profile.stats.totalLikes}</div>
-                <div className="text-gray-400 text-sm">Likes Totales</div>
+                <div className="text-3xl mb-2">💖</div>
+                <div className="text-2xl font-bold text-blue-400 mb-1">{profile.stats.totalLikes}</div>
+                <div className="text-purple-400/80 text-sm">Likes</div>
               </motion.div>
 
               <motion.div
                 whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-gray-800 rounded-2xl p-6 text-center border border-gray-700 hover:border-orange-500 transition-all"
+                className="bg-gray-800/80 rounded-2xl p-6 text-center border border-gray-600/50 hover:border-blue-400 transition-all backdrop-blur-sm"
               >
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="text-3xl mb-2"
-                >
-                  🔥
-                </motion.div>
-                <div className="text-2xl font-bold text-orange-400 mb-1">{profile.stats.streak}</div>
-                <div className="text-gray-400 text-sm">Días de Racha</div>
+                <div className="text-3xl mb-2">🔥</div>
+                <div className="text-2xl font-bold text-blue-400 mb-1">{profile.stats.streak}</div>
+                <div className="text-purple-400/80 text-sm">Racha</div>
               </motion.div>
 
               <motion.div
                 whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-gray-800 rounded-2xl p-6 text-center border border-gray-700 hover:border-purple-500 transition-all"
+                className="bg-gray-800/80 rounded-2xl p-6 text-center border border-gray-600/50 hover:border-blue-400 transition-all backdrop-blur-sm"
               >
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                  className="text-3xl mb-2"
-                >
-                  🎯
-                </motion.div>
-                <div className="text-2xl font-bold text-purple-400 mb-1">{profile.stats.posesCompleted}</div>
-                <div className="text-gray-400 text-sm">Poses Completadas</div>
+                <div className="text-3xl mb-2">🎯</div>
+                <div className="text-2xl font-bold text-blue-400 mb-1">{profile.stats.posesCompleted}</div>
+                <div className="text-purple-400/80 text-sm">Poses Completadas</div>
               </motion.div>
 
               <motion.div
                 whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-gray-800 rounded-2xl p-6 text-center border border-gray-700 hover:border-yellow-500 transition-all"
+                className="bg-gray-800/80 rounded-2xl p-6 text-center border border-gray-600/50 hover:border-blue-400 transition-all backdrop-blur-sm"
               >
-                <motion.div
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="text-3xl mb-2"
-                >
-                  👑
-                </motion.div>
-                <div className="text-2xl font-bold text-yellow-400 mb-1">{profile.stats.level}</div>
-                <div className="text-gray-400 text-sm">Nivel Actual</div>
+                <div className="text-3xl mb-2">⭐</div>
+                <div className="text-2xl font-bold text-blue-400 mb-1">{profile.stats.level}</div>
+                <div className="text-purple-400/80 text-sm">Nivel</div>
               </motion.div>
             </motion.div>
 
             {/* Achievements */}
-            <motion.div variants={itemVariants} className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
-              <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <Trophy className="w-6 h-6 text-yellow-400" />
+            <motion.div variants={itemVariants} className="bg-gray-800/80 rounded-2xl p-6 border border-gray-600/50 backdrop-blur-sm">
+              <h3 className="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2">
+                <Trophy className="w-6 h-6 text-blue-400" />
                 Logros Desbloqueados
               </h3>
               
               {/* Información adicional de estadísticas */}
               {userStats && (
-                <div className="mb-6 p-4 bg-gray-700/50 rounded-xl">
-                  <h4 className="text-lg font-semibold text-white mb-3">Estadísticas Detalladas</h4>
+                <div className="mb-6 p-4 bg-blue-600/20 rounded-xl border border-blue-400/30">
+                  <h4 className="text-lg font-bold text-blue-400 mb-3">Estadísticas Detalladas</h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-400">Puntos Totales</p>
-                      <p className="text-white font-bold">{userStats.total_points}</p>
+                      <p className="text-purple-400/80">Puntos Totales</p>
+                      <p className="text-blue-400 font-bold">{userStats.total_points}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Racha Más Larga</p>
-                      <p className="text-white font-bold">{userStats.longest_streak} días</p>
+                      <p className="text-purple-400/80">Racha Más Larga</p>
+                      <p className="text-blue-400 font-bold">{userStats.longest_streak} días</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Minutos Totales</p>
-                      <p className="text-white font-bold">{userStats.total_minutes}</p>
+                      <p className="text-purple-400/80">Minutos Totales</p>
+                      <p className="text-blue-400 font-bold">{userStats.total_minutes}</p>
                     </div>
                     <div>
-                      <p className="text-gray-400">Retos Completados</p>
-                      <p className="text-white font-bold">{userStats.challenges_completed}</p>
+                      <p className="text-purple-400/80">Retos Completados</p>
+                      <p className="text-blue-400 font-bold">{userStats.challenges_completed}</p>
                     </div>
                   </div>
                 </div>
@@ -544,17 +521,17 @@ const UserProfile: React.FC = () => {
                       whileHover={{ scale: isUnlocked ? 1.05 : 1 }}
                       className={`p-4 rounded-xl text-center transition-all ${
                         isUnlocked 
-                          ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/50' 
-                          : 'bg-gray-700 border border-gray-600 opacity-50'
+                          ? 'bg-gradient-to-br from-blue-600/30 to-blue-400/30 border border-blue-400/50' 
+                          : 'bg-gray-800/50 border border-gray-600/30 opacity-50'
                       }`}
                     >
                       <div className={`text-2xl mb-2 ${isUnlocked ? '' : 'grayscale'}`}>
                         {achievement.icon}
                       </div>
-                      <div className={`text-sm font-semibold mb-1 ${isUnlocked ? 'text-yellow-400' : 'text-gray-500'}`}>
+                      <div className={`text-sm font-bold mb-1 ${isUnlocked ? 'text-blue-400' : 'text-purple-400/50'}`}>
                         {achievement.name}
                       </div>
-                      <div className={`text-xs ${isUnlocked ? 'text-gray-300' : 'text-gray-600'}`}>
+                      <div className={`text-xs ${isUnlocked ? 'text-purple-400/80' : 'text-purple-400/40'}`}>
                         {achievement.description}
                       </div>
                     </motion.div>
@@ -621,7 +598,7 @@ const UserProfile: React.FC = () => {
               className="bg-gray-800 rounded-2xl p-6 max-w-md w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-xl font-bold text-white mb-4 text-center">Elige tu Tema 🎨</h3>
+              <h3 className="text-xl font-bold text-white mb-4 text-center">Elige tu Tema</h3>
               <div className="grid grid-cols-1 gap-3">
                 {themes.map((theme) => (
                   <motion.button
@@ -662,7 +639,7 @@ const UserProfile: React.FC = () => {
               className="bg-gray-800 rounded-2xl p-6 max-w-md w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-xl font-bold text-white mb-4 text-center">Elige tu Avatar 🎭</h3>
+              <h3 className="text-xl font-bold text-white mb-4 text-center">Elige tu Avatar</h3>
               <div className="grid grid-cols-5 gap-3">
                 {avatars.map((avatar) => (
                   <motion.button

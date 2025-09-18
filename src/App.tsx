@@ -67,7 +67,6 @@ export default function App() {
         {!isVerified && (
           <AgeVerificationModal onVerified={handleVerification} />
         )}
-        {isVerified && <GuidePopup />}
         {isVerified && (
           <div className="flex flex-col min-h-screen">
             <AsesoriasBanner variant="top" />
@@ -126,9 +125,21 @@ export default function App() {
             /> */}
           </div>
         )}
-        
+
         {/* Widget de Asesorías - Visible en todas las páginas */}
         <AsesoriasWidget />
+
+        {/* Botón flotante de WhatsApp con oferta */}
+        <GuidePopup />
+
+        {/* Popup de compra - Se muestra después de validar edad */}
+        {/* {showPurchasePopup && (
+          <PurchasePopup
+            isOpen={showPurchasePopup}
+            onClose={handleClosePurchasePopup}
+            onPurchase={handlePurchase}
+          />
+        )} */}
       </div>
     </AuthProvider>
   );
