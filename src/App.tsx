@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Page from "./page";
 import AgeVerificationModal from "./components/VerificarEdad";
-import PurchasePopup from "./components/PurchasePopup";
 import Navbar from "./components/NavigationBar";
 import FarmingCalculator from "./components/FarmingCalculator";
 import KeguelChallengue from "./components/KeguelChallenge";
@@ -26,6 +25,7 @@ import AsesoriasBanner from "./components/common/AsesoriasBanner";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { AuthProvider } from "./context/AuthProvider";
 import DebugAuth from "./components/DebugAuth";
+import GuidePopup from "./components/GuidePopup";
 // import ConfigChecker from "./components/ConfigChecker";
 
 // import PichasahurSidebar from "./components/common/PichasahurSidebar";
@@ -48,29 +48,13 @@ const About = () => (
 
 export default function App() {
   const [isVerified, setIsVerified] = useState(false);
-  const [showPurchasePopup, setShowPurchasePopup] = useState(false);
   // const [isPichasahurOpen, setIsPichasahurOpen] = useState(false);
 
   const handleVerification = (verified: boolean) => {
     setIsVerified(verified);
     if (!verified) {
       window.location.href = "https://www.google.com";
-    } else {
-      // Mostrar popup de compra después de validar edad y términos
-      setTimeout(() => {
-        setShowPurchasePopup(true);
-      }, 2000); // Esperar 2 segundos después de la validación
     }
-  };
-
-  const handleClosePurchasePopup = () => {
-    setShowPurchasePopup(false);
-  };
-
-  const handlePurchase = () => {
-    // Aquí se implementará la lógica de compra
-    console.log('Iniciando proceso de compra...');
-    setShowPurchasePopup(false);
   };
 
   // const openPichasahur = () => setIsPichasahurOpen(true);
@@ -141,18 +125,21 @@ export default function App() {
             /> */}
           </div>
         )}
-        
+
         {/* Widget de Asesorías - Visible en todas las páginas */}
         <AsesoriasWidget />
-        
+
+        {/* Botón flotante de WhatsApp con oferta */}
+        <GuidePopup />
+
         {/* Popup de compra - Se muestra después de validar edad */}
-        {showPurchasePopup && (
+        {/* {showPurchasePopup && (
           <PurchasePopup
             isOpen={showPurchasePopup}
             onClose={handleClosePurchasePopup}
             onPurchase={handlePurchase}
           />
-        )}
+        )} */}
       </div>
     </AuthProvider>
   );
