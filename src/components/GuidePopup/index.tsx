@@ -5,6 +5,7 @@ import { asesoriasLogService } from "../../lib/asesoriasLogService";
 
 export default function GuidePopup() {
   const [isVisible, setIsVisible] = useState(false);
+  const [showCloseButton, setShowCloseButton] = useState(false);
   const [timeLeft, setTimeLeft] = useState(120); // 2 minutos en segundos
   const [availableSpots, setAvailableSpots] = useState(
     Math.floor(Math.random() * 10) + 5
@@ -62,6 +63,13 @@ export default function GuidePopup() {
         setTimeLeft(120);
         setAvailableSpots(Math.floor(Math.random() * 10) + 5);
         setIsVisible(true);
+        
+        // Mostrar el botón de cierre después de 5 segundos
+        const closeButtonTimer = setTimeout(() => {
+          setShowCloseButton(true);
+        }, 5000);
+        
+        return () => clearTimeout(closeButtonTimer);
       }, 1000);
       
       return () => clearTimeout(timer);
@@ -72,6 +80,12 @@ export default function GuidePopup() {
   useEffect(() => {
     const showTimer = setTimeout(() => {
       setIsVisible(true);
+      // Mostrar el botón de cierre después de 5 segundos
+      const closeButtonTimer = setTimeout(() => {
+        setShowCloseButton(true);
+      }, 5000);
+      
+      return () => clearTimeout(closeButtonTimer);
     }, 3000);
 
     return () => clearTimeout(showTimer);
@@ -109,9 +123,23 @@ export default function GuidePopup() {
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border-4 border-amber-400">
         {/* Header */}
         <div className="bg-gradient-to-r from-red-600 to-amber-500 p-4 text-white font-bold flex flex-col items-center text-center">
-          <div className="flex items-center gap-2 text-amber-200 mb-1">
-            <AlertTriangle className="h-5 w-5" />
-            <span>OFERTA POR TIEMPO LIMITADO</span>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2 text-amber-200">
+              <AlertTriangle className="h-5 w-5" />
+              <span>OFERTA POR TIEMPO LIMITADO</span>
+            </div>
+            {showCloseButton && (
+              <button 
+                onClick={() => setIsVisible(false)}
+                className="text-amber-200 hover:text-white transition-colors"
+                aria-label="Cerrar"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            )}
           </div>
           <h3 className="text-2xl font-extrabold">
             ¡ÚNETE A NUESTRA COMUNIDAD VIP GRATIS!
