@@ -46,7 +46,7 @@ export default function GuidePopup() {
       clearInterval(countdown);
       clearInterval(spotTimer);
     };
-  }, []);
+  }, [availableSpots]);
 
   // Obtener la ruta actual
   const location = useLocation();
@@ -119,14 +119,14 @@ export default function GuidePopup() {
     .padStart(2, "0")}`;
 
   return (
-    <div className="fixed inset-0 bg-black/70 z-[999999] flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border-4 border-amber-400">
+    <div className="fixed inset-0 bg-black/70 z-[999999] flex items-center justify-center p-2 sm:p-4">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-sm sm:max-w-md w-full overflow-hidden border-2 sm:border-4 border-amber-400 mx-2">
         {/* Header */}
-        <div className="bg-gradient-to-r from-red-600 to-amber-500 p-4 text-white font-bold flex flex-col items-center text-center">
+        <div className="bg-gradient-to-r from-red-600 to-amber-500 p-3 sm:p-4 text-white font-bold flex flex-col items-center text-center">
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2 text-amber-200">
-              <AlertTriangle className="h-5 w-5" />
-              <span>OFERTA POR TIEMPO LIMITADO</span>
+            <div className="flex items-center gap-1 sm:gap-2 text-amber-200">
+              <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="text-xs sm:text-sm">OFERTA POR TIEMPO LIMITADO</span>
             </div>
             {showCloseButton && (
               <button 
@@ -141,64 +141,64 @@ export default function GuidePopup() {
               </button>
             )}
           </div>
-          <h3 className="text-2xl font-extrabold">
+          <h3 className="text-lg sm:text-2xl font-extrabold">
             ¡ÚNETE A NUESTRA COMUNIDAD VIP GRATIS!
           </h3>
-          <div className="mt-2 bg-black/20 px-3 py-1 rounded-full text-sm font-normal">
+          <div className="mt-2 bg-black/20 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-normal">
             <span>Disponible solo por hoy</span>
           </div>
         </div>
 
         {/* Body */}
-        <div className="p-6">
-          <div className="text-center mb-6">
-            <h2 className="text-3xl font-extrabold text-gray-800 mb-3">
+        <div className="p-4 sm:p-6">
+          <div className="text-center mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-3xl font-extrabold text-gray-800 mb-2 sm:mb-3">
               ¡Pocos cupos disponibles!
             </h2>
-            <p className="text-gray-700 mb-6">
+            <p className="text-sm sm:text-base text-gray-700 mb-4 sm:mb-6">
               Únete ahora y accede a beneficios exclusivos de nuestra comunidad
               VIP
             </p>
 
             {/* Contador de tiempo */}
-            <div className="bg-gray-100 rounded-xl p-4 mb-6">
-              <div className="flex items-center justify-center gap-2 text-gray-600 mb-2">
-                <Clock className="h-5 w-5 text-red-500" />
-                <span>La oferta termina en:</span>
+            <div className="bg-gray-100 rounded-lg sm:rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
+              <div className="flex items-center justify-center gap-1 sm:gap-2 text-gray-600 mb-2">
+                <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
+                <span className="text-xs sm:text-sm">La oferta termina en:</span>
               </div>
-              <div className="text-4xl font-black text-red-600 font-mono">
+              <div className="text-2xl sm:text-4xl font-black text-red-600 font-mono">
                 {formattedTime}
               </div>
             </div>
 
             {/* Contador de cupos */}
-            <div className="bg-amber-50 rounded-xl p-4 mb-6 border border-amber-200">
-              <div className="flex items-center justify-center gap-2 text-amber-800">
-                <Users className="h-5 w-5" />
-                <span className="font-medium">Cupos disponibles:</span>
-                <span className="font-black text-xl">{availableSpots}</span>
+            <div className="bg-amber-50 rounded-lg sm:rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 border border-amber-200">
+              <div className="flex items-center justify-center gap-1 sm:gap-2 text-amber-800">
+                <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="text-xs sm:text-sm font-medium">Cupos disponibles:</span>
+                <span className="font-black text-lg sm:text-xl">{availableSpots}</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+              <div className="w-full bg-gray-200 rounded-full h-2 sm:h-2.5 mt-2">
                 <div
-                  className="bg-gradient-to-r from-amber-400 to-amber-600 h-2.5 rounded-full"
+                  className="bg-gradient-to-r from-amber-400 to-amber-600 h-2 sm:h-2.5 rounded-full"
                   style={{ width: `${(availableSpots / 15) * 100}%` }}
                 ></div>
               </div>
             </div>
           </div>
 
-          <div className="space-y-4 mb-6">
-            <div className="flex items-start space-x-3 bg-green-50 p-4 rounded-lg border border-green-100">
+          <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+            <div className="flex items-start space-x-2 sm:space-x-3 bg-green-50 p-3 sm:p-4 rounded-lg border border-green-100">
               <div className="flex-shrink-0 mt-1">
-                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <MessageCircle className="h-5 w-5 text-green-600" />
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
                 </div>
               </div>
               <div>
-                <h4 className="font-bold text-gray-900 text-lg">
+                <h4 className="font-bold text-gray-900 text-sm sm:text-lg">
                   ¡Últimos cupos disponibles!
                 </h4>
-                <p className="text-gray-600">
+                <p className="text-xs sm:text-sm text-gray-600">
                   Asegura tu acceso a la comunidad VIP antes de que se agoten
                   los cupos
                 </p>
@@ -208,10 +208,10 @@ export default function GuidePopup() {
 
           <button
             onClick={handleWhatsAppClick}
-            className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-extrabold py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-green-500/30 text-lg"
+            className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-extrabold py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 sm:gap-3 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-green-500/30 text-sm sm:text-lg"
           >
-            <MessageCircle className="h-6 w-6" />
-            ¡QUIERO MI CUPO GRATIS AHORA!
+            <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
+            <span className="text-center">¡QUIERO MI CUPO GRATIS AHORA!</span>
           </button>
         </div>
       </div>
