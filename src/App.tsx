@@ -20,12 +20,9 @@ import PoseViewer from "./components/PoseViewer";
 import UserProfile from "./components/UserProfile";
 import ThirtyDaysChallenge from "./components/ThirtyDaysChanllenge";
 import Asesorias from "./components/Asesorias";
-import AsesoriasWidget from "./components/common/AsesoriasWidget";
 import AsesoriasBanner from "./components/common/AsesoriasBanner";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { AuthProvider } from "./context/AuthProvider";
-import DebugAuth from "./components/DebugAuth";
-import GuidePopup from "./components/GuidePopup";
 // import ConfigChecker from "./components/ConfigChecker";
 
 // import PichasahurSidebar from "./components/common/PichasahurSidebar";
@@ -108,7 +105,7 @@ export default function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route path="/debug-auth" element={<DebugAuth />} />
+                {/* <Route path="/debug-auth" element={<DebugAuth />} /> */}
               </Routes>
             </main>
 
@@ -127,10 +124,10 @@ export default function App() {
         )}
 
         {/* Widget de Asesorías - Visible en todas las páginas */}
-        <AsesoriasWidget />
+        {/* <AsesoriasWidget /> */}
 
         {/* Botón flotante de WhatsApp con oferta */}
-        <GuidePopup />
+        {/* <GuidePopup /> */}
 
         {/* Popup de compra - Se muestra después de validar edad */}
         {/* {showPurchasePopup && (
