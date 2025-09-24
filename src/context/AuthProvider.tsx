@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
-import WhatsAppCommunityPopup from "../components/WhatsAppCommunityPopup";
+// import WhatsAppCommunityPopup from "../components/WhatsAppCommunityPopup";
 
 const AuthContext = createContext<{
   session: any;
@@ -56,15 +56,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, [location.pathname, user, hasShownPopupForUser]);
 
-  const handleCloseWhatsAppPopup = () => {
-    setShowWhatsAppPopup(false);
-  };
+  // const handleCloseWhatsAppPopup = () => {
+  //   setShowWhatsAppPopup(false);
+  // };
 
-  const handleJoinWhatsApp = () => {
-    const message = encodeURIComponent("Me quiero unir al canal de WhatsApp");
-    window.open(`https://wa.me/573004048012?text=${message}`, "_blank");
-    setShowWhatsAppPopup(false);
-  };
+  // const handleJoinWhatsApp = () => {
+  //   const message = encodeURIComponent("Me quiero unir al canal de WhatsApp");
+  //   window.open(`https://wa.me/573004048012?text=${message}`, "_blank");
+  //   setShowWhatsAppPopup(false);
+  // };
 
   return (
     <AuthContext.Provider
@@ -76,13 +76,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-      {showWhatsAppPopup && (
+      {/* {showWhatsAppPopup && (
         <WhatsAppCommunityPopup
           isOpen={showWhatsAppPopup}
           onClose={handleCloseWhatsAppPopup}
           onJoinWhatsApp={handleJoinWhatsApp}
         />
-      )}
+      )} */}
     </AuthContext.Provider>
   );
 };
