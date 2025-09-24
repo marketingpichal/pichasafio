@@ -13,42 +13,66 @@ const LeaderboardTable = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+    let subscription: ReturnType<typeof supabase.channel> | null = null;
+
     const fetchLeaderboard = async () => {
+      if (!isMounted) return;
+      
       console.log('🔍 LeaderboardTable: Iniciando carga de datos...');
       setIsLoading(true);
+      
       try {
         console.log('📡 LeaderboardTable: Llamando a challengeService.getLeaderboard...');
         const leaderboardData = await challengeService.getLeaderboard(10);
-        console.log('✅ LeaderboardTable: Datos recibidos:', leaderboardData);
-        setLeaderboard(leaderboardData);
+        
+        if (isMounted) {
+          console.log('✅ LeaderboardTable: Datos recibidos:', leaderboardData);
+          setLeaderboard(leaderboardData);
+        }
       } catch (error) {
         console.error("❌ LeaderboardTable: Error al obtener la tabla de líderes:", error);
       } finally {
-        setIsLoading(false);
-        console.log('🏁 LeaderboardTable: Carga completada');
+        if (isMounted) {
+          setIsLoading(false);
+          console.log('🏁 LeaderboardTable: Carga completada');
+        }
       }
     };
 
+    // Cargar datos iniciales
     fetchLeaderboard();
 
-    // Suscripción para actualizaciones en tiempo real
-    const subscription = supabase
-      .channel("public:leaderboard")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "leaderboard",
-        },
-        fetchLeaderboard
-      )
-      .subscribe();
+    // Configurar suscripción para actualizaciones en tiempo real
+    try {
+      subscription = supabase
+        .channel('leaderboard_changes')
+        .on('postgres_changes', 
+          {
+            event: '*',
+            schema: 'public',
+            table: 'leaderboard',
+          },
+          (payload) => {
+            console.log('🔄 LeaderboardTable: Cambio detectado en leaderboard:', payload);
+            fetchLeaderboard();
+          }
+        )
+        .subscribe((status) => {
+          console.log('🔔 LeaderboardTable: Estado de la suscripción:', status);
+        });
+    } catch (error) {
+      console.error('❌ LeaderboardTable: Error al suscribirse a cambios:', error);
+    }
 
+    // Limpieza al desmontar el componente
     return () => {
-      subscription.unsubscribe();
+      isMounted = false;
+      if (subscription) {
+        supabase.removeChannel(subscription);
+      }
     };
-  }, [supabase]);
+  }, [supabase, user?.id]); // Añadimos user?.id como dependencia
 
   const getRankIcon = (position: number) => {
     switch (position) {
