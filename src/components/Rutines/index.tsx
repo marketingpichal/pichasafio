@@ -1,37 +1,34 @@
-import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
-import Engrosamiento from './Grosor';
-import Alargamiento from './Largor';
-import InstruccionesPene from '../Warning';
-import ResponsiveCard from '../common/ResponsiveCard';
-import DailyVideos from './DailyVideos';
-import RecipesPopup from '../RecipesPopup';
-import { Dumbbell, Target, TrendingUp, Play } from 'lucide-react';
+import { motion } from "framer-motion";
+import Engrosamiento from "./Grosor";
+import Alargamiento from "./Largor";
+import InstruccionesPene from "../Warning";
+import ResponsiveCard from "../common/ResponsiveCard";
+import { Dumbbell, Target, TrendingUp, Play } from "lucide-react";
 
 export default function Rutinas() {
-  const [showRecipesPopup, setShowRecipesPopup] = useState(false);
+  // const [showRecipesPopup, setShowRecipesPopup] = useState(false);
 
-  useEffect(() => {
-    // Mostrar popup después de 2 segundos de entrar a la página
-    const timer = setTimeout(() => {
-      setShowRecipesPopup(true);
-    }, 2000);
+  // useEffect(() => {
+  //   // Mostrar popup después de 2 segundos de entrar a la página
+  //   const timer = setTimeout(() => {
+  //     setShowRecipesPopup(true);
+  //   }, 2000);
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
-  const handleCloseRecipesPopup = () => {
-    setShowRecipesPopup(false);
-  };
+  // const handleCloseRecipesPopup = () => {
+  //   setShowRecipesPopup(false);
+  // };
 
-  const handleJoinWhatsAppForRecipes = () => {
-    const phoneNumber = "573004048012";
-    const message = "Quiero unirme al canal del WhatsApp por las recetas afrodisíacas";
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    
-    window.open(whatsappUrl, '_blank');
-    setShowRecipesPopup(false);
-  };
+  // const handleJoinWhatsAppForRecipes = () => {
+  //   const phoneNumber = "573004048012";
+  //   const message = "Quiero unirme al canal del WhatsApp por las recetas afrodisíacas";
+  //   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+
+  //   window.open(whatsappUrl, '_blank');
+  //   setShowRecipesPopup(false);
+  // };
 
   return (
     <div className="min-h-screen bg-gray-900 py-8 sm:py-12">
@@ -74,7 +71,7 @@ export default function Rutinas() {
           transition={{ duration: 0.5, delay: 0.25 }}
           className="mb-12"
         >
-          <DailyVideos />
+          {/* <DailyVideos /> */}
         </motion.div>
 
         {/* Features Grid */}
@@ -90,9 +87,12 @@ export default function Rutinas() {
                 <Play className="w-6 h-6 text-white" />
               </div>
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">Videos Diarios</h3>
+            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">
+              Videos Diarios
+            </h3>
             <p className="text-gray-300 text-sm font-poppins-light">
-              Desbloquea nuevos videos de entrenamiento iniciando sesión cada día
+              Desbloquea nuevos videos de entrenamiento iniciando sesión cada
+              día
             </p>
           </ResponsiveCard>
 
@@ -102,9 +102,12 @@ export default function Rutinas() {
                 <Target className="w-6 h-6 text-white" />
               </div>
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">Rutinas Especializadas</h3>
+            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">
+              Rutinas Especializadas
+            </h3>
             <p className="text-gray-300 text-sm font-poppins-light">
-              Rutinas diseñadas específicamente para diferentes objetivos y niveles
+              Rutinas diseñadas específicamente para diferentes objetivos y
+              niveles
             </p>
           </ResponsiveCard>
 
@@ -114,7 +117,9 @@ export default function Rutinas() {
                 <TrendingUp className="w-6 h-6 text-white" />
               </div>
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">Progreso Diario</h3>
+            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">
+              Progreso Diario
+            </h3>
             <p className="text-gray-300 text-sm font-poppins-light">
               Sigue tu progreso y mantén la constancia con contenido diario
             </p>
@@ -138,7 +143,9 @@ export default function Rutinas() {
                 <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center">
                   <Target className="w-4 h-4 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-white font-poppins-semibold">Objetivo: Engrosamiento</h3>
+                <h3 className="text-xl font-semibold text-white font-poppins-semibold">
+                  Objetivo: Engrosamiento
+                </h3>
               </div>
               <Engrosamiento />
             </div>
@@ -161,7 +168,9 @@ export default function Rutinas() {
                 <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
                   <TrendingUp className="w-4 h-4 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-white font-poppins-semibold">Objetivo: Alargamiento</h3>
+                <h3 className="text-xl font-semibold text-white font-poppins-semibold">
+                  Objetivo: Alargamiento
+                </h3>
               </div>
               <Alargamiento />
             </div>
@@ -181,8 +190,8 @@ export default function Rutinas() {
                 ¡Comienza tu Transformación Hoy!
               </h3>
               <p className="text-gray-300 leading-relaxed font-poppins-light">
-                Sigue estas rutinas de manera consistente y verás resultados increíbles. 
-                Recuerda que la constancia es la clave del éxito.
+                Sigue estas rutinas de manera consistente y verás resultados
+                increíbles. Recuerda que la constancia es la clave del éxito.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
                 <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 font-poppins-semibold">
@@ -198,11 +207,11 @@ export default function Rutinas() {
       </div>
 
       {/* Popup de Recetas Afrodisíacas */}
-      <RecipesPopup
+      {/* <RecipesPopup
         isOpen={showRecipesPopup}
         onClose={handleCloseRecipesPopup}
         onJoinWhatsApp={handleJoinWhatsAppForRecipes}
-      />
+      /> */}
     </div>
   );
 }
