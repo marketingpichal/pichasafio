@@ -1,4 +1,4 @@
-import { MessageCircle, AlertTriangle, Clock, Users } from "lucide-react";
+import { MessageCircle, AlertTriangle, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { asesoriasLogService } from "../../lib/asesoriasLogService";
@@ -12,7 +12,7 @@ export default function GuidePopup() {
   ); // Entre 5 y 15 cupos
   const phoneNumber = "573004048012";
   const message =
-    "¡Hola! Quiero unirme a la comunidad VIP de Pichasafio. ¿Cómo puedo acceder a los beneficios?";
+    "¡Hola! Quiero acceder a las guías exclusivas de Pichasafio. ¿Cómo puedo obtener las guías para la primera vez, agrandar la picha, consejos para durar más, guías de sexo oral y más?";
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
     message
   )}`;
@@ -94,10 +94,10 @@ export default function GuidePopup() {
   const handleWhatsAppClick = async () => {
     try {
       await asesoriasLogService.logAsesoriaSubmission({
-        nombre: "Interesado en Guías",
+        nombre: "Interesado en Guías Exclusivas",
         telefono: "No proporcionado",
-        motivo: "Consulta sobre Guías de Iniciación",
-        descripcion: "Usuario interesado en las guías",
+        motivo: "Consulta sobre Guías Especializadas",
+        descripcion: "Usuario interesado en guías de primera vez, agrandar picha, durar más, sexo oral y canal de WhatsApp",
         whatsappUrl: whatsappUrl,
         whatsappNumber: phoneNumber,
       });
@@ -142,10 +142,10 @@ export default function GuidePopup() {
             )}
           </div>
           <h3 className="text-lg sm:text-2xl font-extrabold">
-            ¡ÚNETE A NUESTRA COMUNIDAD VIP GRATIS!
+            ¡GUÍAS EXCLUSIVAS DISPONIBLES!
           </h3>
           <div className="mt-2 bg-black/20 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-normal">
-            <span>Disponible solo por hoy</span>
+            <span>Acceso directo por WhatsApp</span>
           </div>
         </div>
 
@@ -153,11 +153,10 @@ export default function GuidePopup() {
         <div className="p-4 sm:p-6">
           <div className="text-center mb-4 sm:mb-6">
             <h2 className="text-xl sm:text-3xl font-extrabold text-gray-800 mb-2 sm:mb-3">
-              ¡Pocos cupos disponibles!
+              ¡Guías Exclusivas para Ti!
             </h2>
             <p className="text-sm sm:text-base text-gray-700 mb-4 sm:mb-6">
-              Únete ahora y accede a beneficios exclusivos de nuestra comunidad
-              VIP
+              Accede a nuestras guías especializadas y únete a nuestro canal de WhatsApp
             </p>
 
             {/* Contador de tiempo */}
@@ -171,18 +170,28 @@ export default function GuidePopup() {
               </div>
             </div>
 
-            {/* Contador de cupos */}
-            <div className="bg-amber-50 rounded-lg sm:rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 border border-amber-200">
-              <div className="flex items-center justify-center gap-1 sm:gap-2 text-amber-800">
-                <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                <span className="text-xs sm:text-sm font-medium">Cupos disponibles:</span>
-                <span className="font-black text-lg sm:text-xl">{availableSpots}</span>
+            {/* Lista de guías disponibles */}
+            <div className="bg-blue-50 rounded-lg sm:rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 border border-blue-200">
+              <div className="text-center mb-3">
+                <span className="text-xs sm:text-sm font-medium text-blue-800">Guías Disponibles:</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 sm:h-2.5 mt-2">
-                <div
-                  className="bg-gradient-to-r from-amber-400 to-amber-600 h-2 sm:h-2.5 rounded-full"
-                  style={{ width: `${(availableSpots / 15) * 100}%` }}
-                ></div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-blue-700">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span>Primera vez</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span>Agrandar picha</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span>Durar más</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span>Sexo oral</span>
+                </div>
               </div>
             </div>
           </div>
@@ -196,11 +205,10 @@ export default function GuidePopup() {
               </div>
               <div>
                 <h4 className="font-bold text-gray-900 text-sm sm:text-lg">
-                  ¡Últimos cupos disponibles!
+                  ¡Canal de WhatsApp Exclusivo!
                 </h4>
                 <p className="text-xs sm:text-sm text-gray-600">
-                  Asegura tu acceso a la comunidad VIP antes de que se agoten
-                  los cupos
+                  Únete a nuestro canal de WhatsApp y accede a todas las guías especializadas
                 </p>
               </div>
             </div>
@@ -211,7 +219,7 @@ export default function GuidePopup() {
             className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-extrabold py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl flex items-center justify-center gap-2 sm:gap-3 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-green-500/30 text-sm sm:text-lg"
           >
             <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
-            <span className="text-center">¡QUIERO MI CUPO GRATIS AHORA!</span>
+            <span className="text-center">¡QUIERO LAS GUÍAS EXCLUSIVAS!</span>
           </button>
         </div>
       </div>

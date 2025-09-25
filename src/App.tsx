@@ -23,6 +23,8 @@ import Asesorias from "./components/Asesorias";
 import AsesoriasBanner from "./components/common/AsesoriasBanner";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import { AuthProvider } from "./context/AuthProvider";
+import GuidePopup from "./components/GuidePopup";
+import AsesoriasWidget from "./components/common/AsesoriasWidget";
 // import ConfigChecker from "./components/ConfigChecker";
 
 // import PichasahurSidebar from "./components/common/PichasahurSidebar";
@@ -45,7 +47,6 @@ const About = () => (
 
 export default function App() {
   const [isVerified, setIsVerified] = useState(false);
-  // const [isPichasahurOpen, setIsPichasahurOpen] = useState(false);
 
   const handleVerification = (verified: boolean) => {
     setIsVerified(verified);
@@ -53,9 +54,6 @@ export default function App() {
       window.location.href = "https://www.google.com";
     }
   };
-
-  // const openPichasahur = () => setIsPichasahurOpen(true);
-  // const closePichasahur = () => setIsPichasahurOpen(false);
 
   return (
     <AuthProvider>
@@ -124,19 +122,10 @@ export default function App() {
         )}
 
         {/* Widget de Asesorías - Visible en todas las páginas */}
-        {/* <AsesoriasWidget /> */}
+        <AsesoriasWidget />
 
         {/* Botón flotante de WhatsApp con oferta */}
-        {/* <GuidePopup /> */}
-
-        {/* Popup de compra - Se muestra después de validar edad */}
-        {/* {showPurchasePopup && (
-          <PurchasePopup
-            isOpen={showPurchasePopup}
-            onClose={handleClosePurchasePopup}
-            onPurchase={handlePurchase}
-          />
-        )} */}
+        <GuidePopup />
       </div>
     </AuthProvider>
   );
