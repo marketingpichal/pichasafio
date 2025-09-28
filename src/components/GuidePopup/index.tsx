@@ -4,7 +4,7 @@ import { asesoriasLogService } from "../../lib/asesoriasLogService";
 
 const PHONE_NUMBER = "573004048012";
 const DEFAULT_MESSAGE =
-  "¡Hola! Me interesa la promoción de 3 guías por $25. Quisiera información sobre las guías de agrandamiento del pene, sexo oral, cómo durar más en la cama, cómo mejorar en la cama, guía de poses y guía para la primera vez.";
+  "¡Hola! Me interesa la promoción de 3 guías por $25.000 COP. Quisiera información sobre las guías de agrandamiento del pene, sexo oral, cómo durar más en la cama, cómo mejorar en la cama, guía de poses y guía para la primera vez. Cómo puedo pagar?";
 const WHATSAPP_URL = `https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(
   DEFAULT_MESSAGE
 )}`;
