@@ -218,14 +218,15 @@ const Chochasafio: React.FC = () => {
     return exercises[exerciseIndex];
   };
 
-  const shouldGateForDay = (day: number): boolean => {
-    return day % 3 === 0;
+  const shouldGateForDay = (): boolean => {
+    // Anuncios deshabilitados: nunca requerir anuncio para desbloquear el video
+    return false;
   };
 
   // Verificar si un día está desbloqueado
-  const isDayUnlocked = (day: number): boolean => {
-    if (!userChallenge) return day === 1; // Solo el día 1 está desbloqueado inicialmente
-    return day <= userChallenge.current_day;
+  const isDayUnlocked = (): boolean => {
+    // Todos los días están desbloqueados para permitir acceso libre
+    return true;
   };
 
   // Verificar si un día está completado
@@ -246,7 +247,7 @@ const Chochasafio: React.FC = () => {
     const exercise = getExerciseForDay(day);
     
     // Verificar si el día está desbloqueado
-    if (!isDayUnlocked(day)) {
+    if (!isDayUnlocked()) {
       setError('Este día aún no está desbloqueado. Completa los días anteriores primero.');
       return;
     }
@@ -257,7 +258,7 @@ const Chochasafio: React.FC = () => {
       return;
     }
 
-    if (shouldGateForDay(day)) {
+    if (shouldGateForDay()) {
       pendingRef.current = { day, exercise };
       setShowAdGate(true);
       logAdEvent("gate_required", {
@@ -486,7 +487,7 @@ const Chochasafio: React.FC = () => {
                       exercise={getExerciseForDay(day)}
                       onClick={handleDayClick}
                       isActive={selectedDay === day}
-                      isUnlocked={isDayUnlocked(day)}
+                      isUnlocked={isDayUnlocked()}
                       isCompleted={isDayCompleted(day)}
                     />
                   ))}
