@@ -199,19 +199,19 @@ const ThirtyDayChallenge: React.FC = () => {
       try {
         setIsLoading(true);
         setError(null);
-        
+
         // Obtener o crear el reto del usuario
         const challenge = await challengeService.getOrCreateUserChallenge(
           user.id,
           "30_days"
         );
-        
+
         // Obtener el progreso
         const { data: progress, error } = await supabase
-          .from('daily_progress')
-          .select('*')
-          .eq('challenge_id', challenge.id)
-          .order('day_number', { ascending: true });
+          .from("daily_progress")
+          .select("*")
+          .eq("challenge_id", challenge.id)
+          .order("day_number", { ascending: true });
 
         if (error) {
           throw error;
@@ -238,7 +238,7 @@ const ThirtyDayChallenge: React.FC = () => {
   };
 
   // Verificar si un día está desbloqueado
-  const isDayUnlocked = (_day: number): boolean => {
+  const isDayUnlocked = (): boolean => {
     // Todos los días están desbloqueados para permitir acceso libre
     return true;
   };
@@ -248,9 +248,9 @@ const ThirtyDayChallenge: React.FC = () => {
     return userProgress.some((progress) => progress.day_number === day);
   };
 
-  const shouldGateForDay = (day: number): boolean => {
-    // MVP: cada 3 días pide anuncio. Puedes afinar o randomizar.
-    return day % 3 === 0;
+  const shouldGateForDay = (): boolean => {
+    // Anuncios deshabilitados: nunca requerir anuncio para desbloquear el video
+    return false;
   };
 
   const unlockVideo = (day: number, exercise: Exercise) => {
@@ -281,12 +281,12 @@ const ThirtyDayChallenge: React.FC = () => {
         user.id,
         "30_days"
       );
-      
+
       const { data: progress, error } = await supabase
-        .from('daily_progress')
-        .select('*')
-        .eq('challenge_id', challenge.id)
-        .order('day_number', { ascending: true });
+        .from("daily_progress")
+        .select("*")
+        .eq("challenge_id", challenge.id)
+        .order("day_number", { ascending: true });
 
       if (error) {
         throw error;
@@ -320,10 +320,8 @@ const ThirtyDayChallenge: React.FC = () => {
 
     const exercise = getExerciseForDay(day);
 
-
-
     // Verificar si el día está desbloqueado
-    if (!isDayUnlocked(day)) {
+    if (!isDayUnlocked()) {
       setError(
         "Este día aún no está desbloqueado. Completa los días anteriores primero."
       );
@@ -336,7 +334,7 @@ const ThirtyDayChallenge: React.FC = () => {
       return;
     }
 
-    if (shouldGateForDay(day)) {
+    if (shouldGateForDay()) {
       pendingRef.current = { day, exercise };
       setShowAdGate(true);
       logAdEvent("gate_required", {
@@ -479,7 +477,7 @@ const ThirtyDayChallenge: React.FC = () => {
                         exercise={getExerciseForDay(day)}
                         onClick={handleDayClick}
                         isActive={selectedDay === day}
-                        isUnlocked={isDayUnlocked(day)}
+                        isUnlocked={isDayUnlocked()}
                         isCompleted={isDayCompleted(day)}
                       />
                     )
