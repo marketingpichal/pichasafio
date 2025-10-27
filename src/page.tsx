@@ -11,6 +11,7 @@ import DailyXPButton from "./components/DailyXPButton";
 import { useState } from "react";
 import { useAuth } from "./context/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { Publicity } from "./components/Publicity";
 
 export default function Page() {
   const [showPoses, setShowPoses] = useState(false);
@@ -121,6 +122,16 @@ export default function Page() {
           </div>
         </section>
       )}
+
+      {/* Publicity Banners Section */}
+      <section className="py-8 sm:py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-8 text-center">
+            Servicios Recomendados
+          </h2>
+          <Publicity />
+        </div>
+      </section>
 
       {/* Footer Section */}
       <section className="py-8 sm:py-12">
