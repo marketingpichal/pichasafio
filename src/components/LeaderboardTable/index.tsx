@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
 
 import { challengeService, type LeaderboardEntry } from "@/lib/challengeService";
@@ -53,14 +53,12 @@ const LeaderboardTable = () => {
             schema: 'public',
             table: 'leaderboard',
           },
-          (payload) => {
+          () => {
             // console.log('🔄 LeaderboardTable: Cambio detectado en leaderboard:', payload);
             fetchLeaderboard();
           }
         )
-        .subscribe((status) => {
-          // console.log('🔔 LeaderboardTable: Estado de la suscripción:', status);
-        });
+     
     } catch (error) {
       console.error('❌ LeaderboardTable: Error al suscribirse a cambios:', error);
     }

@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
 // https://vite.dev/config/
-export default defineConfig(({ _command, mode }) => {
+export default defineConfig(({ mode }) => {
   // Cargar variables de entorno según el modo
   
   // Determinar el puerto según el entorno

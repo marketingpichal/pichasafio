@@ -1,6 +1,5 @@
 import React from "react";
-import RewardedAdGate from "../common/RewardedAdGate";
-import { logAdEvent, trackUserAdImpression } from "@/lib/adTracking";
+import { logAdEvent } from "@/lib/adTracking";
 import { useAuth } from "@/context/AuthProvider";
 import { motion } from "framer-motion";
 import ResponsiveCard from "../common/ResponsiveCard";
@@ -178,7 +177,6 @@ const ThirtyDayChallenge: React.FC = () => {
   );
   const [showVideo, setShowVideo] = React.useState<boolean>(false);
   const [selectedDay, setSelectedDay] = React.useState<number | null>(null);
-  const [showAdGate, setShowAdGate] = React.useState<boolean>(false);
   const pendingRef = React.useRef<{ day: number; exercise: Exercise } | null>(
     null
   );
@@ -336,7 +334,6 @@ const ThirtyDayChallenge: React.FC = () => {
 
     if (shouldGateForDay()) {
       pendingRef.current = { day, exercise };
-      setShowAdGate(true);
       logAdEvent("gate_required", {
         user_id: user?.id ?? null,
         provider: "juicyads",
@@ -547,33 +544,6 @@ const ThirtyDayChallenge: React.FC = () => {
               </div>
             </ResponsiveCard>
           </motion.div>
-        )}
-
-        {/* Rewarded Ad Gate */}
-        {showAdGate && (
-          <RewardedAdGate
-            isOpen={showAdGate}
-            onClose={() => setShowAdGate(false)}
-            onReward={() => {
-              const pending = pendingRef.current;
-              if (!pending) return;
-              trackUserAdImpression(user?.id ?? null);
-              logAdEvent("gate_rewarded", {
-                user_id: user?.id ?? null,
-                provider: "juicyads",
-                context: {
-                  day: pending.day,
-                  exerciseName: pending.exercise.name,
-                },
-              }).catch(() => void 0);
-              completeDay(pending.day, pending.exercise, true);
-              pendingRef.current = null;
-            }}
-            videoContext={{
-              day: pendingRef.current?.day,
-              exerciseName: pendingRef.current?.exercise.name,
-            }}
-          />
         )}
 
         {/* Call to Action */}
