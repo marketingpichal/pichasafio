@@ -1,6 +1,5 @@
 import { MessageCircle, AlertTriangle, Clock } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
-import { asesoriasLogService } from "../../lib/asesoriasLogService";
 
 const PHONE_NUMBER = "573004048012";
 const DEFAULT_MESSAGE =
@@ -46,18 +45,6 @@ export default function GuidePopup() {
 
   const handleWhatsAppClick = useCallback(async () => {
     try {
-      const logData = {
-        nombre: "Interesado en Guías Exclusivas",
-        telefono: "No proporcionado",
-        mensaje: DEFAULT_MESSAGE,
-        tipo: "guia",
-        motivo: "Consulta sobre guías",
-        descripcion: DEFAULT_MESSAGE,
-        whatsappUrl: WHATSAPP_URL,
-        whatsappNumber: PHONE_NUMBER,
-      };
-
-      await asesoriasLogService.logAsesoriaSubmission(logData);
       window.open(WHATSAPP_URL, "_blank");
       setIsVisible(false);
     } catch (error) {
