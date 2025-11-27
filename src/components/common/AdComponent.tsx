@@ -22,7 +22,7 @@ const AdComponent: React.FC<AdComponentProps> = ({
   
   // Debug para verificar el entorno
   useEffect(() => {
-    console.log('AdComponent Debug:', {
+    // console.log('AdComponent Debug:', {
       hostname: window.location.hostname,
       isProduction,
       adZoneId,
@@ -50,19 +50,19 @@ const AdComponent: React.FC<AdComponentProps> = ({
     const loadAd = (retryCount = 0) => {
       try {
         if (window.adsbyjuicy) {
-          console.log(`Loading ad for zone: ${adZoneId}`);
+          // console.log(`Loading ad for zone: ${adZoneId}`);
           (window.adsbyjuicy = window.adsbyjuicy || []).push({ adzone: adZoneId });
         } else {
           if (retryCount < 10) {
-            console.log(`Retrying ad load for zone: ${adZoneId}, attempt: ${retryCount + 1}`);
+            // console.log(`Retrying ad load for zone: ${adZoneId}, attempt: ${retryCount + 1}`);
             setTimeout(() => loadAd(retryCount + 1), 500);
           } else {
-            console.log(`Failed to load ad after ${retryCount} attempts`);
+            // console.log(`Failed to load ad after ${retryCount} attempts`);
             setAdFailed(true);
           }
         }
       } catch (error) {
-        console.log('Ad failed to load:', error);
+        // console.log('Ad failed to load:', error);
         setAdFailed(true);
       }
     };

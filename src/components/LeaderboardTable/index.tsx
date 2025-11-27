@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Crown, Medal, Star, TrendingUp, Zap, Target, Flame } from "lucide-react";
 
 const LeaderboardTable = () => {
-  console.log('🎯 LeaderboardTable: Componente renderizado');
+  // console.log('🎯 LeaderboardTable: Componente renderizado');
   const supabase = useSupabaseClient();
   const user = useUser();
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
@@ -19,15 +19,15 @@ const LeaderboardTable = () => {
     const fetchLeaderboard = async () => {
       if (!isMounted) return;
       
-      console.log('🔍 LeaderboardTable: Iniciando carga de datos...');
+      // console.log('🔍 LeaderboardTable: Iniciando carga de datos...');
       setIsLoading(true);
       
       try {
-        console.log('📡 LeaderboardTable: Llamando a challengeService.getLeaderboard...');
+        // console.log('📡 LeaderboardTable: Llamando a challengeService.getLeaderboard...');
         const leaderboardData = await challengeService.getLeaderboard(10);
         
         if (isMounted) {
-          console.log('✅ LeaderboardTable: Datos recibidos:', leaderboardData);
+          // console.log('✅ LeaderboardTable: Datos recibidos:', leaderboardData);
           setLeaderboard(leaderboardData);
         }
       } catch (error) {
@@ -35,7 +35,7 @@ const LeaderboardTable = () => {
       } finally {
         if (isMounted) {
           setIsLoading(false);
-          console.log('🏁 LeaderboardTable: Carga completada');
+          // console.log('🏁 LeaderboardTable: Carga completada');
         }
       }
     };
@@ -54,12 +54,12 @@ const LeaderboardTable = () => {
             table: 'leaderboard',
           },
           (payload) => {
-            console.log('🔄 LeaderboardTable: Cambio detectado en leaderboard:', payload);
+            // console.log('🔄 LeaderboardTable: Cambio detectado en leaderboard:', payload);
             fetchLeaderboard();
           }
         )
         .subscribe((status) => {
-          console.log('🔔 LeaderboardTable: Estado de la suscripción:', status);
+          // console.log('🔔 LeaderboardTable: Estado de la suscripción:', status);
         });
     } catch (error) {
       console.error('❌ LeaderboardTable: Error al suscribirse a cambios:', error);

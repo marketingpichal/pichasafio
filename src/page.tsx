@@ -33,8 +33,10 @@ export default function Page() {
   };
 
   const handleRewardClaimed = (xp: number) => {
-    console.log(`Usuario ganó ${xp} XP de la ruleta`);
-    // Aquí podrías agregar lógica adicional como mostrar notificaciones
+    // XP claimed from spin wheel
+    if (import.meta.env.DEV) {
+      console.log(`Usuario ganó ${xp} XP de la ruleta`);
+    }
   };
 
   return (

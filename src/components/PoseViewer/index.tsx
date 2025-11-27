@@ -34,7 +34,7 @@ const generatePose = async (id: number): Promise<Pose> => {
   try {
     const response = await getPoseImages();
     cloudinaryImages = response || [];
-    console.log('📊 Supabase images loaded:', cloudinaryImages.length);
+    // console.log('📊 Supabase images loaded:', cloudinaryImages.length);
   } catch (error) {
     console.error('💥 Error loading Supabase images:', error);
   }
@@ -45,7 +45,7 @@ const generatePose = async (id: number): Promise<Pose> => {
   
   // Usar imágenes de Supabase Storage si están disponibles
   if (cloudinaryImages.length > 0) {
-    console.log('✅ Using real Supabase Storage images');
+    // console.log('✅ Using real Supabase Storage images');
     // Seleccionar 3 imágenes
     const imageIndex1 = (id - 1) % cloudinaryImages.length;
     const imageIndex2 = id % cloudinaryImages.length;
@@ -59,7 +59,7 @@ const generatePose = async (id: number): Promise<Pose> => {
     
     imageUrls = selectedImages.map(img => img.url);
   } else {
-    console.log('⚠️ No Supabase images available, using fallback');
+    // console.log('⚠️ No Supabase images available, using fallback');
     // Fallback a URLs directas si no hay imágenes de Supabase
     imageUrls = [
       'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop',
