@@ -7,10 +7,6 @@ import ResponsiveButton from "../common/ResponsiveButton";
 import { profileService } from "../../lib/profileService";
 import * as yup from "yup";
 
-interface CompleteProfileFormData {
-  username: string;
-}
-
 const validationSchema = yup.object().shape({
   username: yup
     .string()

@@ -151,7 +151,7 @@ const FarmingCalculator = () => {
 
   const supabase = useSupabaseClient();
   const user = useUser();
-  const [dailyCount, setDailyCount] = useState(0);
+  const [dailyCount] = useState(0);
   const [canSubmit, setCanSubmit] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [categoria, setCategoria] = useState("gorda");
@@ -160,7 +160,7 @@ const FarmingCalculator = () => {
   const [historial, setHistorial] = useState<string[]>([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [lastXpGained, setLastXpGained] = useState(0);
-  const [lastUsage, setLastUsage] = useState<Date | null>(null);
+  const [_lastUsage, setLastUsage] = useState<Date | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<string>("");
 
   // Verificar último uso y calcular tiempo restante

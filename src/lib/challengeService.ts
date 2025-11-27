@@ -158,7 +158,7 @@ class ChallengeService {
   }
 
   // Verificar si un día está desbloqueado
-  async isDayUnlocked(userId: string, challengeType: string, dayNumber: number): Promise<boolean> {
+  async isDayUnlocked(_userId: string, _challengeType: string, _dayNumber: number): Promise<boolean> {
     // Todos los días están desbloqueados para permitir acceso libre
     return true;
   }
