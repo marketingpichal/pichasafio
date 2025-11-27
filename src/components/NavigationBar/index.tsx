@@ -58,7 +58,9 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      console.log('🚪 Iniciando logout...');
+      if (import.meta.env.DEV) {
+        console.log('🚪 Iniciando logout...');
+      }
       
       // Cerrar menú inmediatamente para feedback visual
       closeMenu();
@@ -73,7 +75,9 @@ export default function Navbar() {
         return;
       }
       
-      console.log('✅ Logout exitoso');
+      if (import.meta.env.DEV) {
+        console.log('✅ Logout exitoso');
+      }
       
       // Limpiar cualquier estado local si es necesario
       localStorage.removeItem('supabase.auth.token');

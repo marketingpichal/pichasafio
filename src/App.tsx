@@ -1,32 +1,32 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import Page from "./page";
 import AgeVerificationModal from "./components/VerificarEdad";
 import Navbar from "./components/NavigationBar";
-import FarmingCalculator from "./components/FarmingCalculator";
-import KeguelChallengue from "./components/KeguelChallenge";
-import RespirationCalendar from "./components/RespirationCalendar";
-import Testimonials from "./components/TestimoniosAnonimos";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import ResetPassword from "./components/ResetPassword";
-import CompleteProfile from "./components/CompleteProfile";
-import Rutinas from "./components/Rutines";
-import Chochasafio from "./components/Chochasafio";
-import SexShop from "./components/Sexshop";
-import TerminosYCondiciones from "./components/Terms";
-import GuideStore from "./components/Guides/guideStore";
-import PoseViewer from "./components/PoseViewer";
-import UserProfile from "./components/UserProfile";
-import ThirtyDaysChallenge from "./components/ThirtyDaysChanllenge";
-import ProtectedRoute from "./components/common/ProtectedRoute";
-import { AuthProvider } from "./context/AuthProvider";
-import GuidePopup from "./components/GuidePopup";
 import DonationBanner from "./components/DonationBanner";
-// import ConfigChecker from "./components/ConfigChecker";
+import ErrorBoundary from "./components/ErrorBoundary";
+import LoadingSpinner from "./components/LoadingSpinner";
+import { AuthProvider } from "./context/AuthProvider";
 
-// import PichasahurSidebar from "./components/common/PichasahurSidebar";
-// import PichasahurFloatingButton from "./components/common/PichasahurFloatingButton";
+// Lazy load heavy components for better performance
+const FarmingCalculator = lazy(() => import("./components/FarmingCalculator"));
+const KeguelChallengue = lazy(() => import("./components/KeguelChallenge"));
+const RespirationCalendar = lazy(() => import("./components/RespirationCalendar"));
+const Testimonials = lazy(() => import("./components/TestimoniosAnonimos"));
+const Login = lazy(() => import("./components/Login"));
+const Register = lazy(() => import("./components/Register"));
+const ResetPassword = lazy(() => import("./components/ResetPassword"));
+const CompleteProfile = lazy(() => import("./components/CompleteProfile"));
+const Rutinas = lazy(() => import("./components/Rutines"));
+const Chochasafio = lazy(() => import("./components/Chochasafio"));
+const SexShop = lazy(() => import("./components/Sexshop"));
+const TerminosYCondiciones = lazy(() => import("./components/Terms"));
+const GuideStore = lazy(() => import("./components/Guides/guideStore"));
+const PoseViewer = lazy(() => import("./components/PoseViewer"));
+const UserProfile = lazy(() => import("./components/UserProfile"));
+const ThirtyDaysChallenge = lazy(() => import("./components/ThirtyDaysChanllenge"));
+const ProtectedRoute = lazy(() => import("./components/common/ProtectedRoute"));
+const GuidePopup = lazy(() => import("./components/GuidePopup"));
 
 const About = () => (
   <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -54,73 +54,62 @@ export default function App() {
   };
 
   return (
-    <AuthProvider>
-      <div className="min-h-screen bg-gray-900">
-        {/* <ConfigChecker /> */}
-        {!isVerified && (
-          <AgeVerificationModal onVerified={handleVerification} />
-        )}
-        {isVerified && (
-          <div className="flex flex-col min-h-screen">
-            <DonationBanner />
-            <Navbar />
-            <main className="flex-1">
-              <Routes>
-                <Route path="/" element={<Page />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/calculadora" element={<FarmingCalculator />} />
-                <Route path="/keguel" element={<KeguelChallengue />} />
-                <Route path="/respiracion" element={<RespirationCalendar />} />
-                <Route path="/testimonios" element={<Testimonials />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
+    <ErrorBoundary>
+      <AuthProvider>
+        <div className="min-h-screen bg-gray-900">
+          {!isVerified && (
+            <AgeVerificationModal onVerified={handleVerification} />
+          )}
+          {isVerified && (
+            <div className="flex flex-col min-h-screen">
+              <DonationBanner />
+              <Navbar />
+              <main className="flex-1">
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Routes>
+                    <Route path="/" element={<Page />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/calculadora" element={<FarmingCalculator />} />
+                    <Route path="/keguel" element={<KeguelChallengue />} />
+                    <Route path="/respiracion" element={<RespirationCalendar />} />
+                    <Route path="/testimonios" element={<Testimonials />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/complete-profile" element={<CompleteProfile />} />
+                    <Route path="/rutinas" element={<Rutinas />} />
+                    <Route path="/chochasafio" element={<Chochasafio />} />
+                    <Route path="/tyc" element={<TerminosYCondiciones />} />
+                    <Route path="/sexshop" element={<SexShop />} />
+                    <Route path="/guia" element={<GuideStore />} />
+                    <Route
+                      path="/pose/:id"
+                      element={
+                        <ProtectedRoute>
+                          <PoseViewer />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="/profile" element={<UserProfile />} />
+                    <Route
+                      path="/thirty-days-challenge"
+                      element={
+                        <ProtectedRoute>
+                          <ThirtyDaysChallenge />
+                        </ProtectedRoute>
+                      }
+                    />
+                  </Routes>
+                </Suspense>
+              </main>
+            </div>
+          )}
 
-                <Route path="/complete-profile" element={<CompleteProfile />} />
-                <Route path="/rutinas" element={<Rutinas />} />
-                <Route path="/chochasafio" element={<Chochasafio />} />
-                {/* Pichasahur Floating Button   <Route path="/sexshop" element={<SexShop />} />*/}
-                <Route path="/tyc" element={<TerminosYCondiciones />} />
-                <Route path="/sexshop" element={<SexShop />} />
-                <Route path="/guia" element={<GuideStore />} />
-                <Route
-                  path="/pose/:id"
-                  element={
-                    <ProtectedRoute>
-                      <PoseViewer />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route path="/profile" element={<UserProfile />} />
-                <Route
-                  path="/thirty-days-challenge"
-                  element={
-                    <ProtectedRoute>
-                      <ThirtyDaysChallenge />
-                    </ProtectedRoute>
-                  }
-                />
-                {/* <Route path="/debug-auth" element={<DebugAuth />} /> */}
-              </Routes>
-            </main>
-
-            {/* Pichasahur Floating Button */}
-            {/* <PichasahurFloatingButton 
-              onClick={openPichasahur} 
-              isVisible={true} 
-            /> */}
-
-            {/* Pichasahur Sidebar */}
-            {/* <PichasahurSidebar 
-              isOpen={isPichasahurOpen} 
-              onClose={closePichasahur} 
-            /> */}
-          </div>
-        )}
-
-        {/* Botón flotante de WhatsApp con oferta */}
-        <GuidePopup />
-      </div>
-    </AuthProvider>
+          <Suspense fallback={null}>
+            <GuidePopup />
+          </Suspense>
+        </div>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
