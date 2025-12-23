@@ -8,6 +8,7 @@ import AchievementNotification from "./components/AchievementNotification";
 import RewardsPanel from "./components/RewardsPanel";
 import SpinWheel from "./components/SpinWheel";
 import DailyXPButton from "./components/DailyXPButton";
+import TelegramBanner from "./components/TelegramBanner";
 import { useState } from "react";
 import { useAuth } from "./context/AuthProvider";
 import { useNavigate } from "react-router-dom";
@@ -45,15 +46,15 @@ export default function Page() {
       {isAuthenticated && (
         <DailyXPButton onClaimClick={handleDailyXPClaim} />
       )}
-      
+
       {/* Ruleta de Premios - Solo para usuarios autenticados */}
       {isAuthenticated && showSpinWheel && (
-        <SpinWheel 
+        <SpinWheel
           onClose={handleSpinWheelClose}
           onRewardClaimed={handleRewardClaimed}
         />
       )}
-      
+
       {/* Notificaciones de Logros - Solo para usuarios autenticados */}
       {isAuthenticated && <AchievementNotification />}
 
@@ -68,6 +69,9 @@ export default function Page() {
           <QuickStats />
         </div>
       </section>
+
+      {/* Telegram Banner */}
+      <TelegramBanner />
 
       {/* Pose Scroll Section */}
       <section>
