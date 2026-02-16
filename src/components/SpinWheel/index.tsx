@@ -7,31 +7,55 @@ interface SpinWheelProps {
   onRewardClaimed: (xp: number) => void;
 }
 
+type PrizeType = 'xp' | 'coupon';
+
+interface Prize {
+  xp: number;
+  color: string;
+  label: string;
+  type: PrizeType;
+  couponId?: string;
+  couponLabel?: string;
+}
+
+// Save a coupon reward to localStorage
+function saveCouponReward(userId: string, couponId: string) {
+  const key = `pichasafio_rewards_${userId}`;
+  const existing = JSON.parse(localStorage.getItem(key) || '[]');
+  existing.push({
+    id: couponId,
+    earnedAt: new Date().toISOString(),
+    used: false,
+  });
+  localStorage.setItem(key, JSON.stringify(existing));
+}
+
 const SpinWheel: React.FC<SpinWheelProps> = ({ onClose, onRewardClaimed }) => {
   const { user } = useAuth();
   const [isSpinning, setIsSpinning] = useState(false);
   const [hasSpun, setHasSpun] = useState(false);
   const [rewardXP, setRewardXP] = useState(0);
+  const [rewardLabel, setRewardLabel] = useState('');
   const [rotation, setRotation] = useState(0);
   const [canSpin, setCanSpin] = useState(true);
   const [timeRemaining, setTimeRemaining] = useState('');
   const [error, setError] = useState('');
 
   // Premios de la ruleta (8 secciones)
-  const prizes = [
-    { xp: 10, color: '#FF6B6B', label: '10 XP' },
-    { xp: 15, color: '#4ECDC4', label: '15 XP' },
-    { xp: 20, color: '#45B7D1', label: '20 XP' },
-    { xp: 25, color: '#96CEB4', label: '25 XP' },
-    { xp: 30, color: '#FFEAA7', label: '30 XP' },
-    { xp: 35, color: '#DDA0DD', label: '35 XP' },
-    { xp: 40, color: '#98D8C8', label: '40 XP' },
-    { xp: 50, color: '#F7DC6F', label: '50 XP' }
+  const prizes: Prize[] = [
+    { xp: 10, color: '#FF6B6B', label: '10 XP', type: 'xp' },
+    { xp: 15, color: '#4ECDC4', label: '15 XP', type: 'xp' },
+    { xp: 20, color: '#45B7D1', label: '20 XP', type: 'xp' },
+    { xp: 0, color: '#FF9F43', label: '10% OFF', type: 'coupon', couponId: 'guide_10_off', couponLabel: '10% de descuento en Guías' },
+    { xp: 30, color: '#FFEAA7', label: '30 XP', type: 'xp' },
+    { xp: 35, color: '#DDA0DD', label: '35 XP', type: 'xp' },
+    { xp: 0, color: '#A29BFE', label: '3 Días Pro', type: 'coupon', couponId: 'pro_3_days', couponLabel: 'Acceso 3 días Pro' },
+    { xp: 50, color: '#F7DC6F', label: '50 XP', type: 'xp' }
   ];
 
   useEffect(() => {
     checkSpinAvailability();
-  }, [user]);
+  }, [user?.id]);
 
   const checkSpinAvailability = async () => {
     if (!user) return;
@@ -91,6 +115,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ onClose, onRewardClaimed }) => {
           .single();
 
         // Atomic RPC call - validates cooldown and updates XP in one transaction
+        // For coupon prizes, we still call with 0 XP to track the spin cooldown
         const { data, error: rpcError } = await supabase.rpc('claim_daily_spin', {
           p_user_id: user.id,
           p_xp: selectedPrize.xp,
@@ -115,10 +140,16 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ onClose, onRewardClaimed }) => {
           return;
         }
 
+        // If coupon prize, save to localStorage
+        if (selectedPrize.type === 'coupon' && selectedPrize.couponId) {
+          saveCouponReward(user.id, selectedPrize.couponId);
+        }
+
         // Success
         setIsSpinning(false);
         setHasSpun(true);
         setRewardXP(selectedPrize.xp);
+        setRewardLabel(selectedPrize.type === 'coupon' ? (selectedPrize.couponLabel || selectedPrize.label) : '');
         onRewardClaimed(selectedPrize.xp);
       } catch (err) {
         console.error('Error updating user XP:', err);
@@ -192,11 +223,12 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ onClose, onRewardClaimed }) => {
                   return (
                     <div
                       key={index}
-                      className="absolute text-white font-bold text-sm"
+                      className="absolute text-white font-bold text-xs"
                       style={{
                         left: `calc(50% + ${x}px)`,
                         top: `calc(50% + ${y}px)`,
-                        transform: 'translate(-50%, -50%)'
+                        transform: 'translate(-50%, -50%)',
+                        textShadow: '1px 1px 2px rgba(0,0,0,0.5)'
                       }}
                     >
                       {prize.label}
@@ -243,8 +275,17 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ onClose, onRewardClaimed }) => {
                   🎉 ¡Felicidades!
                 </div>
                 <div className="text-lg mb-4">
-                  Has ganado <span className="font-bold text-blue-600">{rewardXP} XP</span>
+                  {rewardLabel ? (
+                    <>Has ganado <span className="font-bold text-purple-600">{rewardLabel}</span></>
+                  ) : (
+                    <>Has ganado <span className="font-bold text-blue-600">{rewardXP} XP</span></>
+                  )}
                 </div>
+                {rewardLabel && (
+                  <p className="text-sm text-gray-500 mb-2">
+                    Revisa tus recompensas en tu panel de premios.
+                  </p>
+                )}
                 <button
                   onClick={onClose}
                   className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition-colors"

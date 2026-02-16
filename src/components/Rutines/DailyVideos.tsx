@@ -73,11 +73,11 @@ const DailyVideos: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
+    if (user?.id) {
       loadUserVideos();
       recordDailyLogin();
     }
-  }, [user]);
+  }, [user?.id]);
 
   const recordDailyLogin = async () => {
     if (!user) return;

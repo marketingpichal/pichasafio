@@ -18,12 +18,12 @@ export default function GuidePopup() {
 
   // Load XP discount
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
     rewardsService.getUserDiscount(user.id).then(({ percent }) => {
       setDiscount(percent);
       setFinalPrice(Math.round(BASE_PRICE * (1 - percent / 100)));
     });
-  }, [user]);
+  }, [user?.id]);
 
   useEffect(() => {
     const showTimer = setTimeout(() => {

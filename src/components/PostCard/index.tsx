@@ -34,10 +34,10 @@ export default function PostCard({ post, onCommentClick }: PostCardProps) {
   const truncatedCaption = post.caption && post.caption.length > 100 ? post.caption.substring(0, 100) + '...' : post.caption;
 
   useEffect(() => {
-    if (user) {
+    if (user?.id) {
       checkUserLike();
     }
-  }, [user, post.id]);
+  }, [user?.id, post.id]);
 
   const checkUserLike = async () => {
     if (!user) return;
