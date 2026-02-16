@@ -7,6 +7,7 @@ import DonationBanner from "./components/DonationBanner";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { AuthProvider } from "./context/AuthProvider";
+import { AchievementProvider } from "./context/AchievementContext";
 
 // Lazy load heavy components for better performance
 const FarmingCalculator = lazy(() => import("./components/FarmingCalculator"));
@@ -56,6 +57,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
+        <AchievementProvider>
         <div className="min-h-screen bg-gray-900">
           {!isVerified && (
             <AgeVerificationModal onVerified={handleVerification} />
@@ -109,6 +111,7 @@ export default function App() {
             <GuidePopup />
           </Suspense>
         </div>
+        </AchievementProvider>
       </AuthProvider>
     </ErrorBoundary>
   );

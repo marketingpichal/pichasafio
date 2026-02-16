@@ -348,6 +348,32 @@ class RewardsService {
     }
   }
 
+  // Get XP-based discount percentage
+  getXPDiscount(totalPoints: number): { percent: number; label: string } {
+    if (totalPoints >= 2000) return { percent: 30, label: '30%' };
+    if (totalPoints >= 1000) return { percent: 20, label: '20%' };
+    if (totalPoints >= 500) return { percent: 10, label: '10%' };
+    return { percent: 0, label: '' };
+  }
+
+  // Get user's current XP discount from DB
+  async getUserDiscount(userId: string): Promise<{ percent: number; totalPoints: number }> {
+    try {
+      const { data } = await supabase
+        .from('leaderboard')
+        .select('total_points')
+        .eq('user_id', userId)
+        .single();
+
+      if (!data) return { percent: 0, totalPoints: 0 };
+
+      const { percent } = this.getXPDiscount(data.total_points);
+      return { percent, totalPoints: data.total_points };
+    } catch {
+      return { percent: 0, totalPoints: 0 };
+    }
+  }
+
   // Simular ganar puntos (para testing)
   async simulateEarnPoints(userId: string, points: number): Promise<void> {
     try {

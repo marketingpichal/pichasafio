@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUser } from '@supabase/auth-helpers-react';
 import { rewardsService, UserReward } from '../../lib/rewardsService';
+import { Gift } from 'lucide-react';
 
 interface RewardProgress {
   id: string;
@@ -21,6 +22,7 @@ const RewardsPanel: React.FC = () => {
   const [rewardProgress, setRewardProgress] = useState<RewardProgress[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSimulating, setIsSimulating] = useState(false);
+  const [discount, setDiscount] = useState<{ percent: number; totalPoints: number }>({ percent: 0, totalPoints: 0 });
 
   useEffect(() => {
     if (user?.id) {
@@ -33,13 +35,15 @@ const RewardsPanel: React.FC = () => {
     
     setIsLoading(true);
     try {
-      const [rewards, progress] = await Promise.all([
+      const [rewards, progress, discountData] = await Promise.all([
         rewardsService.getUserRewards(user.id),
-        rewardsService.getRewardProgress(user.id)
+        rewardsService.getRewardProgress(user.id),
+        rewardsService.getUserDiscount(user.id)
       ]);
-      
+
       setUserRewards(rewards);
       setRewardProgress(progress);
+      setDiscount(discountData);
     } catch (error) {
       console.error('Error cargando datos de recompensas:', error);
     } finally {
@@ -101,31 +105,55 @@ const RewardsPanel: React.FC = () => {
           🏆 Recompensas
         </h2>
         
-        {/* Botones de simulación para testing */}
-        <div className="flex gap-2">
-          <button
-            onClick={() => handleSimulatePoints(50)}
-            disabled={isSimulating}
-            className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50"
-          >
-            +50 pts
-          </button>
-          <button
-            onClick={() => handleSimulatePoints(100)}
-            disabled={isSimulating}
-            className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 disabled:opacity-50"
-          >
-            +100 pts
-          </button>
-          <button
-            onClick={() => handleSimulatePoints(200)}
-            disabled={isSimulating}
-            className="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 disabled:opacity-50"
-          >
-            +200 pts
-          </button>
-        </div>
+        {/* Simulate buttons - dev only */}
+        {import.meta.env.DEV && (
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleSimulatePoints(50)}
+              disabled={isSimulating}
+              className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+            >
+              +50 pts
+            </button>
+            <button
+              onClick={() => handleSimulatePoints(100)}
+              disabled={isSimulating}
+              className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700 disabled:opacity-50"
+            >
+              +100 pts
+            </button>
+            <button
+              onClick={() => handleSimulatePoints(200)}
+              disabled={isSimulating}
+              className="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 disabled:opacity-50"
+            >
+              +200 pts
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* XP Discount Banner */}
+      {discount.percent > 0 && (
+        <div className="mb-6 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <Gift className="w-8 h-8 text-green-400" />
+            <div>
+              <h3 className="text-lg font-bold text-green-400">
+                ¡Tienes un {discount.percent}% de descuento!
+              </h3>
+              <p className="text-sm text-gray-300">
+                Con {discount.totalPoints.toLocaleString()} XP has desbloqueado un descuento exclusivo en guías.
+                {discount.percent < 30 && (
+                  <span className="text-green-400 ml-1">
+                    Siguiente nivel: {discount.percent === 10 ? '1,000 XP = 20%' : '2,000 XP = 30%'}
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recompensas obtenidas */}
       <div className="mb-8">

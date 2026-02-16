@@ -1,41 +1,35 @@
-import { useState, useEffect } from "react";
-import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react";
-
+import { useState, useEffect, useRef } from "react";
+import { useUser } from "@supabase/auth-helpers-react";
+import { supabase } from "@/lib/supabaseClient";
 import { challengeService, type LeaderboardEntry } from "@/lib/challengeService";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Crown, Medal, Star, TrendingUp, Zap, Target, Flame } from "lucide-react";
 
 const LeaderboardTable = () => {
-  // console.log('🎯 LeaderboardTable: Componente renderizado');
-  const supabase = useSupabaseClient();
   const user = useUser();
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const isMountedRef = useRef(true);
 
   useEffect(() => {
-    let isMounted = true;
-    let subscription: ReturnType<typeof supabase.channel> | null = null;
+    isMountedRef.current = true;
 
     const fetchLeaderboard = async () => {
-      if (!isMounted) return;
-      
-      // console.log('🔍 LeaderboardTable: Iniciando carga de datos...');
+      if (!isMountedRef.current) return;
+
       setIsLoading(true);
-      
+
       try {
-        // console.log('📡 LeaderboardTable: Llamando a challengeService.getLeaderboard...');
         const leaderboardData = await challengeService.getLeaderboard(10);
-        
-        if (isMounted) {
-          // console.log('✅ LeaderboardTable: Datos recibidos:', leaderboardData);
+
+        if (isMountedRef.current) {
           setLeaderboard(leaderboardData);
         }
       } catch (error) {
-        console.error("❌ LeaderboardTable: Error al obtener la tabla de líderes:", error);
+        console.error("Error al obtener la tabla de líderes:", error);
       } finally {
-        if (isMounted) {
+        if (isMountedRef.current) {
           setIsLoading(false);
-          // console.log('🏁 LeaderboardTable: Carga completada');
         }
       }
     };
@@ -44,33 +38,26 @@ const LeaderboardTable = () => {
     fetchLeaderboard();
 
     // Configurar suscripción para actualizaciones en tiempo real
-    try {
-      subscription = supabase
-        .channel('leaderboard_changes')
-        .on('postgres_changes', 
-          {
-            event: '*',
-            schema: 'public',
-            table: 'leaderboard',
-          },
-          () => {
-            // console.log('🔄 LeaderboardTable: Cambio detectado en leaderboard:', payload);
-            fetchLeaderboard();
-          }
-        )
-     
-    } catch (error) {
-      console.error('❌ LeaderboardTable: Error al suscribirse a cambios:', error);
-    }
+    const subscription = supabase
+      .channel('leaderboard_changes')
+      .on('postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'leaderboard',
+        },
+        () => {
+          fetchLeaderboard();
+        }
+      )
+      .subscribe();
 
     // Limpieza al desmontar el componente
     return () => {
-      isMounted = false;
-      if (subscription) {
-        supabase.removeChannel(subscription);
-      }
+      isMountedRef.current = false;
+      supabase.removeChannel(subscription);
     };
-  }, [supabase, user?.id]); // Añadimos user?.id como dependencia
+  }, [user?.id]);
 
   const getRankIcon = (position: number) => {
     switch (position) {
@@ -174,7 +161,7 @@ const LeaderboardTable = () => {
             <Flame className="w-6 h-6 text-orange-500" />
           </div>
           <p className="text-2xl font-bold text-white">
-            {Math.max(...leaderboard.map(e => e.current_streak), 0)}
+            {leaderboard.length > 0 ? Math.max(...leaderboard.map(e => e.current_streak)) : 0}
           </p>
           <p className="text-gray-400 text-sm">Mejor Racha</p>
         </div>
@@ -184,7 +171,7 @@ const LeaderboardTable = () => {
             <Zap className="w-6 h-6 text-purple-500" />
           </div>
           <p className="text-2xl font-bold text-white">
-            {Math.max(...leaderboard.map(e => e.level), 1)}
+            {leaderboard.length > 0 ? Math.max(...leaderboard.map(e => e.level)) : 1}
           </p>
           <p className="text-gray-400 text-sm">Nivel Máximo</p>
         </div>
@@ -286,7 +273,7 @@ const LeaderboardTable = () => {
                       <motion.div
                         className="h-full bg-gradient-to-r from-pink-500 to-purple-500"
                         initial={{ width: 0 }}
-                        animate={{ width: `${(entry.total_points / Math.max(...leaderboard.map(e => e.total_points), 1)) * 100}%` }}
+                        animate={{ width: `${(entry.total_points / (leaderboard.length > 0 ? Math.max(...leaderboard.map(e => e.total_points)) : 1)) * 100}%` }}
                         transition={{ delay: 0.5 + index * 0.1, duration: 1 }}
                       />
                     </div>
