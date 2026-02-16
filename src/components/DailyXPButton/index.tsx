@@ -56,7 +56,7 @@ const DailyXPButton: React.FC<DailyXPButtonProps> = ({ onClaimClick }) => {
     const interval = setInterval(checkClaimAvailability, 60000);
 
     return () => clearInterval(interval);
-  }, [user]);
+  }, [user?.id]);
 
   if (!user) return null;
 

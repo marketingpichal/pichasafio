@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
-// import WhatsAppCommunityPopup from "../components/WhatsAppCommunityPopup";
 
 const AuthContext = createContext<{
   session: any;
@@ -19,42 +18,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   const [showWhatsAppPopup, setShowWhatsAppPopup] = useState(false);
-  const [hasShownPopupForUser, setHasShownPopupForUser] = useState<
-    string | null
-  >(null);
+  const shownPopupForUserRef = useRef<string | null>(null);
+  const previousUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      previousUserIdRef.current = session?.user?.id ?? null;
     });
 
     // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      const previousUser = user;
+      const prevUserId = previousUserIdRef.current;
       setSession(session);
       setUser(session?.user ?? null);
+      previousUserIdRef.current = session?.user?.id ?? null;
 
       if (session?.user) {
-        // Mostrar popup de WhatsApp solo si es un nuevo login/registro y no se ha mostrado antes para este usuario
         if (
           (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") &&
-          previousUser?.id !== session.user.id &&
-          hasShownPopupForUser !== session.user.id
+          prevUserId !== session.user.id &&
+          shownPopupForUserRef.current !== session.user.id
         ) {
           setTimeout(() => {
             setShowWhatsAppPopup(true);
-            setHasShownPopupForUser(session.user.id);
-          }, 2000); // Mostrar después de 2 segundos
+            shownPopupForUserRef.current = session.user.id;
+          }, 2000);
         }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [location.pathname, user, hasShownPopupForUser]);
+  }, []);
 
   // const handleCloseWhatsAppPopup = () => {
   //   setShowWhatsAppPopup(false);
