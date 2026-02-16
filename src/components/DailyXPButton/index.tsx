@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '../../context/AuthProvider';
 
 interface DailyXPButtonProps {
@@ -15,22 +16,16 @@ const DailyXPButton: React.FC<DailyXPButtonProps> = ({ onClaimClick }) => {
 
     const checkClaimAvailability = async () => {
       try {
-        const { createClient } = await import('@supabase/supabase-js');
-        const supabase = createClient(
-          import.meta.env.VITE_SUPABASE_URL,
-          import.meta.env.VITE_SUPABASE_ANON_KEY
-        );
-        
         const { data: leaderboard } = await supabase
           .from('leaderboard')
-          .select('last_activity')
+          .select('last_spin')
           .eq('user_id', user.id)
           .single();
 
-        if (leaderboard?.last_activity) {
-          const lastActivity = new Date(leaderboard.last_activity);
+        if (leaderboard?.last_spin) {
+          const lastSpin = new Date(leaderboard.last_spin);
           const now = new Date();
-          const timeDiff = now.getTime() - lastActivity.getTime();
+          const timeDiff = now.getTime() - lastSpin.getTime();
           const twentyFourHours = 24 * 60 * 60 * 1000;
 
           if (timeDiff >= twentyFourHours) {
@@ -44,21 +39,22 @@ const DailyXPButton: React.FC<DailyXPButtonProps> = ({ onClaimClick }) => {
             setTimeUntilNext(`${hoursLeft}h ${minutesLeft}m`);
           }
         } else {
-          // Primera vez, puede reclamar
+          // First time user, can claim
           setCanClaim(true);
           setTimeUntilNext('');
         }
       } catch (error) {
         console.error('Error checking claim availability:', error);
-        setCanClaim(true); // En caso de error, permitir reclamar
+        // Don't allow claim on error - prevents exploit
+        setCanClaim(false);
       }
     };
 
     checkClaimAvailability();
-    
-    // Actualizar cada minuto
+
+    // Update every minute
     const interval = setInterval(checkClaimAvailability, 60000);
-    
+
     return () => clearInterval(interval);
   }, [user]);
 

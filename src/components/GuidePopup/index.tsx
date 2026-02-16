@@ -1,19 +1,29 @@
 import { MessageCircle, AlertTriangle, Clock } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
+import { useAuth } from "@/context/AuthProvider";
+import { rewardsService } from "@/lib/rewardsService";
 
 const PHONE_NUMBER = "573004048012";
-const DEFAULT_MESSAGE =
-  "🔥 Hola, quiero acceder a las 3 guías secretas de Pichasafio por $25.000 COP. Estoy interesado en mejorar mi rendimiento sexual (agrandamiento, durar más y sorprender en la cama). ¿Cómo puedo pagar?";
-const WHATSAPP_URL = `https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(
-  DEFAULT_MESSAGE
-)}`;
+const BASE_PRICE = 25000;
 
 export default function GuidePopup() {
+  const { user } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   const [timeLeft, setTimeLeft] = useState(120); // 2 minutos
   const [availableSpots, setAvailableSpots] = useState(
     Math.floor(Math.random() * 10) + 5
   ); // Entre 5 y 15 cupos
+  const [discount, setDiscount] = useState(0);
+  const [finalPrice, setFinalPrice] = useState(BASE_PRICE);
+
+  // Load XP discount
+  useEffect(() => {
+    if (!user) return;
+    rewardsService.getUserDiscount(user.id).then(({ percent }) => {
+      setDiscount(percent);
+      setFinalPrice(Math.round(BASE_PRICE * (1 - percent / 100)));
+    });
+  }, [user]);
 
   useEffect(() => {
     const showTimer = setTimeout(() => {
@@ -44,15 +54,19 @@ export default function GuidePopup() {
   }, [availableSpots]);
 
   const handleWhatsAppClick = useCallback(async () => {
+    const priceText = finalPrice.toLocaleString('es-CO');
+    const discountText = discount > 0 ? ` (con mi descuento de ${discount}% por XP)` : '';
+    const message = `🔥 Hola, quiero acceder a las 3 guías secretas de Pichasafio por $${priceText} COP${discountText}. Estoy interesado en mejorar mi rendimiento sexual (agrandamiento, durar más y sorprender en la cama). ¿Cómo puedo pagar?`;
+    const url = `https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(message)}`;
     try {
-      window.open(WHATSAPP_URL, "_blank");
+      window.open(url, "_blank");
       setIsVisible(false);
     } catch (error) {
       console.error("Error al registrar el envío:", error);
-      window.open(WHATSAPP_URL, "_blank");
+      window.open(url, "_blank");
       setIsVisible(false);
     }
-  }, []);
+  }, [finalPrice, discount]);
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
@@ -129,7 +143,18 @@ export default function GuidePopup() {
               Accede a <b>3 guías secretas</b> usadas por más de{" "}
               <b>+100 hombres</b> para{" "}
               <u>ganar tamaño, durar más y sorprender en la cama</u>. <br />
-              Solo hoy por <b>$25.000 COP</b>.
+              {discount > 0 ? (
+                <>
+                  Solo hoy por{" "}
+                  <span className="line-through text-gray-400">$25.000</span>{" "}
+                  <b className="text-green-600">${finalPrice.toLocaleString('es-CO')} COP</b>
+                  <span className="ml-1 inline-block bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                    -{discount}% por tu XP
+                  </span>
+                </>
+              ) : (
+                <>Solo hoy por <b>$25.000 COP</b>.</>
+              )}
             </p>
 
             {/* Contador */}

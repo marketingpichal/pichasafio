@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { supabase } from "@/lib/supabaseClient";
 
 import { motion } from "framer-motion";
 import { Trophy, Flame, TrendingUp, Users, Award, Star } from "lucide-react";
@@ -19,13 +19,18 @@ const QuickStats: React.FC = () => {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        // Simular estadísticas globales (en un caso real, esto vendría de una API)
-        setStats({
-          totalUsers: 1247,
-          totalPoints: 45678,
-          bestStreak: 45,
-          challengesCompleted: 89
-        });
+        const { data, error } = await supabase.rpc('get_global_stats');
+
+        if (error) throw error;
+
+        if (data) {
+          setStats({
+            totalUsers: data.total_users || 0,
+            totalPoints: data.total_points || 0,
+            bestStreak: data.best_streak || 0,
+            challengesCompleted: data.challenges_completed || 0
+          });
+        }
       } catch (error) {
         console.error("Error loading stats:", error);
       } finally {
