@@ -13,6 +13,7 @@ const LeaderboardTable = () => {
 
   useEffect(() => {
     isMountedRef.current = true;
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
     const fetchLeaderboard = async () => {
       if (!isMountedRef.current) return;
@@ -34,6 +35,14 @@ const LeaderboardTable = () => {
       }
     };
 
+    // Debounced fetch to prevent rapid-fire from real-time events
+    const debouncedFetch = () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        fetchLeaderboard();
+      }, 2000);
+    };
+
     // Cargar datos iniciales
     fetchLeaderboard();
 
@@ -42,19 +51,26 @@ const LeaderboardTable = () => {
       .channel('leaderboard_changes')
       .on('postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
           schema: 'public',
           table: 'leaderboard',
         },
-        () => {
-          fetchLeaderboard();
-        }
+        debouncedFetch
+      )
+      .on('postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'leaderboard',
+        },
+        debouncedFetch
       )
       .subscribe();
 
     // Limpieza al desmontar el componente
     return () => {
       isMountedRef.current = false;
+      if (debounceTimer) clearTimeout(debounceTimer);
       supabase.removeChannel(subscription);
     };
   }, [user?.id]);
