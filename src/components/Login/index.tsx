@@ -32,7 +32,7 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
+
     const { data, error }: SupabaseAuthResponse =
       await supabase.auth.signInWithPassword({
         email,
@@ -50,7 +50,7 @@ export default function Login() {
       // El AuthProvider se encargará de verificar el perfil y redirigir si es necesario
       navigate("/rutinas");
     }
-    
+
     setLoading(false);
   };
 
@@ -78,7 +78,7 @@ export default function Login() {
       console.log('Site URL:', siteUrl);
       console.log('Redirect URL:', `${siteUrl}/reset-password`);
     }
-    
+
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${siteUrl}/reset-password`,
@@ -101,7 +101,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-stone-950 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -111,7 +111,7 @@ export default function Login() {
         <ResponsiveCard
           title={resetMode ? "Recuperar Contraseña" : "Iniciar Sesión"}
           subtitle={resetMode ? "Te enviaremos un enlace para restablecer tu contraseña" : "Accede a tu cuenta para continuar"}
-          className="text-center bg-gray-800 border border-gray-700"
+          className="text-center bg-stone-900 border border-stone-800 shadow-2xl shadow-black/80"
         >
           <form onSubmit={resetMode ? handlePasswordReset : handleLogin} className="space-y-6">
             <div className="space-y-2">
@@ -125,7 +125,7 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="tu@email.com"
                 required
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300"
+                className="w-full px-4 py-3 bg-stone-800 border border-stone-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-300"
                 disabled={loading}
               />
             </div>
@@ -143,7 +143,7 @@ export default function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Tu contraseña"
                     required
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300 pr-12"
+                    className="w-full px-4 py-3 bg-stone-800 border border-stone-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-300 pr-12"
                     disabled={loading}
                   />
                   <button
@@ -186,8 +186,9 @@ export default function Login() {
             <ResponsiveButton
               type="submit"
               disabled={loading}
-              className="w-full"
+              className="w-full font-poppins-bold uppercase tracking-wider"
               size="lg"
+              variant="primary" // Will review ResponsiveButton component later to ensure primary matches red
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -210,12 +211,12 @@ export default function Login() {
                     setError(null);
                     setResetSuccess(false);
                   }}
-                  className="text-blue-400 hover:text-blue-300 transition-colors duration-200 font-medium text-sm"
+                  className="text-red-500 hover:text-red-400 transition-colors duration-200 font-medium text-sm"
                 >
                   ¿Olvidaste tu contraseña?
                 </button>
               )}
-              
+
               {resetMode && (
                 <button
                   type="button"
@@ -224,19 +225,19 @@ export default function Login() {
                     setError(null);
                     setResetSuccess(false);
                   }}
-                  className="text-blue-400 hover:text-blue-300 transition-colors duration-200 font-medium text-sm"
+                  className="text-red-500 hover:text-red-400 transition-colors duration-200 font-medium text-sm"
                 >
                   Volver al inicio de sesión
                 </button>
               )}
-              
+
               {!resetMode && (
                 <p className="text-gray-400 text-sm">
                   ¿No tienes cuenta?{" "}
                   <button
                     type="button"
                     onClick={() => navigate("/register")}
-                    className="text-blue-400 hover:text-blue-300 transition-colors duration-200 font-medium"
+                    className="text-red-500 hover:text-red-400 transition-colors duration-200 font-poppins-bold uppercase text-xs tracking-wider"
                   >
                     Regístrate aquí
                   </button>

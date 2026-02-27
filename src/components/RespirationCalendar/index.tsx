@@ -4,13 +4,13 @@ import useSound from 'use-sound';
 import { useUser } from "@supabase/auth-helpers-react";
 import ResponsiveCard from "../common/ResponsiveCard";
 import { challengeService } from "@/lib/challengeService";
-import { 
-  Clock, 
-  Target, 
-  TrendingUp, 
-  Play, 
-  Pause, 
-  Award, 
+import {
+  Clock,
+  Target,
+  TrendingUp,
+  Play,
+  Pause,
+  Award,
   Activity,
   Zap,
   Heart,
@@ -140,16 +140,16 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({ phase, progress, time
 
   const getPhaseColor = () => {
     switch (phase) {
-      case 'inhale': return 'text-blue-400';
-      case 'holdIn': return 'text-purple-400';
-      case 'exhale': return 'text-green-400';
-      case 'holdOut': return 'text-orange-400';
-      default: return 'text-gray-400';
+      case 'inhale': return 'text-red-500';
+      case 'holdIn': return 'text-amber-500';
+      case 'exhale': return 'text-stone-400';
+      case 'holdOut': return 'text-orange-500';
+      default: return 'text-gray-500';
     }
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="relative"
       animate={phase}
       variants={circleVariants}
@@ -176,14 +176,14 @@ const BreathingCircle: React.FC<BreathingCircleProps> = ({ phase, progress, time
           key={phase}
           className="text-center"
         >
-          <div className="text-2xl font-poppins-bold mb-2">
+          <div className="text-2xl font-poppins-bold mb-2 uppercase tracking-widest text-white">
             {phase === 'inhale' && "Inhala"}
             {phase === 'holdIn' && "Mantén"}
             {phase === 'exhale' && "Exhala"}
             {phase === 'holdOut' && "Mantén"}
             {phase === 'rest' && "Prepárate"}
           </div>
-          <div className="text-4xl font-poppins-bold text-blue-400">{Math.ceil(timeLeft)}s</div>
+          <div className="text-5xl font-poppins-extrabold text-red-500">{Math.ceil(timeLeft)}s</div>
         </motion.div>
       </div>
     </motion.div>
@@ -214,7 +214,7 @@ const RespirationCalendar: React.FC = () => {
 
   const moveToNextPhase = async () => {
     if (!selectedExercise) return;
-    
+
     playTransition();
     if ('vibrate' in navigator) {
       navigator.vibrate(200);
@@ -284,7 +284,7 @@ const RespirationCalendar: React.FC = () => {
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    
+
     if (isExercising && timeLeft > 0) {
       timer = setInterval(() => {
         setTimeLeft(prev => {
@@ -307,10 +307,10 @@ const RespirationCalendar: React.FC = () => {
   }, [isExercising, currentPhase, timeLeft]);
 
   const startExercise = (exercise: Exercise) => {
-    const totalTimePerRound = exercise.inhaleTime + exercise.holdInTime + 
-                             exercise.exhaleTime + exercise.holdOutTime;
+    const totalTimePerRound = exercise.inhaleTime + exercise.holdInTime +
+      exercise.exhaleTime + exercise.holdOutTime;
     const roundsForSelectedTime = Math.floor((selectedMinutes * 60) / totalTimePerRound);
-    
+
     setSelectedExercise({
       ...exercise,
       rounds: roundsForSelectedTime
@@ -339,7 +339,7 @@ const RespirationCalendar: React.FC = () => {
 
   const claimExperiencePoints = async () => {
     if (!user?.id || isClaimingXP) return;
-    
+
     try {
       setIsClaimingXP(true);
       const xpBase = 10;
@@ -351,7 +351,7 @@ const RespirationCalendar: React.FC = () => {
         bonus: xpPorMinutoAdicional,
         total: xpGanada
       });
-      
+
       // Usar challengeService para completar la sesión
       await challengeService.completeSession(
         user.id,
@@ -387,33 +387,15 @@ const RespirationCalendar: React.FC = () => {
 
   const getEffectIcon = (effect: string) => {
     switch (effect) {
-      case 'BALANCING': return <Target className="w-5 h-5" />;
-      case 'CALMING': return <Heart className="w-5 h-5" />;
-      case 'ENERGIZING': return <Zap className="w-5 h-5" />;
-      default: return <Activity className="w-5 h-5" />;
-    }
-  };
-
-  const getEffectColor = (effect: string) => {
-    switch (effect) {
-      case 'BALANCING': return 'from-purple-500 to-pink-500';
-      case 'CALMING': return 'from-blue-500 to-cyan-500';
-      case 'ENERGIZING': return 'from-green-500 to-emerald-500';
-      default: return 'from-gray-500 to-gray-600';
-    }
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'beginner': return 'from-green-500 to-emerald-500';
-      case 'intermediate': return 'from-yellow-500 to-orange-500';
-      case 'advanced': return 'from-red-500 to-pink-500';
-      default: return 'from-blue-500 to-purple-500';
+      case 'BALANCING': return <Target className="w-5 h-5 text-amber-500" />;
+      case 'CALMING': return <Heart className="w-5 h-5 text-amber-500" />;
+      case 'ENERGIZING': return <Zap className="w-5 h-5 text-amber-500" />;
+      default: return <Activity className="w-5 h-5 text-amber-500" />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 sm:py-12">
+    <div className="min-h-screen bg-stone-950 py-8 sm:py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -423,14 +405,14 @@ const RespirationCalendar: React.FC = () => {
           className="text-center mb-12"
         >
           <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center">
-              <Wind className="w-10 h-10 text-white" />
+            <div className="w-20 h-20 bg-stone-900 border border-stone-800 shadow-[4px_4px_0px_rgba(28,25,23,1)] rounded-none flex items-center justify-center">
+              <Wind className="w-10 h-10 text-red-500" />
             </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text-extended mb-4 font-poppins">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-poppins-extrabold uppercase tracking-widest text-white mb-4">
             Ejercicios de Respiración
           </h1>
-          <p className="text-gray-300 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed font-poppins-light">
+          <p className="text-gray-400 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed font-poppins-medium uppercase tracking-widest text-xs">
             Mejora tu control respiratorio y relájate con estos ejercicios de pranayama.
             Cada técnica tiene beneficios específicos para tu bienestar.
           </p>
@@ -445,28 +427,28 @@ const RespirationCalendar: React.FC = () => {
             onClick={() => setShowCompletionModal(false)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-gray-900 rounded-2xl p-8 max-w-md w-full border border-gray-700"
+              className="bg-stone-900 rounded-none p-8 max-w-md w-full border border-stone-800 shadow-[8px_8px_0px_rgba(28,25,23,1)]"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="w-16 h-16 bg-red-600 rounded-none flex items-center justify-center mx-auto mb-6 shadow-[4px_4px_0px_rgba(153,27,27,1)] border border-red-500">
                   <Award className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4 font-poppins-bold">¡Ejercicio Completado!</h3>
-                <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-xl p-6 mb-6">
-                  <div className="text-4xl font-bold text-yellow-400 mb-2 font-poppins-bold">
+                <h3 className="text-2xl font-poppins-bold uppercase tracking-widest text-white mb-4">¡Ejercicio Completado!</h3>
+                <div className="bg-stone-950 border border-stone-800 rounded-none p-6 mb-6">
+                  <div className="text-4xl font-poppins-bold text-amber-500 mb-2">
                     +{earnedXP.total} XP
                   </div>
-                  <div className="text-sm text-gray-300 font-poppins-light">
+                  <div className="text-xs uppercase tracking-widest text-gray-500 font-poppins-medium">
                     <div>Base: {earnedXP.base} XP</div>
                     <div>Bonus por tiempo: +{earnedXP.bonus} XP</div>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowCompletionModal(false)}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 font-poppins-semibold"
+                  className="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-none border border-red-500 font-poppins-bold uppercase tracking-wider transform hover:scale-105 transition-all duration-200 shadow-[4px_4px_0px_rgba(153,27,27,1)]"
                 >
                   Continuar
                 </button>
@@ -488,11 +470,10 @@ const RespirationCalendar: React.FC = () => {
                   <button
                     onClick={claimExperiencePoints}
                     disabled={isClaimingXP}
-                    className={`w-full px-6 py-4 rounded-xl font-bold text-white transition-all duration-200 transform hover:scale-105 ${
-                      isClaimingXP 
-                        ? 'bg-gray-600 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
-                    } font-poppins-semibold`}
+                    className={`w-full px-6 py-4 rounded-xl font-bold text-white transition-all duration-200 transform hover:scale-105 ${isClaimingXP
+                      ? 'bg-gray-600 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
+                      } font-poppins-semibold`}
                   >
                     {isClaimingXP ? 'Reclamando XP...' : '🎉 ¡Reclamar XP Ganado!'}
                   </button>
@@ -506,16 +487,17 @@ const RespirationCalendar: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <ResponsiveCard
-                title="Configuración del Ejercicio"
-                subtitle="Ajusta la duración y ve tu recompensa"
-              >
+              <div className="bg-stone-900 border border-stone-800 p-6 rounded-none shadow-[8px_8px_0px_rgba(28,25,23,1)] max-w-2xl mx-auto">
+                <div className="mb-6">
+                  <h3 className="text-xl font-poppins-bold uppercase tracking-wider text-white">Configuración del Ejercicio</h3>
+                  <p className="text-sm font-poppins-medium text-gray-400">Ajusta la duración y ve tu recompensa</p>
+                </div>
                 <div className="space-y-6">
                   {/* Duration Slider */}
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
-                      <Clock className="w-6 h-6 text-blue-400" />
-                      <label className="text-lg font-medium text-white font-poppins-semibold">
+                      <Clock className="w-6 h-6 text-red-500" />
+                      <label className="text-lg text-white font-poppins-bold uppercase tracking-wider">
                         Duración del ejercicio
                       </label>
                     </div>
@@ -526,7 +508,7 @@ const RespirationCalendar: React.FC = () => {
                         max="30"
                         value={selectedMinutes}
                         onChange={(e) => setSelectedMinutes(parseInt(e.target.value))}
-                        className="flex-1 h-3 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                        className="flex-1 h-3 bg-stone-950 border border-stone-800 rounded-none appearance-none cursor-pointer accent-red-600"
                       />
                       <div className="flex items-center gap-2 min-w-[120px]">
                         <input
@@ -535,31 +517,31 @@ const RespirationCalendar: React.FC = () => {
                           max="30"
                           value={selectedMinutes}
                           onChange={(e) => setSelectedMinutes(Math.max(1, parseInt(e.target.value)))}
-                          className="bg-gray-700 text-white px-4 py-2 rounded-xl w-20 text-center font-poppins-semibold border border-gray-600 focus:border-blue-500 focus:outline-none"
+                          className="bg-stone-950 text-white px-4 py-2 rounded-none w-20 text-center font-poppins-bold border border-stone-800 focus:border-red-500 focus:outline-none"
                         />
-                        <span className="text-gray-300 font-poppins-medium">min</span>
+                        <span className="text-gray-500 font-poppins-medium uppercase tracking-widest text-xs">min</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Reward Section */}
-                  <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl p-6">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Award className="w-6 h-6 text-yellow-400" />
-                      <h3 className="text-lg font-semibold text-white font-poppins-semibold">Recompensa</h3>
+                  <div className="bg-stone-950 border border-stone-800 rounded-none p-6 text-center">
+                    <div className="flex items-center justify-center space-x-3 mb-4">
+                      <Award className="w-6 h-6 text-amber-500" />
+                      <h3 className="text-lg text-white font-poppins-bold uppercase tracking-widest">Recompensa</h3>
                     </div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-3xl font-bold text-yellow-400 font-poppins-bold">
+                    <div className="flex items-center justify-center gap-3 mb-2">
+                      <span className="text-4xl text-amber-500 font-poppins-extrabold">
                         {10 + (selectedMinutes - 1) * 5}
                       </span>
-                      <span className="text-gray-300 font-poppins-medium">XP</span>
+                      <span className="text-gray-500 font-poppins-medium uppercase tracking-widest">XP</span>
                     </div>
-                    <p className="text-sm text-gray-400 font-poppins-light">
+                    <p className="text-xs text-gray-600 font-poppins-medium uppercase tracking-widest">
                       Base: 10 XP + {(selectedMinutes - 1) * 5} XP por minutos adicionales
                     </p>
                   </div>
                 </div>
-              </ResponsiveCard>
+              </div>
             </motion.div>
 
             {/* Statistics */}
@@ -569,37 +551,37 @@ const RespirationCalendar: React.FC = () => {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
-              <ResponsiveCard className="text-center">
+              <div className="bg-stone-900 border border-stone-800 p-6 rounded-none shadow-[8px_8px_0px_rgba(28,25,23,1)] text-center">
                 <div className="flex justify-center mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <Activity className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 bg-stone-950 border border-stone-800 rounded-none flex items-center justify-center shadow-[4px_4px_0px_rgba(28,25,23,1)]">
+                    <Activity className="w-6 h-6 text-red-500" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2 font-poppins-bold">{stats.totalSessions}</h3>
-                <p className="text-gray-300 text-sm font-poppins-light">Sesiones Completadas</p>
-              </ResponsiveCard>
+                <h3 className="text-3xl font-poppins-extrabold text-white mb-2">{stats.totalSessions}</h3>
+                <p className="text-gray-500 text-xs font-poppins-bold uppercase tracking-widest">Sesiones Completadas</p>
+              </div>
 
-              <ResponsiveCard className="text-center">
+              <div className="bg-stone-900 border border-stone-800 p-6 rounded-none shadow-[8px_8px_0px_rgba(28,25,23,1)] text-center">
                 <div className="flex justify-center mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 bg-stone-950 border border-stone-800 rounded-none flex items-center justify-center shadow-[4px_4px_0px_rgba(28,25,23,1)]">
+                    <Clock className="w-6 h-6 text-amber-500" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2 font-poppins-bold">{stats.totalMinutes}</h3>
-                <p className="text-gray-300 text-sm font-poppins-light">Minutos Totales</p>
-              </ResponsiveCard>
+                <h3 className="text-3xl font-poppins-extrabold text-white mb-2">{stats.totalMinutes}</h3>
+                <p className="text-gray-500 text-xs font-poppins-bold uppercase tracking-widest">Minutos Totales</p>
+              </div>
 
-              <ResponsiveCard className="text-center">
+              <div className="bg-stone-900 border border-stone-800 p-6 rounded-none shadow-[8px_8px_0px_rgba(28,25,23,1)] text-center">
                 <div className="flex justify-center mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-stone-950 border border-stone-800 rounded-none flex items-center justify-center shadow-[4px_4px_0px_rgba(28,25,23,1)]">
                     <TrendingUp className="w-6 h-6 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2 font-poppins-bold">
+                <h3 className="text-2xl font-poppins-bold text-white mb-2 uppercase tracking-wide">
                   {stats.lastCompleted ? new Date(stats.lastCompleted).toLocaleDateString() : '-'}
                 </h3>
-                <p className="text-gray-300 text-sm font-poppins-light">Última Sesión</p>
-              </ResponsiveCard>
+                <p className="text-gray-500 text-xs font-poppins-bold uppercase tracking-widest">Última Sesión</p>
+              </div>
             </motion.div>
 
             {/* Exercise Cards */}
@@ -620,23 +602,23 @@ const RespirationCalendar: React.FC = () => {
                   onClick={() => startExercise(exercise)}
                   className="group cursor-pointer"
                 >
-                  <div className="relative overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 shadow-xl hover:shadow-2xl">
-                    {/* Gradient overlay on hover */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${getEffectColor(exercise.effect)}/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
-                    
+                  <div className="relative overflow-hidden bg-stone-900 rounded-none p-6 border border-stone-800 hover:border-red-500 transition-all duration-300 shadow-[8px_8px_0px_rgba(28,25,23,1)] hover:shadow-[8px_8px_0px_rgba(220,38,38,0.5)]">
+                    {/* Background Overlay */}
+                    <div className="absolute inset-0 bg-stone-950/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
                     <div className="relative z-10">
                       {/* Header */}
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors duration-300 font-poppins-semibold">
+                        <h3 className="text-lg font-poppins-bold uppercase tracking-wider text-white group-hover:text-red-500 transition-colors duration-300">
                           {exercise.name}
                         </h3>
-                        <div className={`px-3 py-1 rounded-full bg-gradient-to-r ${getDifficultyColor(exercise.difficulty)} text-white text-xs font-semibold font-poppins-medium`}>
+                        <div className="px-3 py-1 rounded-none border border-stone-700 bg-stone-800 text-amber-500 text-xs font-poppins-bold uppercase tracking-widest">
                           {exercise.difficulty}
                         </div>
                       </div>
 
                       {/* Description */}
-                      <p className="text-gray-300 text-sm leading-relaxed mb-4 font-poppins-light">
+                      <p className="text-gray-400 text-sm leading-relaxed mb-4 font-poppins-medium">
                         {exercise.description}
                       </p>
 
@@ -644,23 +626,23 @@ const RespirationCalendar: React.FC = () => {
                       <div className="space-y-3">
                         {/* Effect */}
                         <div className="flex items-center space-x-3">
-                          <div className={`w-8 h-8 bg-gradient-to-r ${getEffectColor(exercise.effect)} rounded-lg flex items-center justify-center`}>
+                          <div className="w-8 h-8 bg-stone-950 border border-stone-800 rounded-none flex items-center justify-center">
                             {getEffectIcon(exercise.effect)}
                           </div>
                           <div>
-                            <p className="text-xs text-gray-400 font-medium font-poppins-medium">Efecto</p>
-                            <p className="text-sm text-white font-semibold font-poppins-semibold">{exercise.effect}</p>
+                            <p className="text-xs text-gray-500 font-poppins-bold uppercase tracking-widest">Efecto</p>
+                            <p className="text-sm text-white font-poppins-bold uppercase tracking-wider">{exercise.effect}</p>
                           </div>
                         </div>
 
                         {/* Pattern */}
                         <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center">
-                            <Brain className="w-4 h-4 text-white" />
+                          <div className="w-8 h-8 bg-stone-950 border border-stone-800 rounded-none flex items-center justify-center">
+                            <Brain className="w-4 h-4 text-amber-500" />
                           </div>
                           <div>
-                            <p className="text-xs text-gray-400 font-medium font-poppins-medium">Patrón</p>
-                            <p className="text-sm text-white font-semibold font-poppins-semibold">
+                            <p className="text-xs text-gray-500 font-poppins-bold uppercase tracking-widest">Patrón</p>
+                            <p className="text-sm text-white font-poppins-bold uppercase tracking-wider">
                               {exercise.inhaleTime}-{exercise.holdInTime}-{exercise.exhaleTime}-{exercise.holdOutTime}
                             </p>
                           </div>
@@ -669,7 +651,7 @@ const RespirationCalendar: React.FC = () => {
 
                       {/* Play Button */}
                       <div className="mt-6 flex justify-center">
-                        <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <div className="w-12 h-12 bg-red-600 border border-red-500 rounded-none flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-[4px_4px_0px_rgba(153,27,27,1)]">
                           <Play className="w-5 h-5 text-white ml-0.5" />
                         </div>
                       </div>
@@ -686,24 +668,24 @@ const RespirationCalendar: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center space-y-8"
           >
-            <ResponsiveCard className="max-w-2xl w-full">
+            <div className="bg-stone-900 border border-stone-800 p-8 rounded-none shadow-[8px_8px_0px_rgba(28,25,23,1)] max-w-2xl w-full">
               <div className="text-center space-y-6">
-                <h2 className="text-2xl font-bold text-white font-poppins-bold">
+                <h2 className="text-2xl font-poppins-extrabold uppercase tracking-wider text-white">
                   {selectedExercise?.name}
                 </h2>
-                
+
                 <div className="flex items-center justify-center space-x-4">
                   <div className="text-center">
-                    <div className="text-sm text-gray-400 font-poppins-medium">Ronda</div>
-                    <div className="text-2xl font-bold text-white font-poppins-bold">
+                    <div className="text-xs text-gray-500 font-poppins-bold uppercase tracking-widest">Ronda</div>
+                    <div className="text-2xl font-poppins-bold text-white">
                       {currentRound}/{selectedExercise?.rounds}
                     </div>
                   </div>
-                  <div className="w-32 bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300"
-                      style={{ 
-                        width: `${(currentRound / (selectedExercise?.rounds || 1)) * 100}%` 
+                  <div className="w-32 bg-stone-950 rounded-none h-4 border border-stone-800 overflow-hidden">
+                    <div
+                      className="bg-red-600 h-full transition-all duration-300 shadow-[0_0_8px_rgba(220,38,38,0.5)]"
+                      style={{
+                        width: `${(currentRound / (selectedExercise?.rounds || 1)) * 100}%`
                       }}
                     />
                   </div>
@@ -717,9 +699,9 @@ const RespirationCalendar: React.FC = () => {
                   />
                 </AnimatePresence>
 
-                <div className="flex space-x-4">
+                <div className="flex justify-center mt-8">
                   <button
-                    className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl hover:from-red-600 hover:to-pink-700 text-white font-semibold transition-all duration-200 transform hover:scale-105 font-poppins-semibold"
+                    className="px-8 py-4 bg-stone-800 hover:bg-red-600 border border-stone-700 hover:border-red-500 text-white font-poppins-bold uppercase tracking-wider transition-all duration-200 shadow-[4px_4px_0px_rgba(28,25,23,1)] hover:shadow-[4px_4px_0px_rgba(153,27,27,1)] rounded-none flex items-center justify-center"
                     onClick={() => setIsExercising(false)}
                   >
                     <Pause className="w-5 h-5 inline mr-2" />
@@ -727,7 +709,7 @@ const RespirationCalendar: React.FC = () => {
                   </button>
                 </div>
               </div>
-            </ResponsiveCard>
+            </div>
           </motion.div>
         )}
 

@@ -42,37 +42,37 @@ const Routine: React.FC<RoutineProps> = ({ routine, exercise, onClick }) => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "Principiante":
-        return "from-green-500 to-emerald-500";
+        return "bg-green-500/20 text-green-400 border border-green-500/50";
       case "Intermedio":
-        return "from-yellow-500 to-orange-500";
+        return "bg-amber-500/20 text-amber-400 border border-amber-500/50";
       case "Avanzado":
-        return "from-red-500 to-pink-500";
+        return "bg-red-500/20 text-red-400 border border-red-500/50";
       default:
-        return "from-blue-500 to-purple-500";
+        return "bg-stone-800 text-gray-300 border border-stone-700";
     }
   };
 
   return (
     <motion.div
-      whileHover={{ scale: 1.02, y: -5 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.97 }}
       onClick={() => onClick(routine)}
       className="group cursor-pointer"
     >
-      <div className="relative overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 shadow-xl hover:shadow-2xl">
+      <div className="relative overflow-hidden bg-stone-900 rounded-2xl p-6 border border-stone-800 hover:border-red-500/50 transition-all duration-300 shadow-lg">
         {/* Gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div className="absolute inset-0 bg-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
         <div className="relative z-10">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors duration-300 font-poppins-semibold">
+            <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors duration-300 font-poppins-semibold uppercase tracking-wider">
               Rutina {routine}
             </h3>
             <div
-              className={`px-3 py-1 rounded-full bg-gradient-to-r ${getDifficultyColor(
+              className={`px-3 py-1 rounded-full ${getDifficultyColor(
                 exercise?.difficulty || ""
-              )} text-white text-xs font-semibold font-poppins-medium`}
+              )} text-xs font-semibold font-poppins-medium tracking-wide`}
             >
               {exercise.difficulty}
             </div>
@@ -87,11 +87,11 @@ const Routine: React.FC<RoutineProps> = ({ routine, exercise, onClick }) => {
           <div className="space-y-3">
             {/* Duration */}
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <Activity className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 bg-stone-800 border border-stone-700 rounded-lg flex items-center justify-center">
+                <Activity className="w-4 h-4 text-amber-500" />
               </div>
               <div>
-                <p className="text-xs text-gray-400 font-medium font-poppins-medium">
+                <p className="text-xs text-gray-400 font-medium font-poppins-medium uppercase tracking-wider">
                   Duración
                 </p>
                 <p className="text-sm text-white font-semibold font-poppins-semibold">
@@ -102,8 +102,8 @@ const Routine: React.FC<RoutineProps> = ({ routine, exercise, onClick }) => {
 
             {/* Benefits */}
             <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <Heart className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 bg-stone-800 border border-stone-700 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                <Heart className="w-4 h-4 text-red-500" />
               </div>
               <div>
                 <p className="text-xs text-gray-400 font-medium font-poppins-medium">
@@ -125,7 +125,7 @@ const Routine: React.FC<RoutineProps> = ({ routine, exercise, onClick }) => {
 
           {/* Play Button */}
           <div className="mt-6 flex justify-center">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-lg shadow-red-900/40">
               <Play className="w-5 h-5 text-white ml-0.5" />
             </div>
           </div>
@@ -177,9 +177,8 @@ const KeguelChallenge: React.FC = () => {
       return {
         name: `Ejercicio de Kegel ${i + 1}`,
         url: randomVideo,
-        description: `Rutina ${
-          i + 1
-        } para fortalecer tus músculos pélvicos y mejorar tu control muscular.`,
+        description: `Rutina ${i + 1
+          } para fortalecer tus músculos pélvicos y mejorar tu control muscular.`,
         difficulty: randomDifficulty,
         duration: randomDuration,
         benefits: randomBenefits,
@@ -220,17 +219,15 @@ const KeguelChallenge: React.FC = () => {
           className="text-center mb-12"
         >
           <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
-              <Target className="w-10 h-10 text-white" />
+            <div className="w-20 h-20 bg-stone-900 border border-red-500/30 rounded-full flex items-center justify-center shadow-lg shadow-red-900/20">
+              <Target className="w-10 h-10 text-red-500" />
             </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text-extended mb-4 font-poppins">
-            Reto de Kegel
+          <h1 className="challenge-heading text-4xl sm:text-5xl md:text-6xl mb-4 text-white drop-shadow-md">
+            RETO DE KEGEL
           </h1>
-          <p className="text-gray-300 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed font-poppins-light">
-            Fortalece tus músculos pélvicos con estas rutinas especializadas.
-            Mejora tu control, resistencia y confianza con ejercicios
-            progresivos.
+          <p className="text-gray-400 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed font-poppins-medium">
+            El control muscular es la base de todo. Falla aquí y fallarás en el resto. No es magia, es entrenamiento puro.
           </p>
         </motion.div>
 
@@ -241,46 +238,49 @@ const KeguelChallenge: React.FC = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
         >
-          <ResponsiveCard className="text-center">
+          <ResponsiveCard className="text-center bg-stone-900 border-stone-800">
             <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                <Dumbbell className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-stone-800 border border-stone-700 rounded-full flex items-center justify-center">
+                <Dumbbell className="w-5 h-5 text-gray-400" />
               </div>
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">
-              Fortalecimiento
+            <h3 className="text-lg font-bold text-white mb-2 font-poppins-semibold uppercase tracking-wider">
+              Resistencia
             </h3>
-            <p className="text-gray-300 text-sm font-poppins-light">
-              Ejercicios progresivos para fortalecer los músculos pélvicos
+            <p className="text-gray-400 text-sm font-poppins-medium">
+              Soporta más carga, controla el impulso.
             </p>
           </ResponsiveCard>
 
-          <ResponsiveCard className="text-center">
+          <ResponsiveCard className="text-center bg-stone-900 border-stone-800">
             <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-stone-800 border border-stone-700 rounded-full flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-amber-500" />
               </div>
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">
-              Control Mejorado
+            <h3 className="text-lg font-bold text-amber-500 mb-2 font-poppins-semibold uppercase tracking-wider">
+              Ejecución
             </h3>
-            <p className="text-gray-300 text-sm font-poppins-light">
-              Aumenta tu control muscular y resistencia
+            <p className="text-gray-400 text-sm font-poppins-medium">
+              Mejora tu control exactamente en el momento crítico.
             </p>
           </ResponsiveCard>
 
-          <ResponsiveCard className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-red-600 rounded-full flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
+          <ResponsiveCard className="text-center bg-stone-900 border-stone-800 relative overflow-hidden">
+            <div className="absolute inset-0 bg-red-600/5 z-0"></div>
+            <div className="relative z-10">
+              <div className="flex justify-center mb-4">
+                <div className="w-12 h-12 bg-stone-800 border border-red-500/30 rounded-full flex items-center justify-center">
+                  <Heart className="w-5 h-5 text-red-500" />
+                </div>
               </div>
+              <h3 className="text-lg font-bold text-white mb-2 font-poppins-semibold uppercase tracking-wider">
+                Recuperación
+              </h3>
+              <p className="text-gray-400 text-sm font-poppins-medium">
+                Optimiza la circulación y preparate para el siguiente round.
+              </p>
             </div>
-            <h3 className="text-lg font-semibold text-white mb-2 font-poppins-semibold">
-              Bienestar
-            </h3>
-            <p className="text-gray-300 text-sm font-poppins-light">
-              Mejora tu salud íntima y confianza personal
-            </p>
           </ResponsiveCard>
         </motion.div>
 
@@ -363,9 +363,9 @@ const KeguelChallenge: React.FC = () => {
                     </div>
 
                     <div className="flex items-center space-x-3">
-                      <Target className="w-5 h-5 text-purple-400" />
+                      <Target className="w-5 h-5 text-red-400" />
                       <div>
-                        <p className="text-sm text-gray-400 font-poppins-medium">
+                        <p className="text-sm text-gray-400 font-poppins-medium uppercase tracking-wider">
                           Dificultad
                         </p>
                         <p className="text-white font-semibold font-poppins-semibold">
@@ -406,28 +406,28 @@ const KeguelChallenge: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="text-center"
+          className="text-center mt-6"
         >
-          <ResponsiveCard className="max-w-2xl mx-auto">
+          <div className="bg-stone-900 border border-stone-800 p-8 sm:p-10 max-w-2xl mx-auto relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-red-600"></div>
             <div className="space-y-4">
-              <h3 className="text-2xl font-bold gradient-text mb-4 font-poppins-bold">
-                ¡Comienza tu Transformación Hoy!
+              <h3 className="text-2xl sm:text-3xl font-poppins-extrabold uppercase tracking-tighter text-white mb-2">
+                DÉJATE DE EXCUSAS
               </h3>
-              <p className="text-gray-300 leading-relaxed font-poppins-light">
-                Sigue estas rutinas de manera consistente y verás resultados
-                increíbles. El fortalecimiento de los músculos pélvicos mejora
-                significativamente tu calidad de vida.
+              <p className="text-gray-400 leading-relaxed font-poppins-medium">
+                Si no dominas lo básico, el resto del desafío no sirve de nada.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
-                <button className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 font-poppins-semibold">
-                  Ver Más Rutinas
-                </button>
-                <button className="bg-gray-700 text-white px-8 py-3 rounded-xl font-semibold hover:bg-gray-600 transform hover:scale-105 transition-all duration-200 font-poppins-semibold">
-                  Consejos de Expertos
-                </button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="bg-red-600 text-white px-8 py-4 font-poppins-bold uppercase tracking-widest text-sm hover:bg-red-700 transition-colors shadow-lg shadow-red-900/50"
+                >
+                  ARRANCAR RUTINA
+                </motion.button>
               </div>
             </div>
-          </ResponsiveCard>
+          </div>
         </motion.div>
       </div>
     </div>
