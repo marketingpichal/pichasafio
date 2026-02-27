@@ -21,47 +21,47 @@ export default function AgeVerificationModal({ onVerified }: AgeVerificationModa
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
-      <div className="bg-gray-800/90 backdrop-blur-md p-5 sm:p-6 rounded-xl shadow-xl max-w-xs w-full text-center border border-gray-600/30">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
+      <div className="bg-stone-900 p-5 sm:p-6 rounded-xl shadow-2xl shadow-red-900/20 max-w-xs w-full text-center border-2 border-red-600">
         {/* Icon */}
         <div className="mb-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-12 h-12 bg-red-600/10 border border-red-500/30 rounded-full flex items-center justify-center mx-auto">
+            <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
         </div>
 
-        <h2 className="text-lg sm:text-xl font-semibold text-white mb-2">
+        <h2 className="text-xl sm:text-2xl font-poppins-bold uppercase tracking-wide text-white mb-2">
           Verificación de Edad
         </h2>
-        
+
         <p className="text-xs sm:text-sm text-gray-300 mb-4 leading-relaxed">
-          Debes ser mayor de 18 años para acceder a Pichasafio.com. 
+          Debes ser mayor de 18 años para acceder a Pichasafio.com.
           ¿Confirmas que tienes 18 años o más?
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex flex-col sm:flex-row gap-2 mt-6">
           <button
             onClick={handleConfirm}
-            className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium py-2 px-3 rounded-md hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"
+            className="flex-1 bg-red-600 text-white font-poppins-bold uppercase tracking-wide py-3 px-3 rounded-md hover:bg-red-700 transition-colors duration-200 text-xs shadow-lg shadow-red-900/30"
           >
             Sí, tengo 18+ y acepto los tyc
           </button>
           <button
             onClick={handleDeny}
-            className="flex-1 bg-gray-600 text-white font-medium py-2 px-3 rounded-md hover:bg-gray-700 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500/50 text-sm"
+            className="flex-1 bg-stone-800 text-gray-300 font-poppins-bold uppercase tracking-wide py-3 px-3 rounded-md hover:bg-stone-700 hover:text-white border border-stone-700 transition-colors duration-200 text-xs"
           >
             No
           </button>
         </div>
 
-        <p className="text-xs text-gray-400 mt-2">
-  Al continuar, confirmas que eres mayor de edad y que aceptas nuestros{" "}
-  <Link to="/tyc" className="text-blue-400 hover:text-blue-300 underline">
-    Términos y Condiciones
-  </Link>
-</p>
+        <p className="text-xs text-gray-500 mt-4 leading-tight">
+          Al continuar, confirmas que eres mayor de edad y que aceptas nuestros{" "}
+          <Link to="/tyc" className="text-red-500 hover:text-red-400 underline transition-colors">
+            Términos y Condiciones
+          </Link>
+        </p>
 
       </div>
     </div>

@@ -13,10 +13,10 @@ import { getPoseImages, PoseImage } from '../../lib/cloudinaryService';
 const convertToPoseScrollItem = (imageData: PoseImage, index: number): PoseScrollItem => {
   const categories = ['Clásicas', 'Románticas', 'Aventureras', 'Íntimas', 'Experimentales'];
   const difficulties: ('Principiante' | 'Intermedio' | 'Avanzado')[] = ['Principiante', 'Intermedio', 'Avanzado'];
-  
+
   // Extraer nombre de la pose del name o usar un nombre por defecto
   const poseName = imageData.name.replace(/\.[^/.]+$/, '') || `Pose ${index + 1}`;
-  
+
   return {
     id: `pose_${index + 1}`,
     name: poseName,
@@ -52,15 +52,15 @@ const PoseScroll: React.FC = () => {
     const loadInitialPoses = async () => {
       console.log('🔄 Iniciando carga de poses...');
       setLoading(true);
-      
+
       try {
         console.log('📞 Llamando a getPoseImages...');
         const imageData = await getPoseImages();
         console.log('📊 Datos recibidos de getPoseImages:', imageData.length, imageData);
-        
+
         const convertedPoses = imageData.map((img: PoseImage, index: number) => convertToPoseScrollItem(img, index));
         console.log('🔄 Poses convertidas:', convertedPoses.length, convertedPoses);
-        
+
         setPoses(convertedPoses);
         console.log('✅ Poses establecidas en el estado');
       } catch (error) {
@@ -106,12 +106,12 @@ const PoseScroll: React.FC = () => {
     if (loading || !hasMore) return;
 
     setLoading(true);
-    
+
     try {
       const allImages = await getPoseImages();
       const startIndex = poses.length;
       const newImages = allImages.slice(startIndex, startIndex + 8);
-      
+
       if (newImages.length === 0) {
         setHasMore(false);
       } else {
@@ -129,8 +129,8 @@ const PoseScroll: React.FC = () => {
   // Detectar scroll infinito
   useEffect(() => {
     const handleScroll = () => {
-      if (activeTab === 'poses' && window.innerHeight + document.documentElement.scrollTop 
-          >= document.documentElement.offsetHeight - 1000) {
+      if (activeTab === 'poses' && window.innerHeight + document.documentElement.scrollTop
+        >= document.documentElement.offsetHeight - 1000) {
         loadMorePoses();
       }
     };
@@ -186,14 +186,14 @@ const PoseScroll: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-900 py-16">
+    <div className="bg-transparent py-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text-extended mb-4 font-poppins"
+            className="challenge-heading text-4xl sm:text-5xl md:text-6xl text-white mb-4 drop-shadow-md uppercase"
           >
             Explorador de Poses
           </motion.h2>
@@ -205,7 +205,7 @@ const PoseScroll: React.FC = () => {
           >
             Descubre nuevas formas de conectar con tu pareja. Explora poses con instrucciones detalladas y consejos de expertos.
           </motion.p>
-          
+
           {/* Botón Reto de 30 días */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -215,9 +215,9 @@ const PoseScroll: React.FC = () => {
           >
             <motion.button
               onClick={() => navigate('/thirty-days-challenge')}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transform transition-all duration-300 font-poppins-bold flex items-center gap-3 mx-auto"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-red-600 text-white px-8 py-4 font-poppins-bold uppercase tracking-widest text-lg shadow-lg shadow-red-900/50 hover:bg-red-700 transition-colors flex items-center gap-3 mx-auto"
             >
               <span className="text-2xl">🔥</span>
               Reto de 30 Días
@@ -227,33 +227,32 @@ const PoseScroll: React.FC = () => {
         </div>
 
         {/* Navigation Tabs */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           className="flex justify-center mb-12"
         >
-          <div className="relative bg-gray-800/60 backdrop-blur-md rounded-2xl p-2 border border-gray-600/50 shadow-2xl">
+          <div className="relative bg-stone-900 border border-stone-800 p-2 shadow-2xl">
             {/* Background indicator */}
             <motion.div
-              className="absolute top-2 bottom-2 bg-gradient-to-r from-pink-500 to-purple-600 rounded-xl shadow-lg"
+              className="absolute top-2 bottom-2 bg-red-600 shadow-lg"
               animate={{
                 left: activeTab === 'poses' ? '8px' : '50%',
                 width: activeTab === 'poses' ? 'calc(50% - 12px)' : 'calc(50% - 12px)'
               }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             />
-            
+
             <div className="relative flex">
               <motion.button
                 onClick={() => setActiveTab('poses')}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`flex items-center gap-3 px-8 py-4 rounded-xl font-semibold transition-all duration-300 relative z-10 min-w-[140px] justify-center ${
-                  activeTab === 'poses'
-                    ? 'text-white'
-                    : 'text-gray-400 hover:text-white'
-                }`}
+                className={`flex items-center gap-3 px-8 py-4 font-poppins-medium transition-all duration-300 relative z-10 min-w-[140px] justify-center uppercase tracking-wide text-sm ${activeTab === 'poses'
+                  ? 'text-white'
+                  : 'text-gray-400 hover:text-white'
+                  }`}
               >
                 <motion.div
                   animate={{ rotate: activeTab === 'poses' ? 360 : 0 }}
@@ -261,9 +260,9 @@ const PoseScroll: React.FC = () => {
                 >
                   <Grid className="w-5 h-5" />
                 </motion.div>
-                <span className="font-poppins-semibold">Poses</span>
+                <span>Poses</span>
               </motion.button>
-              
+
               <motion.button
                 onClick={() => {
                   if (!isAuthenticated) {
@@ -274,11 +273,10 @@ const PoseScroll: React.FC = () => {
                 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`flex items-center gap-3 px-8 py-4 rounded-xl font-semibold transition-all duration-300 relative z-10 min-w-[140px] justify-center ${
-                  activeTab === 'posts'
-                    ? 'text-white'
-                    : 'text-gray-400 hover:text-white'
-                }`}
+                className={`flex items-center gap-3 px-8 py-4 font-poppins-medium transition-all duration-300 relative z-10 min-w-[140px] justify-center uppercase tracking-wide text-sm ${activeTab === 'posts'
+                  ? 'text-white'
+                  : 'text-gray-400 hover:text-white'
+                  }`}
               >
                 <motion.div
                   animate={{ rotate: activeTab === 'posts' ? 360 : 0 }}
@@ -286,9 +284,9 @@ const PoseScroll: React.FC = () => {
                 >
                   <Users className="w-5 h-5" />
                 </motion.div>
-                <span className="font-poppins-semibold">Comunidad</span>
+                <span>Comunidad</span>
                 {!isAuthenticated && (
-                  <Lock className="w-4 h-4 ml-1 text-yellow-400" />
+                  <Lock className="w-4 h-4 ml-1 text-red-400" />
                 )}
               </motion.button>
             </div>
@@ -306,16 +304,18 @@ const PoseScroll: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="bg-gray-800 rounded-xl overflow-hidden hover:bg-gray-750 transition-all duration-300 group cursor-pointer"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="bg-stone-900 border border-stone-800 rounded-xl overflow-hidden hover:border-red-500/50 transition-all duration-300 group cursor-pointer shadow-lg"
                   onClick={() => handlePoseClick(pose)}
                 >
                   {/* Image */}
-                  <div className="relative aspect-[4/3] bg-gray-700 overflow-hidden pointer-events-none">
+                  <div className="relative aspect-[4/3] bg-stone-800 overflow-hidden pointer-events-none">
                     {pose.isLocked && !isAuthenticated ? (
-                      <div className="absolute inset-0 bg-gray-600 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-stone-900/80 backdrop-blur-sm flex items-center justify-center">
                         <div className="text-center">
-                          <Lock className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                          <p className="text-gray-400 text-sm font-poppins-light">Contenido Premium</p>
+                          <Lock className="w-8 h-8 text-red-500 mx-auto mb-2" />
+                          <p className="text-white text-sm font-poppins-semibold uppercase tracking-wider">Premium</p>
                         </div>
                       </div>
                     ) : (
@@ -338,37 +338,37 @@ const PoseScroll: React.FC = () => {
                             }
                           }}
                         />
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300" />
+                        <div className="absolute inset-0 bg-black/20 group-hover:bg-red-600/10 transition-all duration-300" />
                       </>
                     )}
-                    
+
                     {/* Difficulty Badge */}
                     <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-semibold text-white ${getDifficultyColor(pose.difficulty)}`}>
                       {pose.difficulty}
                     </div>
-                    
+
                     {/* Category Badge */}
-                    <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full text-xs text-white">
+                    <div className="absolute top-2 right-2 bg-stone-900/80 backdrop-blur-sm px-2 py-1 border border-stone-800 rounded-full text-xs text-white">
                       {pose.category}
                     </div>
                   </div>
 
                   {/* Content */}
                   <div className="p-4 pointer-events-none">
-                    <h3 className="text-white font-semibold mb-2 font-poppins-semibold group-hover:text-pink-300 transition-colors">
+                    <h3 className="text-white font-poppins-bold uppercase tracking-wider mb-2 group-hover:text-red-500 transition-colors">
                       {pose.name}
                     </h3>
-                    
+
                     <p className="text-gray-400 text-sm mb-3 font-poppins-light line-clamp-2">
                       {pose.description}
                     </p>
-                    
+
                     {/* Rating */}
                     <div className="flex items-center gap-1 mb-3">
                       {renderStars(pose.rating)}
                       <span className="text-gray-400 text-xs ml-1">({pose.rating})</span>
                     </div>
-                    
+
                     {/* Stats */}
                     <div className="flex items-center justify-between text-xs text-gray-500">
                       <div className="flex items-center gap-3">
@@ -381,7 +381,7 @@ const PoseScroll: React.FC = () => {
                           <span>{pose.likes}</span>
                         </div>
                       </div>
-                      
+
                       {pose.isLocked && !isAuthenticated && (
                         <div className="flex items-center gap-1 text-yellow-400">
                           <Lock className="w-3 h-3" />
@@ -389,15 +389,15 @@ const PoseScroll: React.FC = () => {
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Benefits */}
                     {(!pose.isLocked || isAuthenticated) && (
-                      <div className="mt-3 pt-3 border-t border-gray-700">
+                      <div className="mt-3 pt-3 border-t border-stone-800">
                         <div className="flex flex-wrap gap-1">
                           {pose.benefits.slice(0, 2).map((benefit, idx) => (
                             <span
                               key={idx}
-                              className="bg-purple-900/30 text-purple-300 px-2 py-1 rounded text-xs font-poppins-light"
+                              className="bg-stone-800 text-gray-300 px-2 py-1 rounded text-xs font-poppins-medium uppercase"
                             >
                               {benefit}
                             </span>
@@ -435,29 +435,30 @@ const PoseScroll: React.FC = () => {
             <PostFeed />
           ) : (
             <div className="text-center py-20">
-              <div className="bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/20 rounded-xl p-12 max-w-md mx-auto">
+              <div className="bg-stone-900 border border-stone-800 p-8 sm:p-12 relative overflow-hidden max-w-md mx-auto">
+                <div className="absolute top-0 left-0 w-full h-1 bg-red-600"></div>
                 <div className="text-6xl mb-6">🔒</div>
-                <h3 className="text-2xl font-bold text-white mb-4 font-poppins-bold">
-                  Acceso Restringido
+                <h3 className="text-2xl font-poppins-extrabold uppercase tracking-tight text-white mb-4">
+                  ACCESO RESTRINGIDO
                 </h3>
-                <p className="text-gray-300 mb-8 font-poppins-light">
+                <p className="text-gray-400 mb-8 font-poppins-medium">
                   La comunidad es exclusiva para usuarios registrados. Únete para compartir y descubrir contenido con otros miembros.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <motion.button
                     onClick={() => navigate('/login')}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-pink-600 hover:to-purple-700 transform transition-all duration-200 font-poppins-semibold flex items-center gap-2 justify-center"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="bg-red-600 text-white px-6 py-3 font-poppins-bold uppercase tracking-widest text-sm hover:bg-red-700 transition-colors flex items-center gap-2 justify-center shadow-lg shadow-red-900/50"
                   >
                     <LogIn className="w-5 h-5" />
                     Iniciar Sesión
                   </motion.button>
                   <motion.button
                     onClick={() => navigate('/register')}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="bg-transparent border-2 border-purple-500 text-purple-400 px-6 py-3 rounded-xl font-semibold hover:bg-purple-500 hover:text-white transform transition-all duration-200 font-poppins-semibold flex items-center gap-2 justify-center"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="bg-stone-800 border border-stone-700 text-white px-6 py-3 font-poppins-bold uppercase tracking-widest text-sm hover:bg-stone-700 hover:border-red-500/50 transition-colors flex items-center gap-2 justify-center"
                   >
                     <UserPlus className="w-5 h-5" />
                     Registrarse
@@ -471,14 +472,15 @@ const PoseScroll: React.FC = () => {
         {/* Authentication CTA */}
         {!isAuthenticated && activeTab === 'poses' && (
           <div className="mt-12 text-center">
-            <div className="bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/20 rounded-xl p-8">
-              <h3 className="text-xl font-bold text-white mb-4 font-poppins-bold">
-                ¿Quieres acceso completo?
+            <div className="bg-stone-900 border border-stone-800 p-8 max-w-3xl mx-auto relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-red-600"></div>
+              <h3 className="text-xl font-poppins-bold uppercase tracking-wider text-white mb-4">
+                ¿QUIERES ACCESO COMPLETO?
               </h3>
-              <p className="text-gray-300 mb-6 font-poppins-light">
-                Regístrate para desbloquear todas las poses premium y contenido exclusivo
+              <p className="text-gray-400 mb-6 font-poppins-medium">
+                Regístrate para desbloquear todas las poses premium y contenido exclusivo. Fuego puro.
               </p>
-              <button className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-pink-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 font-poppins-semibold">
+              <button className="bg-red-600 text-white px-8 py-3 font-poppins-bold uppercase tracking-widest text-sm hover:bg-red-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg shadow-red-900/40">
                 Crear Cuenta Gratis
               </button>
             </div>
@@ -493,7 +495,7 @@ const PoseScroll: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0 }}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-200 z-50"
+          className="fixed bottom-8 right-8 w-12 h-12 bg-red-600 text-white rounded-none flex items-center justify-center shadow-lg shadow-red-900/50 hover:bg-red-700 transform hover:scale-105 transition-all duration-200 z-50"
         >
           <ArrowUp className="w-6 h-6" />
         </motion.button>
@@ -505,76 +507,77 @@ const PoseScroll: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
           onClick={() => setShowAuthModal(false)}
         >
           <motion.div
-            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.8, opacity: 0, y: 20 }}
+            exit={{ scale: 0.95, opacity: 0, y: 20 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 max-w-md w-full mx-4 border border-gray-700 shadow-2xl"
+            className="bg-stone-900 rounded-none p-8 max-w-md w-full mx-4 border border-stone-800 shadow-2xl relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
+            <div className="absolute top-0 left-0 w-full h-1 bg-red-600"></div>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-pink-500 to-purple-500 rounded-lg">
-                  <Lock className="w-6 h-6 text-white" />
+                <div className="p-2 bg-red-600/10 border border-red-500/20 rounded-lg">
+                  <Lock className="w-6 h-6 text-red-500" />
                 </div>
-                <h3 className="text-2xl font-bold text-white font-poppins-bold">Acceso Requerido</h3>
+                <h3 className="text-2xl font-poppins-bold uppercase tracking-wide text-white">ACCESO</h3>
               </div>
               <button
                 onClick={() => setShowAuthModal(false)}
-                className="p-2 hover:bg-gray-700 rounded-lg transition-colors duration-200"
+                className="p-2 hover:bg-stone-800 rounded-lg transition-colors duration-200"
               >
-                <X className="w-5 h-5 text-gray-400 hover:text-white" />
+                <X className="w-5 h-5 text-gray-500 hover:text-white" />
               </button>
             </div>
 
             {selectedPose && (
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-lg flex items-center justify-center">
-                    <div className="text-2xl">💕</div>
+                  <div className="w-16 h-16 bg-stone-800 border border-stone-700 flex items-center justify-center">
+                    <div className="text-2xl">🔥</div>
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold font-poppins-semibold">{selectedPose.name}</h4>
-                    <p className="text-gray-400 text-sm font-poppins-light">{selectedPose.category}</p>
+                    <h4 className="text-white font-poppins-bold uppercase tracking-wider">{selectedPose.name}</h4>
+                    <p className="text-gray-400 text-xs font-poppins-medium uppercase mt-1">{selectedPose.category}</p>
                   </div>
                 </div>
               </div>
             )}
 
             <div className="text-center mb-8">
-              <p className="text-gray-300 text-lg leading-relaxed font-poppins-light">
-                Para ver <span className="text-pink-400 font-semibold">poses detalladas</span> e instrucciones paso a paso necesitas estar registrado.
+              <p className="text-gray-400 text-sm leading-relaxed font-poppins-medium">
+                Para ver <span className="text-red-500 font-bold uppercase">poses detalladas</span> e instrucciones paso a paso necesitas estar registrado.
               </p>
-              <p className="text-gray-400 text-sm mt-2 font-poppins-light">
-                ¡Es gratis y solo toma unos segundos!
+              <p className="text-white text-xs mt-2 font-poppins-bold uppercase">
+                Toma 10 segundos.
               </p>
             </div>
 
             <div className="space-y-4">
               <button
                 onClick={handleLogin}
-                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl font-poppins-semibold"
+                className="w-full flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white font-poppins-bold uppercase tracking-widest text-sm py-4 px-6 transition-all duration-200 shadow-lg shadow-red-900/40"
               >
                 <LogIn className="w-5 h-5" />
                 Iniciar Sesión
               </button>
-              
+
               <button
                 onClick={handleRegister}
-                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl font-poppins-semibold"
+                className="w-full flex items-center justify-center gap-3 bg-stone-800 hover:bg-stone-700 border border-stone-700 hover:border-red-500/50 text-white font-poppins-bold uppercase tracking-widest text-sm py-4 px-6 transition-all duration-200"
               >
                 <UserPlus className="w-5 h-5" />
-                Crear Cuenta Gratis
+                Crear Cuenta
               </button>
             </div>
 
-            <div className="mt-6 pt-6 border-t border-gray-700">
-              <p className="text-center text-gray-500 text-sm font-poppins-light">
-                ¿Ya tienes cuenta? <button onClick={handleLogin} className="text-pink-400 hover:text-pink-300 font-medium">Inicia sesión aquí</button>
+            <div className="mt-6 pt-6 border-t border-stone-800">
+              <p className="text-center text-gray-500 text-xs font-poppins-medium uppercase">
+                ¿Ya tienes cuenta? <button onClick={handleLogin} className="text-red-500 hover:text-red-400 font-bold ml-1">Inicia sesión</button>
               </p>
             </div>
           </motion.div>

@@ -209,7 +209,7 @@ export default function Register() {
       // Proceed with registration
       console.log('Iniciando registro con:', { email: data.email, username: data.username });
       console.log('VITE_SITE_URL:', import.meta.env.VITE_SITE_URL);
-      
+
       const { data: authData, error: authError }: AuthResponse =
         await supabase.auth.signUp({
           email: data.email,
@@ -231,10 +231,10 @@ export default function Register() {
 
       if (authData.user) {
         console.log('Usuario creado:', authData.user);
-        
+
         // Wait a moment for the trigger to create the profile
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         // Update the profile with the username
         const { error: profileError }: ProfileResponse = await supabase
           .from("profiles")
@@ -264,7 +264,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-stone-950 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -274,10 +274,10 @@ export default function Register() {
         <ResponsiveCard
           title="Crear Cuenta"
           subtitle="Únete a nuestra comunidad"
-          className="text-center bg-gray-800 border-gray-700"
+          className="text-center bg-stone-900 border-stone-800 shadow-2xl shadow-black/80"
         >
-          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
-            <p className="text-blue-400 text-sm font-medium">
+          <div className="mb-6 p-4 bg-red-600/10 border border-red-500/30 rounded-xl">
+            <p className="text-red-500 text-sm font-poppins-bold uppercase tracking-wider">
               REVISAR TU CORREO PARA VERIFICAR TU CUENTA
             </p>
           </div>
@@ -312,14 +312,13 @@ export default function Register() {
                     type="email"
                     {...register("email")}
                     placeholder="tu@email.com"
-                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ${
-                      errors.email ? "border-red-500" : "border-gray-600/30"
-                    }`}
+                    className={`w-full px-4 py-3 bg-stone-800 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 ${errors.email ? "border-red-500" : "border-stone-700"
+                      }`}
                     disabled={loading}
                   />
                   {checkingEmail && (
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   )}
                   {watchedEmail &&
@@ -327,24 +326,23 @@ export default function Register() {
                     !checkingEmail && (
                       <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                         {emailAvailable ? (
-                          <Check className="w-5 h-5 text-green-400" />
+                          <Check className="w-5 h-5 text-green-500" />
                         ) : (
-                          <X className="w-5 h-5 text-red-400" />
+                          <X className="w-5 h-5 text-red-500" />
                         )}
                       </div>
                     )}
                 </div>
                 {errors.email && (
-                  <p className="text-red-400 text-xs">{errors.email.message}</p>
+                  <p className="text-red-500 text-xs font-medium mt-1">{errors.email.message}</p>
                 )}
                 {watchedEmail &&
                   emailAvailable !== null &&
                   !checkingEmail &&
                   !errors.email && (
                     <p
-                      className={`text-xs ${
-                        emailAvailable ? "text-green-400" : "text-red-400"
-                      }`}
+                      className={`text-xs ${emailAvailable ? "text-green-400" : "text-red-400"
+                        }`}
                     >
                       {emailAvailable ? "Email disponible" : "Email en uso"}
                     </p>
@@ -365,14 +363,13 @@ export default function Register() {
                     type="text"
                     {...register("username")}
                     placeholder="tu_usuario"
-                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ${
-                      errors.username ? "border-red-500" : "border-gray-600/30"
-                    }`}
+                    className={`w-full px-4 py-3 bg-stone-800 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 ${errors.username ? "border-red-500" : "border-stone-700"
+                      }`}
                     disabled={loading}
                   />
                   {checkingUsername && (
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   )}
                   {watchedUsername &&
@@ -380,15 +377,15 @@ export default function Register() {
                     !checkingUsername && (
                       <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                         {usernameAvailable ? (
-                          <Check className="w-5 h-5 text-green-400" />
+                          <Check className="w-5 h-5 text-green-500" />
                         ) : (
-                          <X className="w-5 h-5 text-red-400" />
+                          <X className="w-5 h-5 text-red-500" />
                         )}
                       </div>
                     )}
                 </div>
                 {errors.username && (
-                  <p className="text-red-400 text-xs">
+                  <p className="text-red-500 text-xs font-medium mt-1">
                     {errors.username.message}
                   </p>
                 )}
@@ -397,9 +394,8 @@ export default function Register() {
                   !checkingUsername &&
                   !errors.username && (
                     <p
-                      className={`text-xs ${
-                        usernameAvailable ? "text-green-400" : "text-red-400"
-                      }`}
+                      className={`text-xs ${usernameAvailable ? "text-green-400" : "text-red-400"
+                        }`}
                     >
                       {usernameAvailable
                         ? "Usuario disponible"
@@ -422,15 +418,14 @@ export default function Register() {
                     type={showPassword ? "text" : "password"}
                     {...register("password")}
                     placeholder="Tu contraseña"
-                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 pr-12 ${
-                      errors.password ? "border-red-500" : "border-gray-600/30"
-                    }`}
+                    className={`w-full px-4 py-3 bg-stone-800 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 pr-12 ${errors.password ? "border-red-500" : "border-stone-700"
+                      }`}
                     disabled={loading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-400 transition-colors"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
                   >
                     {showPassword ? (
                       <EyeOff className="w-5 h-5" />
@@ -440,7 +435,7 @@ export default function Register() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-red-400 text-xs">
+                  <p className="text-red-500 text-xs font-medium mt-1">
                     {errors.password.message}
                   </p>
                 )}
@@ -448,57 +443,52 @@ export default function Register() {
 
               {/* Password Requirements */}
               {watchedPassword && (
-                <div className="bg-gray-800/50 border border-gray-600/30 rounded-xl p-4 space-y-2">
+                <div className="bg-stone-950 border border-stone-800 rounded-xl p-4 space-y-2">
                   <p className="text-sm font-medium text-gray-300 mb-3">
                     Requisitos de contraseña:
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     <div
-                      className={`flex items-center space-x-2 ${
-                        validatePassword(watchedPassword).errors.minLength
-                          ? "text-green-400"
-                          : "text-gray-400"
-                      }`}
+                      className={`flex items-center space-x-2 ${validatePassword(watchedPassword).errors.minLength
+                          ? "text-green-500"
+                          : "text-gray-500"
+                        }`}
                     >
                       <Check className="w-4 h-4" />
                       <span>Mínimo 8 caracteres</span>
                     </div>
                     <div
-                      className={`flex items-center space-x-2 ${
-                        validatePassword(watchedPassword).errors.hasUpperCase
-                          ? "text-green-400"
-                          : "text-gray-400"
-                      }`}
+                      className={`flex items-center space-x-2 ${validatePassword(watchedPassword).errors.hasUpperCase
+                          ? "text-green-500"
+                          : "text-gray-500"
+                        }`}
                     >
-                      <Check className="w-4 h-4 drop-shadow-glow" />
+                      <Check className="w-4 h-4 drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
                       <span>Al menos una mayúscula</span>
                     </div>
                     <div
-                      className={`flex items-center space-x-2 ${
-                        validatePassword(watchedPassword).errors.hasLowerCase
-                          ? "text-green-400"
-                          : "text-gray-400"
-                      }`}
+                      className={`flex items-center space-x-2 ${validatePassword(watchedPassword).errors.hasLowerCase
+                          ? "text-green-500"
+                          : "text-gray-500"
+                        }`}
                     >
                       <Check className="w-4 h-4" />
                       <span>Al menos una minúscula</span>
                     </div>
                     <div
-                      className={`flex items-center space-x-2 ${
-                        validatePassword(watchedPassword).errors.hasNumber
-                          ? "text-green-400"
-                          : "text-gray-400"
-                      }`}
+                      className={`flex items-center space-x-2 ${validatePassword(watchedPassword).errors.hasNumber
+                          ? "text-green-500"
+                          : "text-gray-500"
+                        }`}
                     >
                       <Check className="w-4 h-4" />
                       <span>Al menos un número</span>
                     </div>
                     <div
-                      className={`flex items-center space-x-2 ${
-                        validatePassword(watchedPassword).errors.hasSpecialChar
-                          ? "text-green-400"
-                          : "text-gray-400"
-                      }`}
+                      className={`flex items-center space-x-2 ${validatePassword(watchedPassword).errors.hasSpecialChar
+                          ? "text-green-500"
+                          : "text-gray-500"
+                        }`}
                     >
                       <Check className="w-4 h-4" />
                       <span>Carácter especial (!@#$%^&*)</span>
@@ -521,15 +511,14 @@ export default function Register() {
                     type={showConfirmPassword ? "text" : "password"}
                     {...register("confirmPassword")}
                     placeholder="Confirma tu contraseña"
-                    className={`w-full px-4 py-3 bg-gray-700/60 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 pr-12 ${
-                      errors.confirmPassword ? "border-red-500" : "border-gray-600/30"
-                    }`}
+                    className={`w-full px-4 py-3 bg-stone-800 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 pr-12 ${errors.confirmPassword ? "border-red-500" : "border-stone-700"
+                      }`}
                     disabled={loading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-400 transition-colors"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
                     disabled={loading}
                   >
                     {showConfirmPassword ? (
@@ -540,7 +529,7 @@ export default function Register() {
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="text-red-400 text-xs">
+                  <p className="text-red-500 text-xs font-medium mt-1">
                     {errors.confirmPassword.message}
                   </p>
                 )}
@@ -552,28 +541,28 @@ export default function Register() {
                   id="terms"
                   type="checkbox"
                   {...register("termsAccepted")}
-                  className="mt-1 w-4 h-4 text-blue-500 bg-gray-700/60 border-gray-600/30 rounded focus:ring-blue-500 focus:ring-2"
+                  className="mt-1 w-4 h-4 text-red-600 bg-stone-800 border-stone-700 rounded focus:ring-red-500 focus:ring-2 accent-red-600"
                   disabled={loading}
                 />
                 <label htmlFor="terms" className="text-sm text-gray-300 leading-relaxed">
                   Acepto los{" "}
                   <a
                     href="#"
-                    className="text-blue-400 hover:text-blue-300 underline"
+                    className="text-red-500 hover:text-red-400 underline transition-colors"
                   >
                     términos y condiciones
                   </a>{" "}
                   y la{" "}
                   <a
                     href="#"
-                    className="text-blue-400 hover:text-blue-300 underline"
+                    className="text-red-500 hover:text-red-400 underline transition-colors"
                   >
                     política de privacidad
                   </a>
                 </label>
               </div>
               {errors.termsAccepted && (
-                <p className="text-red-400 text-xs">
+                <p className="text-red-500 text-xs font-medium mt-1">
                   {errors.termsAccepted.message}
                 </p>
               )}
@@ -591,8 +580,9 @@ export default function Register() {
               <ResponsiveButton
                 type="submit"
                 disabled={loading || checkingUsername || !isValid}
-                className="w-full"
+                className="w-full font-poppins-bold uppercase tracking-wider"
                 size="lg"
+                variant="primary"
               >
                 {loading ? (
                   <div className="flex items-center justify-center space-x-2">
@@ -610,7 +600,7 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={() => (window.location.href = "/login")}
-                    className="text-blue-400 hover:text-blue-300 transition-colors duration-200 font-medium"
+                    className="text-red-500 hover:text-red-400 transition-colors duration-200 font-poppins-bold uppercase text-xs tracking-wider"
                   >
                     Inicia sesión aquí
                   </button>

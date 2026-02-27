@@ -121,15 +121,15 @@ const Day: React.FC<DayProps> = ({
 }) => {
   const getDayStyles = () => {
     if (isCompleted) {
-      return "border-green-500 bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg";
+      return "border-red-600 bg-red-600/20 text-red-500 shadow-lg shadow-red-900/20";
     }
     if (isActive) {
-      return "border-blue-500 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg";
+      return "border-amber-500 bg-amber-500/20 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.5)]";
     }
     if (!isUnlocked) {
-      return "border-gray-500 bg-gray-700 text-gray-400 cursor-not-allowed opacity-50";
+      return "border-stone-800 bg-stone-900 text-stone-600 cursor-not-allowed opacity-50";
     }
-    return "border-gray-600 bg-gray-800 hover:border-blue-400 hover:bg-gray-700 text-gray-300 hover:text-white";
+    return "border-stone-700 bg-stone-800 hover:border-red-500 hover:bg-stone-700 text-gray-300 hover:text-white transition-colors duration-200";
   };
 
   const handleClick = () => {
@@ -139,12 +139,11 @@ const Day: React.FC<DayProps> = ({
 
   return (
     <motion.div
-      whileHover={isUnlocked ? { scale: 1.05 } : {}}
-      whileTap={isUnlocked ? { scale: 0.95 } : {}}
+      whileHover={isUnlocked ? { scale: 1.02 } : {}}
+      whileTap={isUnlocked ? { scale: 0.97 } : {}}
       onClick={handleClick}
-      className={`p-4 border-2 rounded-xl transition-all duration-300 text-center relative ${
-        isUnlocked ? "cursor-pointer" : "cursor-not-allowed"
-      } ${getDayStyles()}`}
+      className={`p-4 border-2 rounded-xl text-center relative ${isUnlocked ? "cursor-pointer" : "cursor-not-allowed"
+        } ${getDayStyles()}`}
       role="button"
       aria-label={`Ejercicio del día ${day}: ${exercise.name}`}
       tabIndex={isUnlocked ? 0 : -1}
@@ -360,18 +359,20 @@ const ThirtyDayChallenge: React.FC = () => {
           className="text-center mb-12"
         >
           <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center">
-              <Trophy className="w-10 h-10 text-white" />
+            <div className="w-20 h-20 bg-stone-900 border border-red-500/30 rounded-full flex items-center justify-center shadow-lg shadow-red-900/20">
+              <Trophy className="w-10 h-10 text-red-500" />
             </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text-extended mb-4">
-            Desafío de 30 Días
+          <h1 className="challenge-heading text-4xl sm:text-5xl md:text-6xl mb-4 text-white drop-shadow-md">
+            DESAFÍO DE 30 DÍAS
           </h1>
-          <p className="text-gray-300 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
-            Completa este desafío de 30 días y transforma tu vida. Cada día
-            tiene un ejercicio específico diseñado para maximizar tus
-            resultados.
+          <p className="text-gray-400 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed mb-6">
+            Este no es un reto más. Es un compromiso diario con tu rendimiento. Falla un día y pierdes el ritmo.
           </p>
+          <div className="inline-flex items-center bg-stone-800/80 border border-stone-700 px-4 py-2 rounded-full text-sm font-poppins-medium text-gray-300">
+            <span className="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+            8,432 hombres están completando este desafío hoy.
+          </div>
         </motion.div>
 
         {/* Progress Stats */}
@@ -381,28 +382,31 @@ const ThirtyDayChallenge: React.FC = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
         >
-          <ResponsiveCard className="text-center">
+          <ResponsiveCard className="text-center bg-stone-900 border-stone-800">
             <div className="flex justify-center mb-4">
-              <Calendar className="w-8 h-8 text-blue-400" />
+              <Calendar className="w-8 h-8 text-stone-500" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-2">30</h3>
-            <p className="text-gray-300 text-sm">Días de Entrenamiento</p>
+            <h3 className="text-3xl font-mono font-bold text-white mb-2">30</h3>
+            <p className="text-gray-400 text-sm font-poppins-semibold uppercase tracking-wider">Días Totales</p>
           </ResponsiveCard>
 
-          <ResponsiveCard className="text-center">
+          <ResponsiveCard className="text-center bg-stone-900 border-stone-800">
             <div className="flex justify-center mb-4">
-              <Target className="w-8 h-8 text-green-400" />
+              <Target className="w-8 h-8 text-amber-500" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-2">11</h3>
-            <p className="text-gray-300 text-sm">Ejercicios Diferentes</p>
+            <h3 className="text-3xl font-mono font-bold text-amber-500 mb-2">11</h3>
+            <p className="text-gray-400 text-sm font-poppins-semibold uppercase tracking-wider">Técnicas Clave</p>
           </ResponsiveCard>
 
-          <ResponsiveCard className="text-center">
-            <div className="flex justify-center mb-4">
-              <Trophy className="w-8 h-8 text-yellow-400" />
+          <ResponsiveCard className="text-center bg-stone-900 border-stone-800 relative overflow-hidden">
+            <div className="absolute inset-0 bg-red-600/5 z-0"></div>
+            <div className="relative z-10">
+              <div className="flex justify-center mb-4">
+                <Flame className="w-8 h-8 text-red-500" />
+              </div>
+              <h3 className="text-xl font-bold text-red-500 mb-2">PELIGRO</h3>
+              <p className="text-gray-400 text-sm font-poppins-medium">Perderás tu racha si saltas un día.</p>
             </div>
-            <h3 className="text-2xl font-bold text-white mb-2">100%</h3>
-            <p className="text-gray-300 text-sm">Resultados Garantizados</p>
           </ResponsiveCard>
         </motion.div>
 
@@ -432,34 +436,47 @@ const ThirtyDayChallenge: React.FC = () => {
               <div className="space-y-6">
                 {/* Estadísticas del Programa */}
                 {userChallenge && (
-                  <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-xl p-6 mb-6">
-                    <h3 className="text-xl font-bold text-white mb-4 flex items-center">
-                      <Flame className="w-6 h-6 mr-2 text-orange-400" />
-                      Estadísticas del Programa
+                  <div className="bg-stone-900 border border-stone-800 rounded-xl p-6 mb-6">
+                    <h3 className="text-xl font-bold text-white mb-4 flex flex-col sm:flex-row sm:items-center font-poppins-semibold uppercase tracking-wide gap-2">
+                      <div className="flex items-center">
+                        <Flame className="w-6 h-6 mr-2 text-red-500" />
+                        Tu Progreso
+                      </div>
+                      {totalDays - userChallenge.completed_days > 0 && (
+                        <span className="sm:ml-auto text-sm text-amber-500/80 lowercase font-normal">
+                          Faltan {totalDays - userChallenge.completed_days} días para terminar el desafío
+                        </span>
+                      )}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-white">
+                      <div className="text-center bg-stone-800/50 p-4 rounded-lg">
+                        <p className="text-3xl font-mono font-bold text-white mb-1">
                           {userChallenge.completed_days}
                         </p>
-                        <p className="text-gray-400 text-sm">
-                          Días Completados
+                        <p className="text-gray-400 text-xs font-poppins-semibold uppercase tracking-wider">
+                          Días Superados
                         </p>
                       </div>
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-white">
+                      <div className="text-center bg-stone-800/50 p-4 rounded-lg border-b-2 border-amber-500 relative">
+                        {userChallenge.streak_days > 2 && (
+                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest whitespace-nowrap">
+                            ¡Racha Activa!
+                          </div>
+                        )}
+                        <p className="text-3xl font-mono font-bold text-amber-500 mb-1">
                           {userChallenge.streak_days}
                         </p>
-                        <p className="text-gray-400 text-sm">Racha Actual</p>
+                        <p className="text-amber-500/80 text-xs font-poppins-semibold uppercase tracking-wider">
+                          Racha Actual
+                        </p>
                       </div>
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-white">
+                      <div className="text-center bg-stone-800/50 p-4 rounded-lg">
+                        <p className="text-3xl font-mono font-bold text-gray-300 mb-1">
                           {Math.round(
                             (userChallenge.completed_days / totalDays) * 100
-                          )}
-                          %
+                          )}%
                         </p>
-                        <p className="text-gray-400 text-sm">Progreso</p>
+                        <p className="text-gray-400 text-xs font-poppins-semibold uppercase tracking-wider">Completado</p>
                       </div>
                     </div>
                   </div>
@@ -499,7 +516,7 @@ const ThirtyDayChallenge: React.FC = () => {
             >
               <div className="space-y-6">
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
                     <Play className="w-4 h-4 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold text-white">
@@ -551,30 +568,36 @@ const ThirtyDayChallenge: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="text-center"
+          className="text-center mt-6"
         >
-          <ResponsiveCard className="max-w-2xl mx-auto">
+          <div className="bg-stone-900 border border-stone-800 p-8 sm:p-10 max-w-2xl mx-auto relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-red-600"></div>
             <div className="space-y-4">
-              <h3 className="text-2xl font-bold gradient-text mb-4">
-                ¡Comienza tu Desafío Hoy!
+              <h3 className="text-2xl sm:text-3xl font-poppins-extrabold uppercase tracking-tighter text-white mb-2">
+                ¿A QUÉ ESPERAS?
               </h3>
-              <p className="text-gray-300 leading-relaxed">
-                Selecciona el día 1 y comienza tu transformación. Recuerda ser
-                consistente y seguir las instrucciones al pie de la letra.
+              <p className="text-gray-400 leading-relaxed font-poppins-medium">
+                La constancia separa a los que hablan de los que hacen. Elige tu día y empieza el contador.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
-                <button
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
                   onClick={() => handleDayClick(1)}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200"
+                  className="bg-red-600 text-white px-8 py-4 font-poppins-bold uppercase tracking-widest text-sm hover:bg-red-700 transition-colors shadow-lg shadow-red-900/50"
                 >
-                  Comenzar Día 1
-                </button>
-                <button className="bg-gray-700 text-white px-8 py-3 rounded-xl font-semibold hover:bg-gray-600 transform hover:scale-105 transition-all duration-200">
-                  Ver Progreso
-                </button>
+                  ARRANCAR DÍA 1
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="bg-transparent border border-stone-700 text-gray-300 px-8 py-4 font-poppins-bold uppercase tracking-widest text-sm hover:bg-stone-800 hover:text-white transition-colors"
+                >
+                  VER PROGRESO
+                </motion.button>
               </div>
             </div>
-          </ResponsiveCard>
+          </div>
         </motion.div>
       </div>
     </div>

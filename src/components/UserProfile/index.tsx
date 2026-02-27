@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Edit3, 
-  Save, 
-  X, 
-  Trophy, 
-  Palette, 
+import {
+  Edit3,
+  Save,
+  X,
+  Trophy,
+  Palette,
   Camera,
   Plus,
   AlertCircle
@@ -35,12 +35,12 @@ interface UserProfile {
 }
 
 const themes = [
-  { id: 'default', name: 'Clásico', colors: 'from-blue-500 via-purple-500 to-cyan-500' },
-  { id: 'neon', name: 'Neón', colors: 'from-pink-500 via-purple-500 to-cyan-500' },
-  { id: 'sunset', name: 'Atardecer', colors: 'from-orange-400 via-red-500 to-pink-500' },
-  { id: 'ocean', name: 'Océano', colors: 'from-blue-400 via-teal-500 to-green-400' },
-  { id: 'galaxy', name: 'Galaxia', colors: 'from-purple-600 via-blue-600 to-indigo-800' },
-  { id: 'fire', name: 'Fuego', colors: 'from-red-500 via-orange-500 to-yellow-400' }
+  { id: 'default', name: 'Clásico', colors: 'from-stone-800 via-stone-900 to-black' },
+  { id: 'neon', name: 'Neón', colors: 'from-red-600 via-red-900 to-black' },
+  { id: 'sunset', name: 'Atardecer', colors: 'from-amber-600 via-orange-700 to-red-900' },
+  { id: 'ocean', name: 'Océano', colors: 'from-stone-700 via-stone-800 to-stone-900' },
+  { id: 'galaxy', name: 'Galaxia', colors: 'from-zinc-800 via-neutral-900 to-stone-950' },
+  { id: 'fire', name: 'Fuego', colors: 'from-red-600 via-orange-600 to-amber-600' }
 ];
 
 const avatars = [
@@ -66,11 +66,11 @@ const UserProfile: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'stats' | 'posts'>('stats');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Estado para datos reales del perfil
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [userStats, setUserStats] = useState<UserStatsData | null>(null);
-  
+
   // Estado para datos de la UI (combinación de datos reales y UI)
   const [profile, setProfile] = useState<UserProfile>({
     id: user?.id || '1',
@@ -103,7 +103,7 @@ const UserProfile: React.FC = () => {
         const profileData = await profileService.getUserProfile(user.id);
         if (profileData) {
           setProfileData(profileData);
-          
+
           // Actualizar estado de la UI
           setProfile(prev => ({
             ...prev,
@@ -118,10 +118,10 @@ const UserProfile: React.FC = () => {
         // Cargar estadísticas del usuario
         const stats = await profileService.getUserStats(user.id);
         setUserStats(stats);
-        
+
         // Cargar logros del usuario
         const userAchievements = await profileService.getUserAchievements(user.id);
-        
+
         // Actualizar estadísticas en la UI
         setProfile(prev => ({
           ...prev,
@@ -158,13 +158,13 @@ const UserProfile: React.FC = () => {
 
     try {
       setIsLoading(true);
-      
+
       const updateData: ProfileUpdateData = {
         username: editForm.nickname
       };
 
       const updatedProfile = await profileService.updateUserProfile(user.id, updateData);
-      
+
       if (updatedProfile) {
         setProfileData(updatedProfile);
         setProfile(prev => ({
@@ -178,7 +178,7 @@ const UserProfile: React.FC = () => {
       const errorMessage = err instanceof Error ? err.message : 'Error al guardar el perfil';
       setError(errorMessage);
       console.error('Error saving profile:', err);
-      
+
       // Si el error es por campos que no existen, mostrar mensaje informativo
       if (errorMessage.includes('Could not find the')) {
         setError('Solo se puede editar el nombre de usuario por ahora.');
@@ -192,7 +192,7 @@ const UserProfile: React.FC = () => {
     // Por ahora solo actualizar el estado local ya que el campo theme no existe en la BD
     setProfile(prev => ({ ...prev, theme: themeId }));
     setShowThemeSelector(false);
-    
+
     // Mostrar mensaje informativo
     setError('La personalización de tema se guardará localmente por ahora.');
     setTimeout(() => setError(null), 3000);
@@ -202,7 +202,7 @@ const UserProfile: React.FC = () => {
     // Por ahora solo actualizar el estado local ya que el campo avatar no existe en la BD
     setProfile(prev => ({ ...prev, avatar }));
     setShowAvatarSelector(false);
-    
+
     // Mostrar mensaje informativo
     setError('La personalización de avatar se guardará localmente por ahora.');
     setTimeout(() => setError(null), 3000);
@@ -259,7 +259,7 @@ const UserProfile: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4">
+    <div className="min-h-screen bg-stone-950 text-white p-4">
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -268,27 +268,29 @@ const UserProfile: React.FC = () => {
       >
         {/* Header */}
         <motion.div variants={itemVariants} className="text-center mb-8">
-          <motion.h1 
-            className={`text-5xl font-bold bg-gradient-to-r ${currentTheme.colors} bg-clip-text text-transparent mb-2`}
-            animate={{ 
+          <motion.h1
+            className={`text-5xl font-poppins-bold uppercase tracking-wider bg-gradient-to-r ${currentTheme.colors} bg-clip-text text-transparent mb-2`}
+            animate={{
               backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
             }}
             transition={{ duration: 3, repeat: Infinity }}
           >
             Mi Perfil
           </motion.h1>
-          <p className="text-blue-400 text-lg">Personaliza tu experiencia en Pichasafio</p>
+          <p className="text-gray-400 text-lg font-poppins-medium uppercase tracking-widest">Personaliza tu experiencia en Pichasafio</p>
         </motion.div>
 
         {/* Profile Card */}
-        <motion.div 
+        <motion.div
           variants={itemVariants}
-          className={`bg-gradient-to-br ${currentTheme.colors} p-1 rounded-3xl`}
+          className={`bg-gradient-to-br ${currentTheme.colors} p-1 rounded-none shadow-[4px_4px_0px_rgba(220,38,38,1)]`}
         >
-          <div className="bg-gray-800/90 backdrop-blur-sm rounded-3xl p-8 border border-gray-600/30">
+          <div className="bg-stone-900 rounded-none p-8 border border-stone-800 relative overflow-hidden">
+            {/* Base Line Detail */}
+            <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${currentTheme.colors}`}></div>
             <div className="flex flex-col md:flex-row items-center gap-6">
               {/* Avatar */}
-              <motion.div 
+              <motion.div
                 className="relative"
                 whileHover={{ scale: 1.05 }}
               >
@@ -318,10 +320,10 @@ const UserProfile: React.FC = () => {
                       type="text"
                       value={editForm.nickname}
                       onChange={(e) => setEditForm(prev => ({ ...prev, nickname: e.target.value }))}
-                      className="bg-gray-800/80 border border-gray-600/50 rounded-xl px-4 py-2 text-white w-full focus:border-blue-400 focus:outline-none placeholder-gray-400"
+                      className="bg-stone-800 border border-stone-700 rounded-none px-4 py-2 text-white w-full focus:border-red-500 focus:outline-none placeholder-gray-500 font-poppins-medium uppercase tracking-wider"
                       placeholder="Tu nickname"
                     />
-                    <div className="text-sm text-blue-400/80 text-center md:text-left">
+                    <div className="text-xs text-gray-500 text-center md:text-left uppercase tracking-widest">
                       <p>Solo puedes editar tu nombre de usuario por ahora</p>
                     </div>
                     <div className="flex gap-2 justify-center md:justify-start">
@@ -329,7 +331,7 @@ const UserProfile: React.FC = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={handleSave}
-                        className="bg-gradient-to-r from-blue-600 to-blue-400 px-4 py-2 rounded-xl flex items-center gap-2 transition-all text-white border border-blue-400/30"
+                        className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-none flex items-center gap-2 transition-all text-white border border-red-500 shadow-[2px_2px_0px_rgba(153,27,27,1)] uppercase tracking-wider font-poppins-bold text-sm"
                       >
                         <Save className="w-4 h-4" />
                         Guardar
@@ -338,7 +340,7 @@ const UserProfile: React.FC = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setIsEditing(false)}
-                        className="bg-gray-800/80 hover:bg-gray-700/50 px-4 py-2 rounded-xl flex items-center gap-2 transition-colors text-gray-300 border border-gray-600/50"
+                        className="bg-stone-800 hover:bg-stone-700 px-4 py-2 rounded-none flex items-center gap-2 transition-colors text-gray-300 border border-stone-600 uppercase tracking-wider font-poppins-bold text-sm"
                       >
                         <X className="w-4 h-4" />
                         Cancelar
@@ -348,52 +350,52 @@ const UserProfile: React.FC = () => {
                 ) : (
                   <div>
                     <div className="flex items-center gap-3 justify-center md:justify-start mb-2">
-                      <h2 className="text-2xl font-bold text-blue-400">{profile.nickname}</h2>
+                      <h2 className="text-3xl font-poppins-extrabold uppercase tracking-widest text-white">{profile.nickname}</h2>
                       <motion.button
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => setIsEditing(true)}
-                        className="text-blue-600 hover:text-blue-400 transition-colors"
+                        className="text-red-500 hover:text-red-400 transition-colors"
                       >
                         <Edit3 className="w-5 h-5" />
                       </motion.button>
                     </div>
-                    <p className="text-blue-400/90 mb-4">{profile.bio}</p>
-                    
+                    <p className="text-gray-400 mb-4 font-poppins-medium">{profile.bio}</p>
+
                     {/* Información adicional del perfil */}
                     {profileData && (
-                      <div className="mb-4 text-sm text-blue-400/70">
+                      <div className="mb-4 text-xs font-poppins-medium uppercase tracking-widest text-gray-500">
                         <p>Miembro desde: {new Date(profileData.created_at).toLocaleDateString()}</p>
                         {profileData.updated_at && (
                           <p>Última actualización: {new Date(profileData.updated_at).toLocaleDateString()}</p>
                         )}
                       </div>
                     )}
-                    
+
                     {/* Level Progress */}
                     <div className="mb-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-blue-400">Nivel {profile.stats.level}</span>
-                        <span className="text-sm text-purple-400">{profile.stats.experience}/{profile.stats.maxExperience} XP</span>
+                        <span className="text-sm font-poppins-bold uppercase tracking-wider text-red-500">Nivel {profile.stats.level}</span>
+                        <span className="text-sm font-poppins-bold uppercase tracking-wider text-amber-500">{profile.stats.experience}/{profile.stats.maxExperience} XP</span>
                       </div>
-                      <div className="w-full bg-gray-800/60 rounded-full h-3 border border-gray-600/30">
+                      <div className="w-full bg-stone-950 rounded-none h-3 border border-stone-800">
                         <motion.div
-                          className={`h-3 bg-gradient-to-r ${currentTheme.colors} rounded-full`}
+                          className={`h-full bg-gradient-to-r ${currentTheme.colors}`}
                           initial={{ width: 0 }}
                           animate={{ width: `${progressPercentage}%` }}
                           transition={{ duration: 1, delay: 0.5 }}
                         />
                       </div>
                     </div>
-                    
+
                     {/* Theme Selector */}
                     <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => setShowThemeSelector(true)}
-                      className="bg-gradient-to-r from-blue-600/80 to-blue-500/80 px-4 py-2 rounded-xl flex items-center gap-2 transition-all mx-auto md:mx-0 border border-blue-400/30 text-blue-400"
+                      className="bg-stone-800 hover:bg-stone-700 px-6 py-2 rounded-none flex items-center gap-2 transition-all mx-auto md:mx-0 border border-stone-600 text-white font-poppins-bold uppercase tracking-wider shadow-[2px_2px_0px_rgba(239,68,68,0.5)]"
                     >
-                      <Palette className="w-4 h-4" />
+                      <Palette className="w-4 h-4 text-red-500" />
                       Cambiar Tema
                     </motion.button>
                   </div>
@@ -405,34 +407,32 @@ const UserProfile: React.FC = () => {
 
         {/* Tabs and Create Post Button */}
         <motion.div variants={itemVariants} className="flex items-center justify-between mb-6">
-          <div className="flex bg-gray-800/80 rounded-xl p-1 border border-gray-600/50 backdrop-blur-sm">
+          <div className="flex bg-stone-900 rounded-none p-1 border border-stone-800">
             <button
               onClick={() => setActiveTab('stats')}
-              className={`px-6 py-2 rounded-lg transition-all ${
-                activeTab === 'stats'
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-400 text-white'
-                  : 'text-blue-400/70 hover:text-blue-400 hover:bg-blue-600/20'
-              }`}
+              className={`px-6 py-2 rounded-none transition-all font-poppins-bold uppercase tracking-wider text-sm ${activeTab === 'stats'
+                ? 'bg-red-600 text-white shadow-[2px_2px_0px_rgba(153,27,27,1)]'
+                : 'text-gray-500 hover:text-white hover:bg-stone-800'
+                }`}
             >
               Estadísticas
             </button>
             <button
               onClick={() => setActiveTab('posts')}
-              className={`px-6 py-2 rounded-lg transition-all ${
-                activeTab === 'posts'
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-400 text-white'
-                  : 'text-blue-400/70 hover:text-blue-400 hover:bg-blue-600/20'
-              }`}
+              className={`px-6 py-2 rounded-none transition-all font-poppins-bold uppercase tracking-wider text-sm ${activeTab === 'posts'
+                ? 'bg-red-600 text-white shadow-[2px_2px_0px_rgba(153,27,27,1)]'
+                : 'text-gray-500 hover:text-white hover:bg-stone-800'
+                }`}
             >
               Mis Posts
             </button>
           </div>
-          
+
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setShowCreatePost(true)}
-            className="bg-gradient-to-r from-blue-600 to-blue-400 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all border border-blue-400/30"
+            className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-none flex items-center gap-2 transition-all border border-red-500 font-poppins-bold uppercase tracking-wider shadow-[4px_4px_0px_rgba(153,27,27,1)]"
           >
             <Plus className="w-5 h-5" />
             Crear Post
@@ -444,94 +444,93 @@ const UserProfile: React.FC = () => {
           <>
             <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <motion.div
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-gray-800/80 rounded-2xl p-6 text-center border border-gray-600/50 hover:border-blue-400 transition-all backdrop-blur-sm"
+                whileHover={{ scale: 1.02, y: -2 }}
+                className="bg-stone-900 rounded-none p-6 text-center border border-stone-800 hover:border-red-500 transition-all font-poppins-medium"
               >
-                <div className="text-3xl mb-2">💖</div>
-                <div className="text-2xl font-bold text-blue-400 mb-1">{profile.stats.totalLikes}</div>
-                <div className="text-purple-400/80 text-sm">Likes</div>
+                <div className="text-3xl mb-2 drop-shadow-md">💖</div>
+                <div className="text-2xl font-poppins-bold uppercase tracking-widest text-white mb-1">{profile.stats.totalLikes}</div>
+                <div className="text-gray-500 uppercase tracking-widest text-xs">Likes</div>
               </motion.div>
 
               <motion.div
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-gray-800/80 rounded-2xl p-6 text-center border border-gray-600/50 hover:border-blue-400 transition-all backdrop-blur-sm"
+                whileHover={{ scale: 1.02, y: -2 }}
+                className="bg-stone-900 rounded-none p-6 text-center border border-stone-800 hover:border-red-500 transition-all font-poppins-medium"
               >
-                <div className="text-3xl mb-2">🔥</div>
-                <div className="text-2xl font-bold text-blue-400 mb-1">{profile.stats.streak}</div>
-                <div className="text-purple-400/80 text-sm">Racha</div>
+                <div className="text-3xl mb-2 drop-shadow-md">🔥</div>
+                <div className="text-2xl font-poppins-bold uppercase tracking-widest text-amber-500 mb-1">{profile.stats.streak}</div>
+                <div className="text-gray-500 uppercase tracking-widest text-xs">Racha</div>
               </motion.div>
 
               <motion.div
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-gray-800/80 rounded-2xl p-6 text-center border border-gray-600/50 hover:border-blue-400 transition-all backdrop-blur-sm"
+                whileHover={{ scale: 1.02, y: -2 }}
+                className="bg-stone-900 rounded-none p-6 text-center border border-stone-800 hover:border-red-500 transition-all font-poppins-medium"
               >
-                <div className="text-3xl mb-2">🎯</div>
-                <div className="text-2xl font-bold text-blue-400 mb-1">{profile.stats.posesCompleted}</div>
-                <div className="text-purple-400/80 text-sm">Poses Completadas</div>
+                <div className="text-3xl mb-2 drop-shadow-md">🎯</div>
+                <div className="text-2xl font-poppins-bold uppercase tracking-widest text-red-500 mb-1">{profile.stats.posesCompleted}</div>
+                <div className="text-gray-500 uppercase tracking-widest text-xs">Poses Completadas</div>
               </motion.div>
 
               <motion.div
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-gray-800/80 rounded-2xl p-6 text-center border border-gray-600/50 hover:border-blue-400 transition-all backdrop-blur-sm"
+                whileHover={{ scale: 1.02, y: -2 }}
+                className="bg-stone-900 rounded-none p-6 text-center border border-stone-800 hover:border-red-500 transition-all font-poppins-medium"
               >
-                <div className="text-3xl mb-2">⭐</div>
-                <div className="text-2xl font-bold text-blue-400 mb-1">{profile.stats.level}</div>
-                <div className="text-purple-400/80 text-sm">Nivel</div>
+                <div className="text-3xl mb-2 drop-shadow-md">⭐</div>
+                <div className="text-2xl font-poppins-bold uppercase tracking-widest text-white mb-1">{profile.stats.level}</div>
+                <div className="text-gray-500 uppercase tracking-widest text-xs">Nivel</div>
               </motion.div>
             </motion.div>
 
             {/* Achievements */}
-            <motion.div variants={itemVariants} className="bg-gray-800/80 rounded-2xl p-6 border border-gray-600/50 backdrop-blur-sm">
-              <h3 className="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2">
-                <Trophy className="w-6 h-6 text-blue-400" />
+            <motion.div variants={itemVariants} className="bg-stone-900 rounded-none p-6 border border-stone-800 shadow-[4px_4px_0px_rgba(28,25,23,1)]">
+              <h3 className="text-xl font-poppins-bold uppercase tracking-wide text-white mb-4 flex items-center gap-2">
+                <Trophy className="w-6 h-6 text-amber-500" />
                 Logros Desbloqueados
               </h3>
-              
+
               {/* Información adicional de estadísticas */}
               {userStats && (
-                <div className="mb-6 p-4 bg-blue-600/20 rounded-xl border border-blue-400/30">
-                  <h4 className="text-lg font-bold text-blue-400 mb-3">Estadísticas Detalladas</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div className="mb-6 p-4 bg-stone-950 rounded-none border border-stone-800">
+                  <h4 className="text-sm font-poppins-bold uppercase tracking-wider text-red-500 mb-3">Estadísticas Detalladas</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm font-poppins-medium">
                     <div>
-                      <p className="text-purple-400/80">Puntos Totales</p>
-                      <p className="text-blue-400 font-bold">{userStats.total_points}</p>
+                      <p className="text-gray-500 uppercase tracking-widest text-xs">Puntos Totales</p>
+                      <p className="text-white text-lg">{userStats.total_points}</p>
                     </div>
                     <div>
-                      <p className="text-purple-400/80">Racha Más Larga</p>
-                      <p className="text-blue-400 font-bold">{userStats.longest_streak} días</p>
+                      <p className="text-gray-500 uppercase tracking-widest text-xs">Racha Más Larga</p>
+                      <p className="text-amber-500 text-lg">{userStats.longest_streak} días</p>
                     </div>
                     <div>
-                      <p className="text-purple-400/80">Minutos Totales</p>
-                      <p className="text-blue-400 font-bold">{userStats.total_minutes}</p>
+                      <p className="text-gray-500 uppercase tracking-widest text-xs">Minutos Totales</p>
+                      <p className="text-white text-lg">{userStats.total_minutes}</p>
                     </div>
                     <div>
-                      <p className="text-purple-400/80">Retos Completados</p>
-                      <p className="text-blue-400 font-bold">{userStats.challenges_completed}</p>
+                      <p className="text-gray-500 uppercase tracking-widest text-xs">Retos Completados</p>
+                      <p className="text-red-500 text-lg">{userStats.challenges_completed}</p>
                     </div>
                   </div>
                 </div>
               )}
-              
+
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {achievements.map((achievement) => {
                   const isUnlocked = profile.stats.achievements.includes(achievement.id);
                   return (
                     <motion.div
                       key={achievement.id}
-                      whileHover={{ scale: isUnlocked ? 1.05 : 1 }}
-                      className={`p-4 rounded-xl text-center transition-all ${
-                        isUnlocked 
-                          ? 'bg-gradient-to-br from-blue-600/30 to-blue-400/30 border border-blue-400/50' 
-                          : 'bg-gray-800/50 border border-gray-600/30 opacity-50'
-                      }`}
+                      whileHover={{ scale: isUnlocked ? 1.02 : 1 }}
+                      className={`p-4 rounded-none text-center transition-all ${isUnlocked
+                        ? 'bg-stone-800 border-2 border-red-500 shadow-[2px_2px_0px_rgba(220,38,38,0.5)]'
+                        : 'bg-stone-950 border border-stone-800 opacity-60'
+                        }`}
                     >
-                      <div className={`text-2xl mb-2 ${isUnlocked ? '' : 'grayscale'}`}>
+                      <div className={`text-2xl mb-2 drop-shadow-md ${isUnlocked ? '' : 'grayscale'}`}>
                         {achievement.icon}
                       </div>
-                      <div className={`text-sm font-bold mb-1 ${isUnlocked ? 'text-blue-400' : 'text-purple-400/50'}`}>
+                      <div className={`text-sm font-poppins-bold uppercase tracking-wider mb-1 ${isUnlocked ? 'text-white' : 'text-gray-600'}`}>
                         {achievement.name}
                       </div>
-                      <div className={`text-xs ${isUnlocked ? 'text-purple-400/80' : 'text-purple-400/40'}`}>
+                      <div className={`text-xs font-poppins-medium ${isUnlocked ? 'text-gray-400' : 'text-gray-700'}`}>
                         {achievement.description}
                       </div>
                     </motion.div>
@@ -567,8 +566,8 @@ const UserProfile: React.FC = () => {
               className="w-full max-w-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <CreatePost 
-                isOpen={showCreatePost} 
+              <CreatePost
+                isOpen={showCreatePost}
                 onClose={() => setShowCreatePost(false)}
                 onPostCreated={() => {
                   // Actualizar el feed sin recargar la página
@@ -588,17 +587,17 @@ const UserProfile: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
             onClick={() => setShowThemeSelector(false)}
           >
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="bg-gray-800 rounded-2xl p-6 max-w-md w-full"
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-stone-900 rounded-none p-6 max-w-md w-full border border-stone-800 shadow-[8px_8px_0px_rgba(28,25,23,1)]"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-xl font-bold text-white mb-4 text-center">Elige tu Tema</h3>
+              <h3 className="text-xl font-poppins-bold uppercase tracking-wider text-white mb-4 text-center">Elige tu Tema</h3>
               <div className="grid grid-cols-1 gap-3">
                 {themes.map((theme) => (
                   <motion.button
@@ -606,14 +605,13 @@ const UserProfile: React.FC = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleThemeChange(theme.id)}
-                    className={`p-4 rounded-xl border-2 transition-all ${
-                      profile.theme === theme.id 
-                        ? 'border-white' 
-                        : 'border-transparent hover:border-gray-600'
-                    }`}
+                    className={`p-4 rounded-none border-2 transition-all ${profile.theme === theme.id
+                      ? 'border-red-500 shadow-[2px_2px_0px_rgba(220,38,38,0.5)]'
+                      : 'border-transparent hover:border-stone-700 bg-stone-800/50'
+                      }`}
                   >
-                    <div className={`w-full h-12 bg-gradient-to-r ${theme.colors} rounded-lg mb-2`} />
-                    <div className="text-white font-semibold">{theme.name}</div>
+                    <div className={`w-full h-8 bg-gradient-to-r ${theme.colors} border border-stone-700 rounded-none mb-2`} />
+                    <div className="text-white font-poppins-medium uppercase tracking-widest text-sm">{theme.name}</div>
                   </motion.button>
                 ))}
               </div>
@@ -629,17 +627,17 @@ const UserProfile: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
             onClick={() => setShowAvatarSelector(false)}
           >
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="bg-gray-800 rounded-2xl p-6 max-w-md w-full"
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-stone-900 rounded-none p-6 max-w-md w-full border border-stone-800 shadow-[8px_8px_0px_rgba(28,25,23,1)]"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-xl font-bold text-white mb-4 text-center">Elige tu Avatar</h3>
+              <h3 className="text-xl font-poppins-bold uppercase tracking-wider text-white mb-4 text-center">Elige tu Avatar</h3>
               <div className="grid grid-cols-5 gap-3">
                 {avatars.map((avatar) => (
                   <motion.button
@@ -647,11 +645,10 @@ const UserProfile: React.FC = () => {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => handleAvatarChange(avatar)}
-                    className={`w-12 h-12 rounded-xl text-2xl flex items-center justify-center transition-all ${
-                      profile.avatar === avatar 
-                        ? 'bg-gradient-to-br from-pink-500 to-purple-500' 
-                        : 'bg-gray-700 hover:bg-gray-600'
-                    }`}
+                    className={`w-12 h-12 rounded-none text-2xl flex items-center justify-center transition-all ${profile.avatar === avatar
+                      ? 'bg-red-600 shadow-[2px_2px_0px_rgba(220,38,38,0.5)] border border-red-500'
+                      : 'bg-stone-800 hover:bg-stone-700 border border-transparent'
+                      }`}
                   >
                     {avatar}
                   </motion.button>

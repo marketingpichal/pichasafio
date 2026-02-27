@@ -17,22 +17,22 @@ export default function ResetPassword() {
   const [isValidToken, setIsValidToken] = useState<boolean>(false);
   const [isCheckingToken, setIsCheckingToken] = useState<boolean>(true);
 
-  
+
   const navigate = useNavigate();
   // const [searchParams] = useSearchParams();
 
   useEffect(() => {
     checkResetToken();
-    
+
     // Escuchar cambios en el hash de la URL
     const handleHashChange = () => {
       if (import.meta.env.DEV) console.log('Hash cambiado, verificando token nuevamente...');
       setIsCheckingToken(true);
       checkResetToken();
     };
-    
+
     window.addEventListener('hashchange', handleHashChange);
-    
+
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
@@ -43,25 +43,25 @@ export default function ResetPassword() {
       // Extraer el token del hash de la URL
       const hash = window.location.hash;
       const urlParams = new URLSearchParams(hash.substring(1)); // Remover el # inicial
-      
+
       const accessToken = urlParams.get('access_token');
       const refreshToken = urlParams.get('refresh_token');
       const tokenType = urlParams.get('type');
-      
+
       // Logs de debug solo en desarrollo
       if (import.meta.env.DEV) {
         console.log('Hash de la URL:', hash);
         console.log('Access Token:', accessToken ? 'Presente' : 'No presente');
         console.log('Token Type:', tokenType);
       }
-      
+
       if (accessToken && tokenType === 'recovery') {
         // Si tenemos un token de recuperación válido, establecer la sesión
         const { data, error } = await supabase.auth.setSession({
           access_token: accessToken,
           refresh_token: refreshToken || ''
         });
-        
+
         if (error) {
           if (import.meta.env.DEV) console.error('Error al establecer sesión:', error);
           setError('Error al procesar el enlace de recuperación. Por favor, solicita un nuevo enlace.');
@@ -73,22 +73,22 @@ export default function ResetPassword() {
           setError('El enlace de recuperación no es válido o ha expirado. Por favor, solicita un nuevo enlace.');
           setIsValidToken(false);
         }
-              } else {
-          // Si no hay token en el hash, verificar si ya hay una sesión válida
-          const { data: { session }, error } = await supabase.auth.getSession();
-          
-          if (error) {
-            if (import.meta.env.DEV) console.error('Error al verificar sesión:', error);
-            setError('Error al verificar el enlace de recuperación. Por favor, solicita un nuevo enlace.');
-            setIsValidToken(false);
-          } else if (session) {
-            if (import.meta.env.DEV) console.log('Sesión existente válida');
-            setIsValidToken(true);
-          } else {
-            setError('El enlace de recuperación no es válido o ha expirado. Por favor, solicita un nuevo enlace.');
-            setIsValidToken(false);
-          }
+      } else {
+        // Si no hay token en el hash, verificar si ya hay una sesión válida
+        const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (error) {
+          if (import.meta.env.DEV) console.error('Error al verificar sesión:', error);
+          setError('Error al verificar el enlace de recuperación. Por favor, solicita un nuevo enlace.');
+          setIsValidToken(false);
+        } else if (session) {
+          if (import.meta.env.DEV) console.log('Sesión existente válida');
+          setIsValidToken(true);
+        } else {
+          setError('El enlace de recuperación no es válido o ha expirado. Por favor, solicita un nuevo enlace.');
+          setIsValidToken(false);
         }
+      }
     } catch (err) {
       if (import.meta.env.DEV) console.error('Error inesperado al verificar token:', err);
       setError('Error inesperado al verificar el enlace. Por favor, intenta nuevamente.');
@@ -128,7 +128,7 @@ export default function ResetPassword() {
       } else {
         if (import.meta.env.DEV) console.log('Contraseña actualizada exitosamente');
         setSuccess(true);
-        
+
         // Redirigir al login después de 3 segundos
         setTimeout(() => {
           navigate("/login");
@@ -151,7 +151,7 @@ export default function ResetPassword() {
 
   if (isCheckingToken) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-stone-950 flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -161,10 +161,10 @@ export default function ResetPassword() {
           <ResponsiveCard
             title="Verificando enlace..."
             subtitle="Estamos validando tu enlace de recuperación"
-            className="text-center"
+            className="text-center bg-stone-900 border border-stone-800 shadow-2xl shadow-black/80"
           >
             <div className="flex items-center justify-center py-8">
-              <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
           </ResponsiveCard>
         </motion.div>
@@ -174,7 +174,7 @@ export default function ResetPassword() {
 
   if (!isValidToken) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-stone-950 flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -184,13 +184,13 @@ export default function ResetPassword() {
           <ResponsiveCard
             title="Enlace Inválido"
             subtitle="El enlace de recuperación no es válido o ha expirado"
-            className="text-center"
+            className="text-center bg-stone-900 border border-stone-800 shadow-2xl shadow-black/80"
           >
             <div className="space-y-6">
               <div className="flex items-center justify-center">
                 <AlertCircle className="w-16 h-16 text-red-500" />
               </div>
-              
+
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
                 <p className="text-red-400 text-sm">{error}</p>
                 <p className="text-gray-400 text-xs mt-2">
@@ -200,12 +200,13 @@ export default function ResetPassword() {
 
               <ResponsiveButton
                 onClick={handleRequestNewLink}
-                className="w-full"
+                className="w-full font-poppins-bold uppercase tracking-wider"
                 size="lg"
+                variant="primary"
               >
                 Solicitar Nuevo Enlace
               </ResponsiveButton>
-              
+
 
             </div>
           </ResponsiveCard>
@@ -216,7 +217,7 @@ export default function ResetPassword() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-stone-950 flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -226,13 +227,13 @@ export default function ResetPassword() {
           <ResponsiveCard
             title="¡Contraseña Actualizada!"
             subtitle="Tu contraseña ha sido restablecida exitosamente"
-            className="text-center"
+            className="text-center bg-stone-900 border border-stone-800 shadow-2xl shadow-black/80"
           >
             <div className="space-y-6">
               <div className="flex items-center justify-center">
                 <CheckCircle className="w-16 h-16 text-green-500" />
               </div>
-              
+
               <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
                 <p className="text-green-400 text-sm">
                   Tu contraseña ha sido actualizada correctamente. Serás redirigido al inicio de sesión en unos segundos.
@@ -241,8 +242,9 @@ export default function ResetPassword() {
 
               <ResponsiveButton
                 onClick={() => navigate("/login")}
-                className="w-full"
+                className="w-full font-poppins-bold uppercase tracking-wider"
                 size="lg"
+                variant="primary"
               >
                 Ir al Inicio de Sesión
               </ResponsiveButton>
@@ -254,7 +256,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-stone-950 flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -264,7 +266,7 @@ export default function ResetPassword() {
         <ResponsiveCard
           title="Restablecer Contraseña"
           subtitle="Ingresa tu nueva contraseña"
-          className="text-center"
+          className="text-center bg-stone-900 border border-stone-800 shadow-2xl shadow-black/80"
         >
           <form onSubmit={handlePasswordReset} className="space-y-6">
             <div className="space-y-2">
@@ -279,7 +281,7 @@ export default function ResetPassword() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Tu nueva contraseña"
                   required
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12"
+                  className="w-full px-4 py-3 bg-stone-800 border border-stone-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 pr-12"
                   disabled={loading}
                 />
                 <button
@@ -309,7 +311,7 @@ export default function ResetPassword() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirma tu nueva contraseña"
                   required
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-12"
+                  className="w-full px-4 py-3 bg-stone-800 border border-stone-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 pr-12"
                   disabled={loading}
                 />
                 <button
@@ -339,8 +341,9 @@ export default function ResetPassword() {
             <ResponsiveButton
               type="submit"
               disabled={loading}
-              className="w-full"
+              className="w-full font-poppins-bold uppercase tracking-wider"
               size="lg"
+              variant="primary"
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -356,7 +359,7 @@ export default function ResetPassword() {
               <button
                 type="button"
                 onClick={() => navigate("/login")}
-                className="text-blue-400 hover:text-blue-300 transition-colors duration-200 font-medium text-sm"
+                className="text-red-500 hover:text-red-400 transition-colors duration-200 font-medium text-sm"
               >
                 Volver al inicio de sesión
               </button>

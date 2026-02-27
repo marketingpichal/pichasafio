@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import Page from "./page";
 import AgeVerificationModal from "./components/VerificarEdad";
 import Navbar from "./components/NavigationBar";
-import DonationBanner from "./components/DonationBanner";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { AuthProvider } from "./context/AuthProvider";
@@ -30,7 +29,7 @@ const ProtectedRoute = lazy(() => import("./components/common/ProtectedRoute"));
 const GuidePopup = lazy(() => import("./components/GuidePopup"));
 
 const About = () => (
-  <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+  <div className="min-h-screen bg-stone-950 flex items-center justify-center">
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <h2 className="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-6">
         Acerca de Nosotros
@@ -58,59 +57,58 @@ export default function App() {
     <ErrorBoundary>
       <AuthProvider>
         <AchievementProvider>
-        <div className="min-h-screen bg-gray-900">
-          {!isVerified && (
-            <AgeVerificationModal onVerified={handleVerification} />
-          )}
-          {isVerified && (
-            <div className="flex flex-col min-h-screen">
-              <DonationBanner />
-              <Navbar />
-              <main className="flex-1">
-                <Suspense fallback={<LoadingSpinner />}>
-                  <Routes>
-                    <Route path="/" element={<Page />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/calculadora" element={<FarmingCalculator />} />
-                    <Route path="/keguel" element={<KeguelChallengue />} />
-                    <Route path="/respiracion" element={<RespirationCalendar />} />
-                    <Route path="/testimonios" element={<Testimonials />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/reset-password" element={<ResetPassword />} />
-                    <Route path="/complete-profile" element={<CompleteProfile />} />
-                    <Route path="/rutinas" element={<Rutinas />} />
-                    <Route path="/chochasafio" element={<Chochasafio />} />
-                    <Route path="/tyc" element={<TerminosYCondiciones />} />
-                    <Route path="/sexshop" element={<SexShop />} />
-                    <Route path="/guia" element={<GuideStore />} />
-                    <Route
-                      path="/pose/:id"
-                      element={
-                        <ProtectedRoute>
-                          <PoseViewer />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="/profile" element={<UserProfile />} />
-                    <Route
-                      path="/thirty-days-challenge"
-                      element={
-                        <ProtectedRoute>
-                          <ThirtyDaysChallenge />
-                        </ProtectedRoute>
-                      }
-                    />
-                  </Routes>
-                </Suspense>
-              </main>
-            </div>
-          )}
+          <div className="min-h-screen bg-stone-950">
+            {!isVerified && (
+              <AgeVerificationModal onVerified={handleVerification} />
+            )}
+            {isVerified && (
+              <div className="flex flex-col min-h-screen">
+                <Navbar />
+                <main className="flex-1">
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <Routes>
+                      <Route path="/" element={<Page />} />
+                      <Route path="/about" element={<About />} />
+                      <Route path="/calculadora" element={<FarmingCalculator />} />
+                      <Route path="/keguel" element={<KeguelChallengue />} />
+                      <Route path="/respiracion" element={<RespirationCalendar />} />
+                      <Route path="/testimonios" element={<Testimonials />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
+                      <Route path="/reset-password" element={<ResetPassword />} />
+                      <Route path="/complete-profile" element={<CompleteProfile />} />
+                      <Route path="/rutinas" element={<Rutinas />} />
+                      <Route path="/chochasafio" element={<Chochasafio />} />
+                      <Route path="/tyc" element={<TerminosYCondiciones />} />
+                      <Route path="/sexshop" element={<SexShop />} />
+                      <Route path="/guia" element={<GuideStore />} />
+                      <Route
+                        path="/pose/:id"
+                        element={
+                          <ProtectedRoute>
+                            <PoseViewer />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route path="/profile" element={<UserProfile />} />
+                      <Route
+                        path="/thirty-days-challenge"
+                        element={
+                          <ProtectedRoute>
+                            <ThirtyDaysChallenge />
+                          </ProtectedRoute>
+                        }
+                      />
+                    </Routes>
+                  </Suspense>
+                </main>
+              </div>
+            )}
 
-          <Suspense fallback={null}>
-            <GuidePopup />
-          </Suspense>
-        </div>
+            <Suspense fallback={null}>
+              <GuidePopup />
+            </Suspense>
+          </div>
         </AchievementProvider>
       </AuthProvider>
     </ErrorBoundary>

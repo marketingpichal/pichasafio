@@ -88,7 +88,7 @@ export default function GuidePopup() {
       onClick={handleClose}
     >
       <div
-        className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-sm sm:max-w-md w-full overflow-hidden border-2 sm:border-4 border-amber-400 mx-2 my-4 relative max-h-[90vh] overflow-y-auto"
+        className="bg-stone-900 rounded-xl sm:rounded-2xl shadow-2xl shadow-black/50 max-w-sm sm:max-w-md w-full overflow-hidden border-2 sm:border-4 border-red-600 mx-2 my-4 relative max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Botón cerrar */}
@@ -116,7 +116,7 @@ export default function GuidePopup() {
         </button>
 
         {/* Header */}
-        <div className="bg-gradient-to-r from-red-600 to-amber-500 p-3 sm:p-4 text-white font-bold flex flex-col items-center text-center">
+        <div className="bg-stone-950 border-b-2 border-red-600 p-3 sm:p-4 text-white font-bold flex flex-col items-center text-center">
           <div className="flex items-center justify-center w-full">
             <div className="flex items-center gap-1 sm:gap-2 text-amber-200">
               <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -136,10 +136,10 @@ export default function GuidePopup() {
         {/* Body */}
         <div className="p-3 sm:p-4 md:p-6">
           <div className="text-center mb-3 sm:mb-6">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-800 mb-2 sm:mb-3">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-poppins-bold uppercase tracking-tight text-white mb-2 sm:mb-3">
               ¿Quieres mejorar tu rendimiento en la cama?
             </h2>
-            <p className="text-xs sm:text-sm md:text-base text-gray-700 mb-3 sm:mb-6">
+            <p className="text-xs sm:text-sm md:text-base text-gray-300 mb-3 sm:mb-6">
               Accede a <b>3 guías secretas</b> usadas por más de{" "}
               <b>+100 hombres</b> para{" "}
               <u>ganar tamaño, durar más y sorprender en la cama</u>. <br />
@@ -158,8 +158,8 @@ export default function GuidePopup() {
             </p>
 
             {/* Contador */}
-            <div className="bg-gray-100 rounded-lg sm:rounded-xl p-3 mb-4 sm:mb-6">
-              <div className="flex items-center justify-center gap-1 sm:gap-2 text-gray-600 mb-2">
+            <div className="bg-stone-950 border border-stone-800 rounded-lg sm:rounded-xl p-3 mb-4 sm:mb-6">
+              <div className="flex items-center justify-center gap-1 sm:gap-2 text-gray-400 mb-2">
                 <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-red-500" />
                 <span className="text-xs sm:text-sm">
                   La oferta termina en:
@@ -174,43 +174,43 @@ export default function GuidePopup() {
             </div>
 
             {/* Lista de objetivos */}
-            <div className="bg-blue-50 rounded-lg sm:rounded-xl p-2 sm:p-3 mb-4 sm:mb-6 border border-blue-200">
+            <div className="bg-stone-800 rounded-lg sm:rounded-xl p-2 sm:p-3 mb-4 sm:mb-6 border border-stone-700">
               <div className="text-center mb-2 sm:mb-3">
-                <span className="text-xs font-medium text-blue-800">
+                <span className="text-xs font-poppins-bold uppercase tracking-wide text-gray-300">
                   Elige tu objetivo principal:
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-blue-700">
+              <div className="grid grid-cols-2 gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-gray-300">
                 <div className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></div>
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></div>
                   <span>Ganar tamaño</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></div>
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></div>
                   <span>Sexo oral experto</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></div>
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></div>
                   <span>Durar más</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></div>
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></div>
                   <span>Mejorar en la cama</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></div>
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></div>
                   <span>Poses sexuales</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></div>
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></div>
                   <span>Primera vez</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></div>
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></div>
                   <span>Masajes eróticos</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-1.5"></div>
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1.5"></div>
                   <span>Fantasías sexuales</span>
                 </div>
               </div>
@@ -220,7 +220,7 @@ export default function GuidePopup() {
           {/* CTA */}
           <button
             onClick={handleWhatsAppClick}
-            className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-extrabold py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 sm:gap-2 transition-all duration-300 transform hover:scale-[1.02] shadow-md hover:shadow-green-500/30 text-xs sm:text-sm md:text-base whitespace-normal"
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-poppins-bold uppercase tracking-wide py-2.5 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 sm:gap-2 transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-green-900/30 text-xs sm:text-sm md:text-base whitespace-normal"
           >
             <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
             <span className="text-center">
