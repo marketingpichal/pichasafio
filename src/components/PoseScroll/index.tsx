@@ -4,7 +4,7 @@ import { Heart, Eye, Star, Lock, ArrowUp, X, LogIn, UserPlus, Grid, Users } from
 import { useAuth } from '../../context/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import PostFeed from '../PostFeed';
-import { PoseScrollItem } from '../../types/pose';
+import type { PoseScrollItem } from '../../types/pose';
 import { getPoseImages, PoseImage } from '../../lib/cloudinaryService';
 
 
@@ -394,7 +394,7 @@ const PoseScroll: React.FC = () => {
                     {(!pose.isLocked || isAuthenticated) && (
                       <div className="mt-3 pt-3 border-t border-stone-800">
                         <div className="flex flex-wrap gap-1">
-                          {pose.benefits.slice(0, 2).map((benefit, idx) => (
+                          {pose.benefits.slice(0, 2).map((benefit: string, idx: number) => (
                             <span
                               key={idx}
                               className="bg-stone-800 text-gray-300 px-2 py-1 rounded text-xs font-poppins-medium uppercase"
