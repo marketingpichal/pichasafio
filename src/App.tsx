@@ -1,5 +1,6 @@
 import { useState, lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import Page from "./page";
 import AgeVerificationModal from "./components/VerificarEdad";
 import Navbar from "./components/NavigationBar";
@@ -111,6 +112,7 @@ export default function App() {
           </div>
         </AchievementProvider>
       </AuthProvider>
+      <Analytics />
     </ErrorBoundary>
   );
 }
