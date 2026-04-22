@@ -227,138 +227,138 @@ const PoseScroll: React.FC = () => {
         </div>
 
         {/* Poses Grid */}
-            {/* Poses Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {poses.map((pose, index) => (
-                <motion.div
-                  key={pose.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="bg-stone-900 border border-stone-800 rounded-xl overflow-hidden hover:border-red-500/50 transition-all duration-300 group cursor-pointer shadow-lg"
-                  onClick={() => handlePoseClick(pose)}
-                >
-                  {/* Image */}
-                  <div className="relative aspect-[4/3] bg-stone-800 overflow-hidden pointer-events-none">
-                    {pose.isLocked && !isAuthenticated ? (
-                      <div className="absolute inset-0 bg-stone-900/80 backdrop-blur-sm flex items-center justify-center">
-                        <div className="text-center">
-                          <Lock className="w-8 h-8 text-red-500 mx-auto mb-2" />
-                          <p className="text-white text-sm font-poppins-semibold uppercase tracking-wider">Premium</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <img
-                          src={pose.image}
-                          alt={pose.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            // Fallback si la imagen no carga
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const parent = target.parentElement;
-                            if (parent) {
-                              parent.innerHTML = `
+        {/* Poses Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {poses.map((pose, index) => (
+            <motion.div
+              key={pose.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-stone-900 border border-stone-800 rounded-xl overflow-hidden hover:border-red-500/50 transition-all duration-300 group cursor-pointer shadow-lg"
+              onClick={() => handlePoseClick(pose)}
+            >
+              {/* Image */}
+              <div className="relative aspect-[4/3] bg-stone-800 overflow-hidden pointer-events-none">
+                {pose.isLocked && !isAuthenticated ? (
+                  <div className="absolute inset-0 bg-stone-900/80 backdrop-blur-sm flex items-center justify-center">
+                    <div className="text-center">
+                      <Lock className="w-8 h-8 text-red-500 mx-auto mb-2" />
+                      <p className="text-white text-sm font-poppins-semibold uppercase tracking-wider">Premium</p>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <img
+                      src={pose.image}
+                      alt={pose.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        // Fallback si la imagen no carga
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const parent = target.parentElement;
+                        if (parent) {
+                          parent.innerHTML = `
                                 <div class="w-full h-full bg-gradient-to-br from-pink-500/20 to-purple-500/20 flex items-center justify-center">
                                   <div class="text-6xl opacity-50">💕</div>
                                 </div>
                               `;
-                            }
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-red-600/10 transition-all duration-300" />
-                      </>
-                    )}
+                        }
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-red-600/10 transition-all duration-300" />
+                  </>
+                )}
 
-                    {/* Difficulty Badge */}
-                    <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-semibold text-white ${getDifficultyColor(pose.difficulty)}`}>
-                      {pose.difficulty}
+                {/* Difficulty Badge */}
+                <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-semibold text-white ${getDifficultyColor(pose.difficulty)}`}>
+                  {pose.difficulty}
+                </div>
+
+                {/* Category Badge */}
+                <div className="absolute top-2 right-2 bg-stone-900/80 backdrop-blur-sm px-2 py-1 border border-stone-800 rounded-full text-xs text-white">
+                  {pose.category}
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-4 pointer-events-none">
+                <h3 className="text-white font-poppins-bold uppercase tracking-wider mb-2 group-hover:text-red-500 transition-colors">
+                  {pose.name}
+                </h3>
+
+                <p className="text-gray-400 text-sm mb-3 font-poppins-light line-clamp-2">
+                  {pose.description}
+                </p>
+
+                {/* Rating */}
+                <div className="flex items-center gap-1 mb-3">
+                  {renderStars(pose.rating)}
+                  <span className="text-gray-400 text-xs ml-1">({pose.rating})</span>
+                </div>
+
+                {/* Stats */}
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-3 h-3" />
+                      <span>{pose.views.toLocaleString()}</span>
                     </div>
-
-                    {/* Category Badge */}
-                    <div className="absolute top-2 right-2 bg-stone-900/80 backdrop-blur-sm px-2 py-1 border border-stone-800 rounded-full text-xs text-white">
-                      {pose.category}
+                    <div className="flex items-center gap-1">
+                      <Heart className="w-3 h-3" />
+                      <span>{pose.likes}</span>
                     </div>
                   </div>
 
-                  {/* Content */}
-                  <div className="p-4 pointer-events-none">
-                    <h3 className="text-white font-poppins-bold uppercase tracking-wider mb-2 group-hover:text-red-500 transition-colors">
-                      {pose.name}
-                    </h3>
-
-                    <p className="text-gray-400 text-sm mb-3 font-poppins-light line-clamp-2">
-                      {pose.description}
-                    </p>
-
-                    {/* Rating */}
-                    <div className="flex items-center gap-1 mb-3">
-                      {renderStars(pose.rating)}
-                      <span className="text-gray-400 text-xs ml-1">({pose.rating})</span>
+                  {pose.isLocked && !isAuthenticated && (
+                    <div className="flex items-center gap-1 text-yellow-400">
+                      <Lock className="w-3 h-3" />
+                      <span>Premium</span>
                     </div>
+                  )}
+                </div>
 
-                    {/* Stats */}
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" />
-                          <span>{pose.views.toLocaleString()}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Heart className="w-3 h-3" />
-                          <span>{pose.likes}</span>
-                        </div>
-                      </div>
-
-                      {pose.isLocked && !isAuthenticated && (
-                        <div className="flex items-center gap-1 text-yellow-400">
-                          <Lock className="w-3 h-3" />
-                          <span>Premium</span>
-                        </div>
-                      )}
+                {/* Benefits */}
+                {(!pose.isLocked || isAuthenticated) && (
+                  <div className="mt-3 pt-3 border-t border-stone-800">
+                    <div className="flex flex-wrap gap-1">
+                      {pose.benefits.slice(0, 2).map((benefit: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="bg-stone-800 text-gray-300 px-2 py-1 rounded text-xs font-poppins-medium uppercase"
+                        >
+                          {benefit}
+                        </span>
+                      ))}
                     </div>
-
-                    {/* Benefits */}
-                    {(!pose.isLocked || isAuthenticated) && (
-                      <div className="mt-3 pt-3 border-t border-stone-800">
-                        <div className="flex flex-wrap gap-1">
-                          {pose.benefits.slice(0, 2).map((benefit, idx) => (
-                            <span
-                              key={idx}
-                              className="bg-stone-800 text-gray-300 px-2 py-1 rounded text-xs font-poppins-medium uppercase"
-                            >
-                              {benefit}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
-                </motion.div>
-              ))}
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Loading */}
+        {loading && (
+          <div className="text-center py-12">
+            <div className="inline-flex items-center gap-3 text-gray-300">
+              <div className="animate-spin w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
+              <span className="font-poppins-light">Cargando más poses...</span>
             </div>
+          </div>
+        )}
 
-            {/* Loading */}
-            {loading && (
-              <div className="text-center py-12">
-                <div className="inline-flex items-center gap-3 text-gray-300">
-                  <div className="animate-spin w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
-                  <span className="font-poppins-light">Cargando más poses...</span>
-                </div>
-              </div>
-            )}
-
-            {/* End Message */}
-            {!hasMore && (
-              <div className="text-center py-12">
-                <div className="text-gray-400 font-poppins-light">
-                  ¡Has visto todas las poses disponibles! 🎉
-                </div>
-              </div>
-            )}
+        {/* End Message */}
+        {!hasMore && (
+          <div className="text-center py-12">
+            <div className="text-gray-400 font-poppins-light">
+              ¡Has visto todas las poses disponibles! 🎉
+            </div>
+          </div>
+        )}
 
 
         {/* Authentication CTA */}
