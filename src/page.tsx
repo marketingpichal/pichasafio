@@ -8,6 +8,7 @@ import RewardsPanel from "./components/RewardsPanel";
 import SpinWheel from "./components/SpinWheel";
 import DailyXPButton from "./components/DailyXPButton";
 import TelegramBanner from "./components/TelegramBanner";
+import ExerciseAnimationViewer from "./components/ExerciseAnimationViewer";
 import { useState } from "react";
 import { useAuth } from "./context/AuthProvider";
 import { useNavigate } from "react-router-dom";
@@ -106,6 +107,8 @@ export default function Page() {
       <section>
         <PoseScroll />
       </section>
+
+      <ExerciseAnimationViewer />
 
       {/* Leaderboard Section - Solo para usuarios autenticados */}
       {isAuthenticated && (
