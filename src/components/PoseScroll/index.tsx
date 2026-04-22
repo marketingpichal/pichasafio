@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Eye, Star, Lock, ArrowUp, X, LogIn, UserPlus, Grid, Users } from 'lucide-react';
+import { Heart, Eye, Star, Lock, ArrowUp, X, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '../../context/AuthProvider';
 import { useNavigate } from 'react-router-dom';
-import PostFeed from '../PostFeed';
+
 import { PoseScrollItem } from '../../types/pose';
 import { getPoseImages, PoseImage } from '../../lib/cloudinaryService';
 
@@ -42,7 +42,7 @@ const PoseScroll: React.FC = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [selectedPose, setSelectedPose] = useState<PoseScrollItem | null>(null);
-  const [activeTab, setActiveTab] = useState<'poses' | 'posts'>('poses');
+
 
 
 
@@ -129,7 +129,7 @@ const PoseScroll: React.FC = () => {
   // Detectar scroll infinito
   useEffect(() => {
     const handleScroll = () => {
-      if (activeTab === 'poses' && window.innerHeight + document.documentElement.scrollTop
+      if (window.innerHeight + document.documentElement.scrollTop
         >= document.documentElement.offsetHeight - 1000) {
         loadMorePoses();
       }
@@ -137,7 +137,7 @@ const PoseScroll: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [loadMorePoses, activeTab]);
+  }, [loadMorePoses]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -226,76 +226,7 @@ const PoseScroll: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Navigation Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="flex justify-center mb-12"
-        >
-          <div className="relative bg-stone-900 border border-stone-800 p-2 shadow-2xl">
-            {/* Background indicator */}
-            <motion.div
-              className="absolute top-2 bottom-2 bg-red-600 shadow-lg"
-              animate={{
-                left: activeTab === 'poses' ? '8px' : '50%',
-                width: activeTab === 'poses' ? 'calc(50% - 12px)' : 'calc(50% - 12px)'
-              }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            />
-
-            <div className="relative flex">
-              <motion.button
-                onClick={() => setActiveTab('poses')}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`flex items-center gap-3 px-8 py-4 font-poppins-medium transition-all duration-300 relative z-10 min-w-[140px] justify-center uppercase tracking-wide text-sm ${activeTab === 'poses'
-                  ? 'text-white'
-                  : 'text-gray-400 hover:text-white'
-                  }`}
-              >
-                <motion.div
-                  animate={{ rotate: activeTab === 'poses' ? 360 : 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Grid className="w-5 h-5" />
-                </motion.div>
-                <span>Poses</span>
-              </motion.button>
-
-              <motion.button
-                onClick={() => {
-                  if (!isAuthenticated) {
-                    setShowAuthModal(true);
-                    return;
-                  }
-                  setActiveTab('posts');
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`flex items-center gap-3 px-8 py-4 font-poppins-medium transition-all duration-300 relative z-10 min-w-[140px] justify-center uppercase tracking-wide text-sm ${activeTab === 'posts'
-                  ? 'text-white'
-                  : 'text-gray-400 hover:text-white'
-                  }`}
-              >
-                <motion.div
-                  animate={{ rotate: activeTab === 'posts' ? 360 : 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Users className="w-5 h-5" />
-                </motion.div>
-                <span>Comunidad</span>
-                {!isAuthenticated && (
-                  <Lock className="w-4 h-4 ml-1 text-red-400" />
-                )}
-              </motion.button>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Content */}
-        {activeTab === 'poses' ? (
-          <>
+        {/* Poses Grid */}
             {/* Poses Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {poses.map((pose, index) => (
@@ -428,49 +359,10 @@ const PoseScroll: React.FC = () => {
                 </div>
               </div>
             )}
-          </>
-        ) : (
-          /* Posts Feed */
-          isAuthenticated ? (
-            <PostFeed />
-          ) : (
-            <div className="text-center py-20">
-              <div className="bg-stone-900 border border-stone-800 p-8 sm:p-12 relative overflow-hidden max-w-md mx-auto">
-                <div className="absolute top-0 left-0 w-full h-1 bg-red-600"></div>
-                <div className="text-6xl mb-6">🔒</div>
-                <h3 className="text-2xl font-poppins-extrabold uppercase tracking-tight text-white mb-4">
-                  ACCESO RESTRINGIDO
-                </h3>
-                <p className="text-gray-400 mb-8 font-poppins-medium">
-                  La comunidad es exclusiva para usuarios registrados. Únete para compartir y descubrir contenido con otros miembros.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <motion.button
-                    onClick={() => navigate('/login')}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="bg-red-600 text-white px-6 py-3 font-poppins-bold uppercase tracking-widest text-sm hover:bg-red-700 transition-colors flex items-center gap-2 justify-center shadow-lg shadow-red-900/50"
-                  >
-                    <LogIn className="w-5 h-5" />
-                    Iniciar Sesión
-                  </motion.button>
-                  <motion.button
-                    onClick={() => navigate('/register')}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="bg-stone-800 border border-stone-700 text-white px-6 py-3 font-poppins-bold uppercase tracking-widest text-sm hover:bg-stone-700 hover:border-red-500/50 transition-colors flex items-center gap-2 justify-center"
-                  >
-                    <UserPlus className="w-5 h-5" />
-                    Registrarse
-                  </motion.button>
-                </div>
-              </div>
-            </div>
-          )
-        )}
+
 
         {/* Authentication CTA */}
-        {!isAuthenticated && activeTab === 'poses' && (
+        {!isAuthenticated && (
           <div className="mt-12 text-center">
             <div className="bg-stone-900 border border-stone-800 p-8 max-w-3xl mx-auto relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-red-600"></div>
