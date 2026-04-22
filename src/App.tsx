@@ -27,7 +27,7 @@ const PoseViewer = lazy(() => import("./components/PoseViewer"));
 const UserProfile = lazy(() => import("./components/UserProfile"));
 const ThirtyDaysChallenge = lazy(() => import("./components/ThirtyDaysChanllenge"));
 const ProtectedRoute = lazy(() => import("./components/common/ProtectedRoute"));
-const GuidePopup = lazy(() => import("./components/GuidePopup"));
+const CoachingBanner = lazy(() => import("./components/CoachingBanner"));
 
 const About = () => (
   <div className="min-h-screen bg-stone-950 flex items-center justify-center">
@@ -103,12 +103,12 @@ export default function App() {
                     </Routes>
                   </Suspense>
                 </main>
+
+                <Suspense fallback={null}>
+                  <CoachingBanner />
+                </Suspense>
               </div>
             )}
-
-            <Suspense fallback={null}>
-              <GuidePopup />
-            </Suspense>
           </div>
         </AchievementProvider>
       </AuthProvider>

@@ -100,7 +100,7 @@ export default function Page() {
       </motion.section>
 
       {/* Telegram Banner */}
-      <TelegramBanner />
+      {/* <TelegramBanner /> */}
 
       {/* Pose Scroll Section */}
       <section>

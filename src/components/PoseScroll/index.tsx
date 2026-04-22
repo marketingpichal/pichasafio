@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Eye, Star, Lock, ArrowUp, X, LogIn, UserPlus, Grid, Users } from 'lucide-react';
+import { Heart, Eye, Star, Lock, ArrowUp, X, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '../../context/AuthProvider';
 import { useNavigate } from 'react-router-dom';
-import PostFeed from '../PostFeed';
-import type { PoseScrollItem } from '../../types/pose';
+
+import { PoseScrollItem } from '../../types/pose';
 import { getPoseImages, PoseImage } from '../../lib/cloudinaryService';
 
 
@@ -42,7 +42,7 @@ const PoseScroll: React.FC = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [selectedPose, setSelectedPose] = useState<PoseScrollItem | null>(null);
-  const [activeTab, setActiveTab] = useState<'poses' | 'posts'>('poses');
+
 
 
 
@@ -129,7 +129,7 @@ const PoseScroll: React.FC = () => {
   // Detectar scroll infinito
   useEffect(() => {
     const handleScroll = () => {
-      if (activeTab === 'poses' && window.innerHeight + document.documentElement.scrollTop
+      if (window.innerHeight + document.documentElement.scrollTop
         >= document.documentElement.offsetHeight - 1000) {
         loadMorePoses();
       }
@@ -137,7 +137,7 @@ const PoseScroll: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [loadMorePoses, activeTab]);
+  }, [loadMorePoses]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -226,251 +226,143 @@ const PoseScroll: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Navigation Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="flex justify-center mb-12"
-        >
-          <div className="relative bg-stone-900 border border-stone-800 p-2 shadow-2xl">
-            {/* Background indicator */}
+        {/* Poses Grid */}
+        {/* Poses Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {poses.map((pose, index) => (
             <motion.div
-              className="absolute top-2 bottom-2 bg-red-600 shadow-lg"
-              animate={{
-                left: activeTab === 'poses' ? '8px' : '50%',
-                width: activeTab === 'poses' ? 'calc(50% - 12px)' : 'calc(50% - 12px)'
-              }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            />
-
-            <div className="relative flex">
-              <motion.button
-                onClick={() => setActiveTab('poses')}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`flex items-center gap-3 px-8 py-4 font-poppins-medium transition-all duration-300 relative z-10 min-w-[140px] justify-center uppercase tracking-wide text-sm ${activeTab === 'poses'
-                  ? 'text-white'
-                  : 'text-gray-400 hover:text-white'
-                  }`}
-              >
-                <motion.div
-                  animate={{ rotate: activeTab === 'poses' ? 360 : 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Grid className="w-5 h-5" />
-                </motion.div>
-                <span>Poses</span>
-              </motion.button>
-
-              <motion.button
-                onClick={() => {
-                  if (!isAuthenticated) {
-                    setShowAuthModal(true);
-                    return;
-                  }
-                  setActiveTab('posts');
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`flex items-center gap-3 px-8 py-4 font-poppins-medium transition-all duration-300 relative z-10 min-w-[140px] justify-center uppercase tracking-wide text-sm ${activeTab === 'posts'
-                  ? 'text-white'
-                  : 'text-gray-400 hover:text-white'
-                  }`}
-              >
-                <motion.div
-                  animate={{ rotate: activeTab === 'posts' ? 360 : 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Users className="w-5 h-5" />
-                </motion.div>
-                <span>Comunidad</span>
-                {!isAuthenticated && (
-                  <Lock className="w-4 h-4 ml-1 text-red-400" />
-                )}
-              </motion.button>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Content */}
-        {activeTab === 'poses' ? (
-          <>
-            {/* Poses Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {poses.map((pose, index) => (
-                <motion.div
-                  key={pose.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="bg-stone-900 border border-stone-800 rounded-xl overflow-hidden hover:border-red-500/50 transition-all duration-300 group cursor-pointer shadow-lg"
-                  onClick={() => handlePoseClick(pose)}
-                >
-                  {/* Image */}
-                  <div className="relative aspect-[4/3] bg-stone-800 overflow-hidden pointer-events-none">
-                    {pose.isLocked && !isAuthenticated ? (
-                      <div className="absolute inset-0 bg-stone-900/80 backdrop-blur-sm flex items-center justify-center">
-                        <div className="text-center">
-                          <Lock className="w-8 h-8 text-red-500 mx-auto mb-2" />
-                          <p className="text-white text-sm font-poppins-semibold uppercase tracking-wider">Premium</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <img
-                          src={pose.image}
-                          alt={pose.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            // Fallback si la imagen no carga
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const parent = target.parentElement;
-                            if (parent) {
-                              parent.innerHTML = `
+              key={pose.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-stone-900 border border-stone-800 rounded-xl overflow-hidden hover:border-red-500/50 transition-all duration-300 group cursor-pointer shadow-lg"
+              onClick={() => handlePoseClick(pose)}
+            >
+              {/* Image */}
+              <div className="relative aspect-[4/3] bg-stone-800 overflow-hidden pointer-events-none">
+                {pose.isLocked && !isAuthenticated ? (
+                  <div className="absolute inset-0 bg-stone-900/80 backdrop-blur-sm flex items-center justify-center">
+                    <div className="text-center">
+                      <Lock className="w-8 h-8 text-red-500 mx-auto mb-2" />
+                      <p className="text-white text-sm font-poppins-semibold uppercase tracking-wider">Premium</p>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <img
+                      src={pose.image}
+                      alt={pose.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        // Fallback si la imagen no carga
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const parent = target.parentElement;
+                        if (parent) {
+                          parent.innerHTML = `
                                 <div class="w-full h-full bg-gradient-to-br from-pink-500/20 to-purple-500/20 flex items-center justify-center">
                                   <div class="text-6xl opacity-50">💕</div>
                                 </div>
                               `;
-                            }
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-red-600/10 transition-all duration-300" />
-                      </>
-                    )}
+                        }
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-red-600/10 transition-all duration-300" />
+                  </>
+                )}
 
-                    {/* Difficulty Badge */}
-                    <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-semibold text-white ${getDifficultyColor(pose.difficulty)}`}>
-                      {pose.difficulty}
-                    </div>
+                {/* Difficulty Badge */}
+                <div className={`absolute top-2 left-2 px-2 py-1 rounded-full text-xs font-semibold text-white ${getDifficultyColor(pose.difficulty)}`}>
+                  {pose.difficulty}
+                </div>
 
-                    {/* Category Badge */}
-                    <div className="absolute top-2 right-2 bg-stone-900/80 backdrop-blur-sm px-2 py-1 border border-stone-800 rounded-full text-xs text-white">
-                      {pose.category}
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-4 pointer-events-none">
-                    <h3 className="text-white font-poppins-bold uppercase tracking-wider mb-2 group-hover:text-red-500 transition-colors">
-                      {pose.name}
-                    </h3>
-
-                    <p className="text-gray-400 text-sm mb-3 font-poppins-light line-clamp-2">
-                      {pose.description}
-                    </p>
-
-                    {/* Rating */}
-                    <div className="flex items-center gap-1 mb-3">
-                      {renderStars(pose.rating)}
-                      <span className="text-gray-400 text-xs ml-1">({pose.rating})</span>
-                    </div>
-
-                    {/* Stats */}
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" />
-                          <span>{pose.views.toLocaleString()}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Heart className="w-3 h-3" />
-                          <span>{pose.likes}</span>
-                        </div>
-                      </div>
-
-                      {pose.isLocked && !isAuthenticated && (
-                        <div className="flex items-center gap-1 text-yellow-400">
-                          <Lock className="w-3 h-3" />
-                          <span>Premium</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Benefits */}
-                    {(!pose.isLocked || isAuthenticated) && (
-                      <div className="mt-3 pt-3 border-t border-stone-800">
-                        <div className="flex flex-wrap gap-1">
-                          {pose.benefits.slice(0, 2).map((benefit: string, idx: number) => (
-                            <span
-                              key={idx}
-                              className="bg-stone-800 text-gray-300 px-2 py-1 rounded text-xs font-poppins-medium uppercase"
-                            >
-                              {benefit}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Loading */}
-            {loading && (
-              <div className="text-center py-12">
-                <div className="inline-flex items-center gap-3 text-gray-300">
-                  <div className="animate-spin w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
-                  <span className="font-poppins-light">Cargando más poses...</span>
+                {/* Category Badge */}
+                <div className="absolute top-2 right-2 bg-stone-900/80 backdrop-blur-sm px-2 py-1 border border-stone-800 rounded-full text-xs text-white">
+                  {pose.category}
                 </div>
               </div>
-            )}
 
-            {/* End Message */}
-            {!hasMore && (
-              <div className="text-center py-12">
-                <div className="text-gray-400 font-poppins-light">
-                  ¡Has visto todas las poses disponibles! 🎉
-                </div>
-              </div>
-            )}
-          </>
-        ) : (
-          /* Posts Feed */
-          isAuthenticated ? (
-            <PostFeed />
-          ) : (
-            <div className="text-center py-20">
-              <div className="bg-stone-900 border border-stone-800 p-8 sm:p-12 relative overflow-hidden max-w-md mx-auto">
-                <div className="absolute top-0 left-0 w-full h-1 bg-red-600"></div>
-                <div className="text-6xl mb-6">🔒</div>
-                <h3 className="text-2xl font-poppins-extrabold uppercase tracking-tight text-white mb-4">
-                  ACCESO RESTRINGIDO
+              {/* Content */}
+              <div className="p-4 pointer-events-none">
+                <h3 className="text-white font-poppins-bold uppercase tracking-wider mb-2 group-hover:text-red-500 transition-colors">
+                  {pose.name}
                 </h3>
-                <p className="text-gray-400 mb-8 font-poppins-medium">
-                  La comunidad es exclusiva para usuarios registrados. Únete para compartir y descubrir contenido con otros miembros.
+
+                <p className="text-gray-400 text-sm mb-3 font-poppins-light line-clamp-2">
+                  {pose.description}
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <motion.button
-                    onClick={() => navigate('/login')}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="bg-red-600 text-white px-6 py-3 font-poppins-bold uppercase tracking-widest text-sm hover:bg-red-700 transition-colors flex items-center gap-2 justify-center shadow-lg shadow-red-900/50"
-                  >
-                    <LogIn className="w-5 h-5" />
-                    Iniciar Sesión
-                  </motion.button>
-                  <motion.button
-                    onClick={() => navigate('/register')}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="bg-stone-800 border border-stone-700 text-white px-6 py-3 font-poppins-bold uppercase tracking-widest text-sm hover:bg-stone-700 hover:border-red-500/50 transition-colors flex items-center gap-2 justify-center"
-                  >
-                    <UserPlus className="w-5 h-5" />
-                    Registrarse
-                  </motion.button>
+
+                {/* Rating */}
+                <div className="flex items-center gap-1 mb-3">
+                  {renderStars(pose.rating)}
+                  <span className="text-gray-400 text-xs ml-1">({pose.rating})</span>
                 </div>
+
+                {/* Stats */}
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-3 h-3" />
+                      <span>{pose.views.toLocaleString()}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Heart className="w-3 h-3" />
+                      <span>{pose.likes}</span>
+                    </div>
+                  </div>
+
+                  {pose.isLocked && !isAuthenticated && (
+                    <div className="flex items-center gap-1 text-yellow-400">
+                      <Lock className="w-3 h-3" />
+                      <span>Premium</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Benefits */}
+                {(!pose.isLocked || isAuthenticated) && (
+                  <div className="mt-3 pt-3 border-t border-stone-800">
+                    <div className="flex flex-wrap gap-1">
+                      {pose.benefits.slice(0, 2).map((benefit: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="bg-stone-800 text-gray-300 px-2 py-1 rounded text-xs font-poppins-medium uppercase"
+                        >
+                          {benefit}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Loading */}
+        {loading && (
+          <div className="text-center py-12">
+            <div className="inline-flex items-center gap-3 text-gray-300">
+              <div className="animate-spin w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full"></div>
+              <span className="font-poppins-light">Cargando más poses...</span>
             </div>
-          )
+          </div>
         )}
 
+        {/* End Message */}
+        {!hasMore && (
+          <div className="text-center py-12">
+            <div className="text-gray-400 font-poppins-light">
+              ¡Has visto todas las poses disponibles! 🎉
+            </div>
+          </div>
+        )}
+
+
         {/* Authentication CTA */}
-        {!isAuthenticated && activeTab === 'poses' && (
+        {!isAuthenticated && (
           <div className="mt-12 text-center">
             <div className="bg-stone-900 border border-stone-800 p-8 max-w-3xl mx-auto relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-red-600"></div>
