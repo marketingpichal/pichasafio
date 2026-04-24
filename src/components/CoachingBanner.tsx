@@ -104,7 +104,7 @@ export default function CoachingBanner() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 bg-black/80 backdrop-blur-md z-[99999] flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md z-[99999] flex items-start justify-center sm:items-center p-4 sm:p-6 overflow-y-auto"
           onClick={handleClose}
         >
           <motion.div
@@ -125,10 +125,10 @@ export default function CoachingBanner() {
             {/* Close */}
             <button
               onClick={handleClose}
-              className="absolute top-10 right-3 sm:top-11 sm:right-4 z-10 p-2 bg-stone-900/80 hover:bg-stone-800 rounded-full text-stone-400 hover:text-white transition-colors"
+              className="absolute top-3 right-3 sm:top-11 sm:right-4 z-10 p-3 bg-stone-900/90 hover:bg-stone-800 rounded-full text-stone-400 hover:text-white transition-colors touch-manipulation"
               aria-label="Cerrar"
             >
-              <X className="w-5 h-5" />
+              <X className="w-6 h-6 sm:w-5 sm:h-5" />
             </button>
 
             <div className="p-6 sm:p-10">
