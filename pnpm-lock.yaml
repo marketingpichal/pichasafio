@@ -162,6 +162,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.17
+      typescript:
+        specifier: ^5.7.3
+        version: 5.7.3
       typescript-eslint:
         specifier: ^8.22.0
         version: 8.24.1(eslint@9.21.0(jiti@1.21.7))(typescript@5.7.3)
